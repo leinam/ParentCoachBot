@@ -56,7 +56,7 @@ fun NavigationDrawerScreen(content: @Composable() ()->Unit,
             {
                 navBarItems.forEachIndexed { index, navBarItem ->
                     NavigationDrawerItem(
-                        label = { Text(text = navBarItem.title) },
+                        label = { navBarItem.title?.let { Text(text = it) } },
                         selected = index == selectedIndex,
                         onClick = {
                             selectedIndex = index

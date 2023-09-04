@@ -51,7 +51,7 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
         R.drawable.favourites_icon,
         route = "saved"),
 
-    NavBarItem("Profile",
+    NavBarItem(null,
         R.drawable.profile_icon,
         route = Screen.AddProfileScreen.route)
 ),
@@ -87,11 +87,14 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
             }},
             modifier = Modifier
                 .padding(vertical = 14.dp),
-            label = { Text(
-                text = menuItem.title,
+            label = { menuItem.title?.let {
+                Text(
+                text = it,
                 color = Beige,
                 style = MaterialTheme.typography.labelSmall)
-                    },
+            }
+                    }
+                ,
             icon = {
                 Icon(
                     painter = painterResource(id = menuItem.icon),
@@ -99,6 +102,7 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
                     tint = Beige,
                     modifier = Modifier.size(30.dp)
                 )
+
             })
 
         navBarItems?.forEachIndexed{
@@ -117,11 +121,15 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
                           },
                 modifier = Modifier
                     .padding(vertical = 14.dp),
-                label = { Text(
-                    text = item.title,
-                    color = Beige,
-                    style = MaterialTheme.typography.labelSmall
-                )
+                label = {
+                    item.title?.let {
+                    Text(
+                        text = it,
+                        color = Beige,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
                 }, icon =   {
                     Icon(
                         painter = painterResource(id = item.icon),

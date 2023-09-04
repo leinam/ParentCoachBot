@@ -22,8 +22,11 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -103,6 +106,10 @@ fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var bottomSheetContent: BottomSheetContent by remember { mutableStateOf(BottomSheetContent.Topics) }
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(
+            initialValue = SheetValue.PartiallyExpanded, skipHiddenState = false)
+    )
     var currentTopic: Topic? by remember { mutableStateOf(null) }
     var currentSubtopic: Subtopic? by remember { mutableStateOf(null) }
 
@@ -114,7 +121,7 @@ fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
 
                 drawerItemsList.forEachIndexed { index, navBarItem ->
                     NavigationDrawerItem(
-                        label = { Text(text = navBarItem.title) },
+                        label = { navBarItem.title?.let { Text(text = it) } },
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index
@@ -151,6 +158,8 @@ fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
                         navController = navController,
                         onProfileSelectionEvent = {
                             bottomSheetContent = it
+                            scope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+
                         })
                 })
             {contentPadding ->
@@ -162,6 +171,7 @@ fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
                 ){
 
                     BottomSheetScaffold(
+                        scaffoldState = bottomSheetScaffoldState,
                         sheetContent = {
                             when (bottomSheetContent){
                                 BottomSheetContent.Questions -> {}
@@ -253,7 +263,7 @@ fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
                                     Column(modifier = Modifier.height(300.dp)){
                                         Box(modifier = Modifier.fillMaxWidth(),
                                             contentAlignment = Alignment.Center){
-                                            Text(text = "PROFILE",
+                                            Text(text = "SWITCH PROFILE",
                                                 color = LightBeige)
                                         }
 
