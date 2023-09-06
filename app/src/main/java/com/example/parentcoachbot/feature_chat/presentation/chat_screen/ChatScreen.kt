@@ -28,6 +28,8 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -61,18 +62,19 @@ import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import kotlinx.coroutines.launch
 
-@Preview
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
+fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(ChatStateWrapper()),
                navController: NavController = rememberNavController()
 ) {
+    val chatStateWrapper = ChatViewModelState.value
 
-    val topicsList:List<Topic> by chatViewModelState.topicsListState.collectAsStateWithLifecycle()
-    val questionsWithAnswersList by chatViewModelState.questionsWithAnswersState.collectAsStateWithLifecycle()
-    val questionSessionList by chatViewModelState.questionSessionListState.collectAsStateWithLifecycle()
-    val subtopicList: List<Subtopic> by chatViewModelState.subtopicsListState.collectAsStateWithLifecycle()
-    val childProfileList: List<ChildProfile> by chatViewModelState.childProfilesListState.collectAsStateWithLifecycle()
+    val topicsList:List<Topic> by chatStateWrapper.topicsListState.collectAsStateWithLifecycle()
+    val questionsWithAnswersList by chatStateWrapper.questionsWithAnswersState.collectAsStateWithLifecycle()
+    val questionSessionList by chatStateWrapper.questionSessionListState.collectAsState()
+    val subtopicList: List<Subtopic> by chatStateWrapper.subtopicsListState.collectAsStateWithLifecycle()
+    val childProfileList: List<ChildProfile> by chatStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
     val drawerItemsList = listOf(
@@ -86,19 +88,19 @@ fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
 
         NavBarItem("Help",
             R.drawable.help_icon,
-            route = "help"),
+            route = null),
 
         NavBarItem("Saved",
             R.drawable.favourites_icon,
-            route = "saved"),
+            route = null),
 
         NavBarItem("Resources",
             R.drawable.resources_icon,
-            route = "resources"),
+            route = null),
 
         NavBarItem("Settings",
             R.drawable.settings_icon,
-            route = "settings"),
+            route = null),
     )
 
     var drawerSelectedItemIndex by rememberSaveable {
@@ -127,7 +129,7 @@ fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
                             drawerSelectedItemIndex = index
                             scope.launch{
                                 drawerState.close()
-                                navController.navigate(route = navBarItem.route)
+                                navBarItem.route?.let { navController.navigate(route = it) }
                             }
 
                         },
@@ -220,45 +222,45 @@ fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
                                 }
                                 BottomSheetContent.Topics -> {
                                     Column(modifier = Modifier.height(300.dp)){
-                                    Box(modifier = Modifier.fillMaxWidth(),
-                                        contentAlignment = Alignment.Center){
-                                        Text(text = "TOPICS",
-                                            color = LightBeige)
-                                    }
+                                        Box(modifier = Modifier.fillMaxWidth(),
+                                            contentAlignment = Alignment.Center){
+                                            Text(text = "TOPICS",
+                                                color = LightBeige)
+                                        }
 
-                                    Spacer(modifier = Modifier.size(10.dp))
+                                        Spacer(modifier = Modifier.size(10.dp))
 
-                                    LazyColumn {
-                                        items(topicsList) { topic ->
-                                            Row(horizontalArrangement = Arrangement.SpaceBetween,
-                                                modifier = Modifier
-                                                    .padding(16.dp)
-                                                    .fillMaxWidth()
-                                                    .clickable {
-                                                        currentTopic = topic
-                                                        bottomSheetContent =
-                                                            BottomSheetContent.SubTopics
+                                        LazyColumn {
+                                            items(topicsList) { topic ->
+                                                Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                                    modifier = Modifier
+                                                        .padding(16.dp)
+                                                        .fillMaxWidth()
+                                                        .clickable {
+                                                            currentTopic = topic
+                                                            bottomSheetContent =
+                                                                BottomSheetContent.SubTopics
+                                                        }
+                                                ) {
+                                                    topic.title?.let {
+                                                        Text(
+                                                            text = it,
+                                                            color = Color.White
+                                                        )
                                                     }
-                                            ) {
-                                                topic.title?.let {
-                                                    Text(
-                                                        text = it,
-                                                        color = Color.White
-                                                    )
-                                                }
 
-                                                topic.icon?.let {
-                                                    Icon(
-                                                        painter = painterResource(id = it),
-                                                        contentDescription = topic.title,
-                                                        tint = Color.White
-                                                    )
-                                                }
+                                                    topic.icon?.let {
+                                                        Icon(
+                                                            painter = painterResource(id = it),
+                                                            contentDescription = topic.title,
+                                                            tint = Color.White
+                                                        )
+                                                    }
 
+                                                }
                                             }
                                         }
-                                    }
-                                }}
+                                    }}
                                 BottomSheetContent.ChildProfiles -> {
                                     Column(modifier = Modifier.height(300.dp)){
                                         Box(modifier = Modifier.fillMaxWidth(),
@@ -304,9 +306,11 @@ fun ChatScreen(chatViewModelState: ChatStateWrapper = ChatStateWrapper(),
                         sheetPeekHeight = 80.dp,
                         sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
                     ) {
+                        Text(text = "$questionSessionList")
                         LazyColumn {
                             items(questionsWithAnswersList) { questionWithAnswer ->
-                                questionWithAnswer?.let {questionAnswerPair ->
+                                questionWithAnswer?.let {
+                                        questionAnswerPair ->
                                     QuestionBox(question = questionAnswerPair.first)
 
                                     Column {

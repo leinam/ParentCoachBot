@@ -1,5 +1,7 @@
 package com.example.parentcoachbot.feature_chat.presentation.profile_screen
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parentcoachbot.common.GlobalState
@@ -23,10 +25,11 @@ class ProfileViewModel @Inject constructor(private val childProfileUseCases: Chi
     private val _childProfilesList = globalState._childProfilesListState
     private val _currentChildProfile = globalState._currentChildProfileState
 
-    val profileStateWrapper: ProfileStateWrapper
-        get() = ProfileStateWrapper(parentUserState = parentUser,
+    private val _profileViewModelState = mutableStateOf( ProfileStateWrapper(parentUserState = parentUser,
             childProfilesListState = _childProfilesList,
-            currentChildProfileState = _currentChildProfile)
+            currentChildProfileState = _currentChildProfile))
+
+    val profileViewModelState: State<ProfileStateWrapper> = _profileViewModelState
 
     init {
         getChildProfilesList()

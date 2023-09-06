@@ -24,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -64,30 +64,28 @@ import java.time.format.DateTimeFormatter
 
 
 @Composable
-fun ChatListScreen(chatListStateWrapper: ChatListStateWrapper,
+fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
                    navController: NavController = rememberNavController(),
                    onChatListEvent:(ChatListEvent) -> Unit,
                    onChatEvent:(ChatEvent) -> Unit) {
 
+    val chatListStateWrapper = chatListViewModelState.value
+
     val chatSessionList: List<ChatSession> by chatListStateWrapper.chatSessionListState.collectAsStateWithLifecycle()
     val newChatSession: ChatSession? by chatListStateWrapper.newChatState.collectAsStateWithLifecycle()
 
-    val drawerItemList = listOf(
+    val drawerItemList: List<NavBarItem> = listOf(
         NavBarItem("Profile",
             R.drawable.profile_icon,
-            route = Screen.ChatScreen.route),
-
-                NavBarItem("New Chat",
-            R.drawable.newchat_icon,
-            route = Screen.ChatScreen.route),
-
-        NavBarItem("Help",
-            R.drawable.help_icon,
-            route = "help"),
+            route = Screen.SelectProfileScreen.route),
 
         NavBarItem("Chats",
             R.drawable.chats_icon,
             route = Screen.ChatListScreen.route),
+
+        NavBarItem("Help",
+            R.drawable.help_icon,
+            route = "help"),
 
         NavBarItem("Saved",
             R.drawable.favourites_icon,
@@ -131,7 +129,7 @@ fun ChatListScreen(chatListStateWrapper: ChatListStateWrapper,
                             drawerSelectedItemIndex = index
                             scope.launch{
                                 drawerState.close()
-                                navController.navigate(route = navBarItem.route)
+                                navBarItem.route?.let { navController.navigate(route = it) }
                             }
 
                         },
@@ -215,11 +213,6 @@ fun ChatListScreen(chatListStateWrapper: ChatListStateWrapper,
                                     onChatEvent(ChatEvent.SelectChat(chatSession))
                                     // onChatListEvent(ChatListEvent.SelectChat(chatSession))
                                     navController.navigate(route = Screen.ChatScreen.route)
-                                }
-                                .onSizeChanged {
-                                    itemHeight = with(density) {
-                                        it.height.toDp()
-                                    }
                                 }
                                 // true reflects state of whether to detect
                                 )

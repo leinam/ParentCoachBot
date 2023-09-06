@@ -51,9 +51,9 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
         R.drawable.favourites_icon,
         route = "saved"),
 
-    NavBarItem(null,
+    NavBarItem("Profile",
         R.drawable.profile_icon,
-        route = Screen.AddProfileScreen.route)
+        route = Screen.SelectProfileScreen.route)
 ),
               drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
               scope: CoroutineScope = rememberCoroutineScope(),
@@ -72,9 +72,9 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
         windowInsets = NavigationBarDefaults.windowInsets,
     ) {
 
-        val menuItem = NavBarItem("Menu",
+        val menuItem = NavBarItem(null,
             R.drawable.menu_icon,
-            route = "more")
+            route = null)
 
         NavigationBarItem(
             colors=NavigationBarItemDefaults.colors(
@@ -86,13 +86,13 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
                 drawerState.open()
             }},
             modifier = Modifier
-                .padding(vertical = 14.dp),
-            label = { menuItem.title?.let {
+                .padding(vertical = 11.dp),
+            label ={
                 Text(
-                text = it,
+                text = "",
                 color = Beige,
                 style = MaterialTheme.typography.labelSmall)
-            }
+
                     }
                 ,
             icon = {
@@ -100,7 +100,7 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
                     painter = painterResource(id = menuItem.icon),
                     contentDescription = menuItem.title,
                     tint = Beige,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(35.dp)
                 )
 
             })
@@ -114,10 +114,9 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
 
                 selected = selectedIndex == index,
                 onClick = { selectedIndex = index
-                    if (index != 3){
+                    item.route?.let {
                         navController.navigate(route = item.route)
                     }
-                    onProfileSelectionEvent(BottomSheetContent.ChildProfiles)
                           },
                 modifier = Modifier
                     .padding(vertical = 14.dp),

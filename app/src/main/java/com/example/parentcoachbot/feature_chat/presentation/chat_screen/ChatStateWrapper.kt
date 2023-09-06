@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.mongodb.kbson.ObjectId
 
 data class ChatStateWrapper(val questionsListState: StateFlow<List<Question>> = MutableStateFlow(emptyList()),
-                            val questionSessionListState: StateFlow<List<QuestionSession>> = MutableStateFlow(emptyList()),
+                            var questionSessionListState: StateFlow<List<QuestionSession>> = MutableStateFlow(emptyList()),
                             val questionsWithAnswersState: StateFlow<MutableList<Pair<Question,
                              List<Answer>>?>> = MutableStateFlow(mutableListOf()),
                             val topicsListState: StateFlow<List<Topic>> = MutableStateFlow(emptyList()),

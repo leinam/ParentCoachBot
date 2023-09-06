@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListScreen
 import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListViewModel
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatScreen
@@ -19,6 +20,10 @@ import com.example.parentcoachbot.ui.theme.OnboardingPageItem
 @Composable
 fun Navigation() {
     val navHostController: NavHostController = rememberNavController()
+    val chatListViewModel = hiltViewModel<ChatListViewModel>()
+    val chatViewModel = hiltViewModel<ChatViewModel>()
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+
 
     NavHost(navController = navHostController,
         startDestination = Screen.SplashScreen.route ){
@@ -27,11 +32,14 @@ fun Navigation() {
         }
 
         composable(route=Screen.SelectProfileScreen.route){
-            val profileViewModel: ProfileViewModel = hiltViewModel()
-
             SelectProfileScreen(navController = navHostController,
-                profileStateWrapper = profileViewModel.profileStateWrapper,
-                onEvent = {profileEvent -> profileViewModel.onEvent(profileEvent)})
+                profileState = profileViewModel.profileViewModelState,
+                onEvent = {profileEvent ->
+                    profileViewModel.onEvent(profileEvent)
+                    // todo is it really necessary to trigger this - can we observe and trigger directly
+                    chatListViewModel.onEvent(chatListEvent = ChatListEvent.SelectProfile)
+
+                })
         }
 
         composable(route = Screen.ExploreOnboardingScreen.route){
@@ -50,20 +58,17 @@ fun Navigation() {
         }
 
         composable(route = Screen.ChatListScreen.route){
-            val chatListViewModel = hiltViewModel<ChatListViewModel>()
-            val chatViewModel = hiltViewModel<ChatViewModel>()
-
 
             ChatListScreen(navController = navHostController,
-                chatListStateWrapper = chatListViewModel.chatListStateWrapper,
+                chatListViewModelState = chatListViewModel.chatListViewModelState,
                 onChatListEvent = {chatListEvent ->  chatListViewModel.onEvent(chatListEvent)},
-                onChatEvent = {chatEvent -> chatViewModel.onEvent(chatEvent)} )
+                onChatEvent = {chatEvent -> chatViewModel.onEvent(chatEvent)}
+            )
         }
 
         composable(route = Screen.ChatScreen.route){
-            val chatViewModel = hiltViewModel<ChatViewModel>()
 
-            ChatScreen(chatViewModelState = chatViewModel.chatStateWrapper,
+            ChatScreen(ChatViewModelState = chatViewModel.chatViewModelState,
                 navController = navHostController)
         }
 

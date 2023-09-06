@@ -18,7 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,10 +46,11 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 @Preview
 @Composable
 fun SelectProfileScreen(navController: NavController = rememberNavController(),
-                        profileStateWrapper: ProfileStateWrapper = ProfileStateWrapper(),
+                        profileState: State<ProfileStateWrapper> = mutableStateOf(ProfileStateWrapper()),
                         onEvent: (ProfileEvent) -> Unit = {}
 ) {
 
+    val profileStateWrapper = profileState.value
     val childProfileList: List<ChildProfile> by profileStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier

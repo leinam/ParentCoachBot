@@ -1,7 +1,10 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_screen
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.parentcoachbot.common.GlobalState
 import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
@@ -32,9 +35,10 @@ class ChatViewModel @Inject constructor(
     private val topicUseCases: TopicUseCases,
     private val subtopicUseCases: SubtopicUseCases,
     private val childProfileUseCases: ChildProfileUseCases,
-    private val parentUserUseCases: ParentUserUseCases) : ViewModel()
-{
+    private val parentUserUseCases: ParentUserUseCases,
+    private val globalState: GlobalState) : ViewModel()
 
+{
 
     private val _topicsListState = MutableStateFlow<List<Topic>>(emptyList())
     private val _currentChatState = MutableStateFlow<ChatSession?>(null)
@@ -45,15 +49,16 @@ class ChatViewModel @Inject constructor(
     private val _questionsWithAnswersListState = MutableStateFlow<MutableList<Pair<Question,
             List<Answer>>?>>(mutableListOf())
 
-    val chatStateWrapper: ChatStateWrapper
-        get() = ChatStateWrapper(questionsListState = _questionsListState,
-            topicsListState = _topicsListState,
-            questionsWithAnswersState = _questionsWithAnswersListState,
-            questionSessionListState = _questionSessionListState,
-            subtopicsListState = _subtopicsListState,
-            childProfilesListState = _childProfilesListState
-        )
+    private val _chatViewModelState = mutableStateOf(ChatStateWrapper(
+        questionsListState = _questionsListState,
+        topicsListState = _topicsListState,
+        questionsWithAnswersState = _questionsWithAnswersListState,
+        questionSessionListState = _questionSessionListState,
+        subtopicsListState = _subtopicsListState,
+        childProfilesListState = _childProfilesListState
+    ))
 
+    val chatViewModelState: State<ChatStateWrapper> = _chatViewModelState
 
     private var lastDeletedQuestion: Question? = null
     private var getQuestionsJob: Job? = null // track job coroutine observing db
@@ -64,22 +69,20 @@ class ChatViewModel @Inject constructor(
     private var getChildProfilesJob: Job? = null
 
     init {
-        println("initializing this ish")
-        getQuestionsWithAnswers()
+        getChatQuestionSessions()
         getTopics()
         getChildProfiles()
     }
 
     fun onEvent(event: ChatEvent){
             when (event){
-                is ChatEvent.FavouriteQuestion -> {
-
-                }
+                is ChatEvent.FavouriteQuestion -> {}
 
                 is ChatEvent.DeleteQuestion -> {
                     viewModelScope.launch {
                         lastDeletedQuestion = event.question
                         questionUseCases.deleteQuestion(event.question)
+
                     }
                 }
 
@@ -91,9 +94,15 @@ class ChatViewModel @Inject constructor(
                 }
 
                 is ChatEvent.SelectQuestion -> TODO()
+
                 is ChatEvent.SelectChat -> {
                     _currentChatState.value = event.chatSession
-                    println("the current chat is ${_currentChatState.value}")
+                    getChatQuestionSessions() //todo why do i need to call this each time
+
+                }
+
+                is ChatEvent.SelectProfile -> {
+                    // globalState.updateCurrentChildProfile(childProfile = event.childProfile)
                 }
             }
         }
@@ -108,16 +117,27 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun getChatQuestionSessions(chatSessionId: ObjectId){
+    private fun getChatQuestionSessions(){
         getChatQuestionSessionsJob?.cancel()
-        getChatQuestionSessionsJob = viewModelScope.launch{
-                questionSessionUseCases.getChatQuestionSessions(chatSessionId)
-                    .onEach { questionSessionList ->
-                        _questionSessionListState.value = questionSessionList
-                    }.collect()
 
+        getChatQuestionSessionsJob = viewModelScope.launch{
+            _currentChatState.onEach {
+                println("the current chat is ${_currentChatState.value}")
+                it?.let {
+                    questionSessionUseCases.getChatQuestionSessions(it._id).onEach {
+                            questionSessionList ->
+                        _questionSessionListState.value = questionSessionList
+
+                        println(chatViewModelState.value.questionSessionListState.value)
+                        chatViewModelState.value.questionSessionListState.value.forEach { println("the ID is $it._id") }
+
+                    }.collect()
+                }
+            }.collect()
+
+            }
         }
-    }
+
 
     private fun getChildProfiles(){
         viewModelScope.launch {

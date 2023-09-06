@@ -25,4 +25,8 @@ class GlobalState(val parentUserUseCases: ParentUserUseCases,
         println("The global parent state is ${parentUserState.value}")
     }
 
+    fun updateCurrentChildProfile(childProfile: ChildProfile){
+        _currentChildProfileState.value = childProfile
+    }
+
 }
