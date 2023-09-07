@@ -50,7 +50,15 @@ class ChatListViewModel @Inject constructor(private val chatSessionUseCases: Cha
             ChatListEvent.NewChat -> {
                 viewModelScope.launch {
                     _currentChildProfile.value?.let {
-                        chatSessionUseCases.newChatSession(ChatSession().apply { this.childProfile = it._id })
+                        ChatSession().apply { this.childProfile = it._id }.let {
+                            _newChatState.value = it
+                            _newChatState.value?.let {chatSession ->
+                                chatSessionUseCases.newChatSession(chatSession)
+                            }
+
+                        }
+
+
                     }
 
                 }

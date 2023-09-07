@@ -17,8 +17,11 @@ class ParentUserRepositoryImpl(private val realm: Realm): ParentUserRepository {
 
     override suspend fun deleteParentUser(id: ObjectId) {
         realm.write {
-            val parent = realm.query<ParentUser>(query = "_id == $0", id).find().first()
-            delete(parent)
+            val parent = realm.query<ParentUser>(query = "_id == $0", id).find().firstOrNull()
+            parent?.let {
+                delete(parent)
+            }
+
         }
     }
 

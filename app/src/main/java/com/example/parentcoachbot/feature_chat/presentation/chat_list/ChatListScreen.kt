@@ -157,8 +157,9 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
                         onChatListEvent(ChatListEvent.NewChat).apply {
                             newChatSession?.let {
                                 onChatEvent(ChatEvent.SelectChat(it))
+                                navController.navigate(Screen.ChatScreen.route)
                             }
-                            navController.navigate(Screen.ChatScreen.route)
+                            // TODO clear new chat Session once it is now the current chat
                         }
 
                     },

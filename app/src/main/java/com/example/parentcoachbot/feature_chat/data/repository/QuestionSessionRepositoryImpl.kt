@@ -17,8 +17,8 @@ class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRe
         }
     }
 
-    override suspend fun getQuestionSessionById(id: ObjectId): QuestionSession = withContext(Dispatchers.IO){
-        realm.query<QuestionSession>(query = "_id == $0", id).find().first()
+    override suspend fun getQuestionSessionById(id: ObjectId): QuestionSession? = withContext(Dispatchers.IO){
+        realm.query<QuestionSession>(query = "_id == $0", id).find().firstOrNull()
     }
 
     override suspend fun getQuestionSessionsByChatSession(chatSessionId: ObjectId): Flow<List<QuestionSession>> = withContext(
@@ -33,8 +33,11 @@ class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRe
 
     override suspend fun deleteQuestionSession(id: ObjectId) {
         realm.write {
-            val questionSession = realm.query<QuestionSession>(query = "id == $id").find().first()
-            delete(questionSession)
+            val questionSession = realm.query<QuestionSession>(query = "id == $id").find().firstOrNull()
+            questionSession?.let {
+                delete(questionSession)
+            }
+
         }
     }
 

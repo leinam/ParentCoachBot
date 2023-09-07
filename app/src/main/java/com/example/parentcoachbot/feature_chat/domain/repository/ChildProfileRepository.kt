@@ -9,9 +9,9 @@ interface ChildProfileRepository {
 
     suspend fun getChildProfileByParent(parentId: ObjectId): Flow<List<ChildProfile>>
 
-    suspend fun getChildProfileByParentTest(parentId: ObjectId): ChildProfile
+    suspend fun getChildProfileByParentTest(parentId: ObjectId): ChildProfile?
 
-    suspend fun getChildProfileById(id: ObjectId): ChildProfile
+    suspend fun getChildProfileById(id: ObjectId): ChildProfile?
 
     suspend fun deleteChildProfile(id: ObjectId)
 

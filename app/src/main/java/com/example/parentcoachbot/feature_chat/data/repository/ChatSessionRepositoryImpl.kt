@@ -20,13 +20,16 @@ class ChatSessionRepositoryImpl(private val realm: Realm): ChatSessionRepository
 
     override suspend fun deleteChatSession(id: ObjectId) {
         realm.write {
-            val chatSession = realm.query<ChatSession>(query = "_id == $0", id).find().first()
-            delete(chatSession)
+            val chatSession = realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
+            chatSession?.let {
+                delete(chatSession)
+            }
+
         }
     }
 
-    override suspend fun getChatSessionById(id: ObjectId): ChatSession {
-        return realm.query<ChatSession>(query = "_id == $0", id).find().first()
+    override suspend fun getChatSessionById(id: ObjectId): ChatSession? {
+        return realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
     }
 
     override suspend fun getChatSessionsByChildProfile(childProfileId: ObjectId): Flow<List<ChatSession>>

@@ -5,7 +5,7 @@ import com.example.parentcoachbot.feature_chat.domain.repository.SubtopicReposit
 import org.mongodb.kbson.ObjectId
 
 class GetSubtopicById(private val subtopicRepository: SubtopicRepository) {
-    suspend operator fun invoke(subtopicId: ObjectId): Subtopic {
+    suspend operator fun invoke(subtopicId: ObjectId): Subtopic? {
         return subtopicRepository.getSubtopicsById(id = subtopicId)
     }
 }

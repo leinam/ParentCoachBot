@@ -9,7 +9,7 @@ interface ChatSessionRepository {
 
     suspend fun deleteChatSession(id: ObjectId)
 
-    suspend fun getChatSessionById(id: ObjectId): ChatSession
+    suspend fun getChatSessionById(id: ObjectId): ChatSession?
 
     suspend fun getChatSessionsByChildProfile(childProfileId: ObjectId) :Flow<List<ChatSession>>
 

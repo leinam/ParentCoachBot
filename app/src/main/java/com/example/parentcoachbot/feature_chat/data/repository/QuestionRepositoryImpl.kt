@@ -15,8 +15,8 @@ class QuestionRepositoryImpl(val realm: Realm): QuestionRepository {
          realm.query<Question>().asFlow().map { it.list }
     }
 
-    override suspend fun getQuestionById(id: ObjectId): Question = withContext(Dispatchers.IO) {
-        realm.query<Question>(query = "_id == $0", id).find().first()
+    override suspend fun getQuestionById(id: ObjectId): Question? = withContext(Dispatchers.IO) {
+        realm.query<Question>(query = "_id == $0", id).find().firstOrNull()
     }
 
     override suspend fun insertQuestion(question: Question) {
@@ -29,6 +29,15 @@ class QuestionRepositoryImpl(val realm: Realm): QuestionRepository {
         realm.write {
             val question = this.query<Question>("_id == $id").find().first()
             delete(question)
+        }
+    }
+
+    override suspend fun getQuestionsBySubtopic(subtopicId: ObjectId): Flow<List<Question>>
+    = withContext(Dispatchers.IO){
+        realm.query<Question>().asFlow().map {
+            it.list.filter {
+                    question -> question.subtopics.contains(subtopicId)
+            }
         }
     }
 }

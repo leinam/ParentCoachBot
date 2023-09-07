@@ -5,7 +5,7 @@ import com.example.parentcoachbot.feature_chat.domain.repository.ChildProfileRep
 import org.mongodb.kbson.ObjectId
 
 class GetChildProfileTest(private val childProfileRepository: ChildProfileRepository) {
-    suspend operator fun invoke(parentUserId: ObjectId): ChildProfile {
+    suspend operator fun invoke(parentUserId: ObjectId): ChildProfile? {
         return childProfileRepository.getChildProfileByParentTest(parentUserId)
     }
 }

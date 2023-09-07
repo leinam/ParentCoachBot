@@ -29,7 +29,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,12 +40,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
+import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.presentation.Screen
@@ -62,19 +63,20 @@ import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import kotlinx.coroutines.launch
 
-
+// todo modularize chat screen composable
+@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(ChatStateWrapper()),
-               navController: NavController = rememberNavController()
-) {
+               navController: NavController = rememberNavController(), onEvent: (chatEvent: ChatEvent) -> Unit = {}) {
     val chatStateWrapper = ChatViewModelState.value
 
     val topicsList:List<Topic> by chatStateWrapper.topicsListState.collectAsStateWithLifecycle()
-    val questionsWithAnswersList by chatStateWrapper.questionsWithAnswersState.collectAsStateWithLifecycle()
-    val questionSessionList by chatStateWrapper.questionSessionListState.collectAsState()
+    val questionSessionWithQuestionAndAnswersList by chatStateWrapper.questionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
     val subtopicList: List<Subtopic> by chatStateWrapper.subtopicsListState.collectAsStateWithLifecycle()
     val childProfileList: List<ChildProfile> by chatStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
+    val subtopicQuestionsList: List<Question> by chatStateWrapper.subtopicQuestionsListState.collectAsStateWithLifecycle()
+
 
     val scope = rememberCoroutineScope()
     val drawerItemsList = listOf(
@@ -176,7 +178,43 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                         scaffoldState = bottomSheetScaffoldState,
                         sheetContent = {
                             when (bottomSheetContent){
-                                BottomSheetContent.Questions -> {}
+                                BottomSheetContent.Questions -> {
+                                    Column(modifier = Modifier.height(300.dp)){
+                                        Box(modifier = Modifier.fillMaxWidth(),
+                                            contentAlignment = Alignment.Center){
+                                            Text(text = "${currentSubtopic?.title?.uppercase()}",
+                                                color = LightBeige
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.size(10.dp))
+                                        LazyColumn {
+                                            items(subtopicQuestionsList) { question ->
+                                                Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                                    modifier = Modifier
+                                                        .padding(16.dp)
+                                                        .fillMaxWidth()
+                                                        .clickable {
+                                                            onEvent(ChatEvent.AddQuestionSession(question))
+                                                            scope.launch {
+                                                                bottomSheetScaffoldState.bottomSheetState.partialExpand()
+                                                            }
+
+                                                        }) {
+
+                                                    question.questionText?.let {
+                                                        Text(
+                                                            text = it,
+                                                            color = Color.White
+                                                        )
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
                                 BottomSheetContent.SubTopics -> {
                                     Column(modifier = Modifier.height(300.dp)){
                                         Box(modifier = Modifier.fillMaxWidth(),
@@ -187,7 +225,6 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                                         }
 
                                         Spacer(modifier = Modifier.size(10.dp))
-
                                         LazyColumn {
                                             items(subtopicList) { subtopic ->
                                                 Row(horizontalArrangement = Arrangement.SpaceBetween,
@@ -195,6 +232,7 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                                                         .padding(16.dp)
                                                         .fillMaxWidth()
                                                         .clickable {
+                                                            onEvent(ChatEvent.SelectSubtopic(subtopic))
                                                             currentSubtopic = subtopic
                                                             bottomSheetContent =
                                                                 BottomSheetContent.Questions
@@ -237,6 +275,7 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                                                         .padding(16.dp)
                                                         .fillMaxWidth()
                                                         .clickable {
+                                                            onEvent(ChatEvent.SelectTopic(topic))
                                                             currentTopic = topic
                                                             bottomSheetContent =
                                                                 BottomSheetContent.SubTopics
@@ -306,15 +345,14 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                         sheetPeekHeight = 80.dp,
                         sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
                     ) {
-                        Text(text = "$questionSessionList")
                         LazyColumn {
-                            items(questionsWithAnswersList) { questionWithAnswer ->
+                            items(questionSessionWithQuestionAndAnswersList) { questionWithAnswer ->
                                 questionWithAnswer?.let {
-                                        questionAnswerPair ->
-                                    QuestionBox(question = questionAnswerPair.first)
+                                        questionAnswerTriple ->
+                                    questionAnswerTriple.second?.let { question -> QuestionBox(question = question) }
 
                                     Column {
-                                        questionAnswerPair.second.forEach {answer ->
+                                        questionAnswerTriple.third?.forEach {answer ->
                                             AnswerBox(questionAnswer = answer)
                                         }
 

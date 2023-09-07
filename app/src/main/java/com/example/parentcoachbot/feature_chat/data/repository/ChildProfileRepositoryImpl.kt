@@ -23,19 +23,22 @@ class ChildProfileRepositoryImpl(private val realm: Realm): ChildProfileReposito
             .map { it.list }
     }
 
-    override suspend fun getChildProfileByParentTest(parentId: ObjectId): ChildProfile = withContext(
+    override suspend fun getChildProfileByParentTest(parentId: ObjectId): ChildProfile? = withContext(
         Dispatchers.IO){
-        realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().first()
+        realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().firstOrNull()
     }
 
-    override suspend fun getChildProfileById(id: ObjectId): ChildProfile = withContext(Dispatchers.IO){
-        realm.query<ChildProfile>(query = "_id == $0", id).find().first()
+    override suspend fun getChildProfileById(id: ObjectId): ChildProfile? = withContext(Dispatchers.IO){
+        realm.query<ChildProfile>(query = "_id == $0", id).find().firstOrNull()
     }
 
     override suspend fun deleteChildProfile(id: ObjectId) {
         realm.write {
-            val childProfile = realm.query<ChildProfile>(query = "_id == $0", id).find().first()
-            delete(childProfile)
+            val childProfile = realm.query<ChildProfile>(query = "_id == $0", id).find().firstOrNull()
+            childProfile?.let {
+                delete(childProfile)
+            }
+
         }
     }
 

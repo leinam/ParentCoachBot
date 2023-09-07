@@ -6,7 +6,7 @@ import org.mongodb.kbson.ObjectId
 
 class GetChildProfileById(private val childProfileRepository: ChildProfileRepository) {
 
-    suspend operator fun invoke(childProfileId: ObjectId): ChildProfile {
+    suspend operator fun invoke(childProfileId: ObjectId): ChildProfile? {
         return childProfileRepository.getChildProfileById(childProfileId)
     }
 }

@@ -13,4 +13,6 @@ interface QuestionRepository {
 
     suspend fun deleteQuestion(id: ObjectId)
 
+    suspend fun getQuestionsBySubtopic(subtopicId: ObjectId): Flow<List<Question>>
+
 }

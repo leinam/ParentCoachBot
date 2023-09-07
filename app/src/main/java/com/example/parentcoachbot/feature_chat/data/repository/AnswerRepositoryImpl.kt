@@ -9,8 +9,8 @@ import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 
 class AnswerRepositoryImpl(private val realm: Realm): AnswerRepository {
-    override suspend fun getAnswerById(id: ObjectId): Answer = withContext(Dispatchers.IO) {
-        realm.query<Answer>(query = "_id == $0", id).find().first()
+    override suspend fun getAnswerById(id: ObjectId): Answer? = withContext(Dispatchers.IO) {
+        realm.query<Answer>(query = "_id == $0", id).find().firstOrNull()
     }
 
     // return flow ?? the answers not likely to change in real time
@@ -20,8 +20,11 @@ class AnswerRepositoryImpl(private val realm: Realm): AnswerRepository {
 
     override suspend fun deleteAnswer(id: ObjectId) {
         realm.write {
-            val answer = realm.query<Answer>(query = "_id == $id").find().first()
-            delete(answer)
+            val answer = realm.query<Answer>(query = "_id == $id").find().firstOrNull()
+            answer?.let {
+                delete(answer)
+            }
+
         }
     }
 

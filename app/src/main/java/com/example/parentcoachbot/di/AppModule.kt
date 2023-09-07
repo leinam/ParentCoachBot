@@ -49,6 +49,8 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicsByTopic
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.NewQuestionSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.QuestionSessionUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionWithAnswers
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsBySubtopic
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
@@ -140,7 +142,9 @@ object AppModule {
         return QuestionUseCases(getAllQuestions = GetAllQuestions(questionRepository),
             deleteQuestion = DeleteQuestion(questionRepository),
             addQuestion = AddQuestion(questionRepository),
-            getQuestionsWithAnswers = GetQuestionsWithAnswers(questionRepository, answerRepository)
+            getQuestionsWithAnswers = GetQuestionsWithAnswers(questionRepository, answerRepository),
+            getQuestionWithAnswers = GetQuestionWithAnswers(questionRepository, answerRepository),
+            getQuestionBySubtopic = GetQuestionsBySubtopic(questionRepository)
         )
     }
 

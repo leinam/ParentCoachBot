@@ -110,6 +110,7 @@ class PopulateDb(private val realm: MutableRealm) {
         val questionOne = Question().apply {
             this.questionText = "Do I produce enough milk?"
             this.questionAnswers
+            this.subtopics = realmListOf(accesoriesBF._id)
         }
 
         val sampleQuestionSession: QuestionSession = QuestionSession().apply {

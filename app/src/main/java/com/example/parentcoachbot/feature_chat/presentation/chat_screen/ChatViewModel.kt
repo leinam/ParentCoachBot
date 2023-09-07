@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.mongodb.kbson.ObjectId
 import javax.inject.Inject
 
 // TODO SEPARATE CHAT STATES
@@ -45,17 +44,23 @@ class ChatViewModel @Inject constructor(
     private val _childProfilesListState = MutableStateFlow<List<ChildProfile>>(emptyList())
     private val _subtopicsListState = MutableStateFlow<List<Subtopic>>(emptyList())
     private val _questionSessionListState = MutableStateFlow<List<QuestionSession>>(emptyList())
-    private val _questionsListState = MutableStateFlow<List<Question>>(emptyList())
+    private val _subtopicQuestionsListState = MutableStateFlow<List<Question>>(emptyList())
     private val _questionsWithAnswersListState = MutableStateFlow<MutableList<Pair<Question,
             List<Answer>>?>>(mutableListOf())
+    private val _questionSessionsWithQuestionAndAnswersListState: MutableStateFlow<List<Triple<QuestionSession,
+            Question?, List<Answer>?>?>> = MutableStateFlow(emptyList())
+    private val _currentTopic: MutableStateFlow<Topic?> = MutableStateFlow(null)
+    private val _currentSubtopic: MutableStateFlow<Subtopic?> = MutableStateFlow(null)
+
 
     private val _chatViewModelState = mutableStateOf(ChatStateWrapper(
-        questionsListState = _questionsListState,
+        subtopicQuestionsListState = _subtopicQuestionsListState,
         topicsListState = _topicsListState,
         questionsWithAnswersState = _questionsWithAnswersListState,
         questionSessionListState = _questionSessionListState,
         subtopicsListState = _subtopicsListState,
-        childProfilesListState = _childProfilesListState
+        childProfilesListState = _childProfilesListState,
+        questionSessionsWithQuestionAndAnswersState = _questionSessionsWithQuestionAndAnswersListState
     ))
 
     val chatViewModelState: State<ChatStateWrapper> = _chatViewModelState
@@ -69,16 +74,17 @@ class ChatViewModel @Inject constructor(
     private var getChildProfilesJob: Job? = null
 
     init {
-        getChatQuestionSessions()
         getTopics()
+        getQuestionsWithAnswers()
         getChildProfiles()
     }
 
+    // todo new chat doesn't always open
     fun onEvent(event: ChatEvent){
             when (event){
-                is ChatEvent.FavouriteQuestion -> {}
+                is ChatEvent.FavouriteQuestionSession -> {}
 
-                is ChatEvent.DeleteQuestion -> {
+                is ChatEvent.DeleteQuestionSession -> {
                     viewModelScope.launch {
                         lastDeletedQuestion = event.question
                         questionUseCases.deleteQuestion(event.question)
@@ -93,26 +99,52 @@ class ChatViewModel @Inject constructor(
                     }
                 }
 
-                is ChatEvent.SelectQuestion -> TODO()
+                is ChatEvent.AddQuestionSession -> {
+                    viewModelScope.launch {
+                                    _currentChatState.value?.let {
+                                        questionSessionUseCases.newQuestionSession(
+                                            chatSessionId = it._id,
+                                            question = event.question)
+                                    }
+                                }
+                }
 
+                // todo new chat bug - change profiles strange behaviour()
                 is ChatEvent.SelectChat -> {
                     _currentChatState.value = event.chatSession
-                    getChatQuestionSessions() //todo why do i need to call this each time
-
+                    println("current chat is ${_currentChatState.value?._id}")
+                    getQuestionSessionWithQuestionAndAnswers()
+                //todo why do i need to call this each time
+                    // todo for new chat not reflecting the change of current chat
                 }
 
                 is ChatEvent.SelectProfile -> {
                     // globalState.updateCurrentChildProfile(childProfile = event.childProfile)
                 }
+
+                is ChatEvent.SelectSubtopic -> {
+                    _currentSubtopic.value = event.subtopic
+                    getSubtopicQuestions()
+                }
+
+                is ChatEvent.SelectTopic -> {
+                    _currentTopic.value = event.topic
+                    getSubtopics()
+                }
             }
         }
 
-    private fun getQuestions(){
+    private fun getSubtopicQuestions(){
         getQuestionsJob?.cancel()
+
         getQuestionsJob = viewModelScope.launch {
-            questionUseCases.getAllQuestions().onEach {
-                    questionsList ->
-                _questionsListState.value = questionsList
+            _currentSubtopic.onEach {
+                _currentSubtopic.value?.let {
+                    questionUseCases.getQuestionBySubtopic(it._id).onEach {
+                            questionsList ->
+                        _subtopicQuestionsListState.value = questionsList
+                    }.collect()
+                }
             }.collect()
         }
     }
@@ -121,20 +153,17 @@ class ChatViewModel @Inject constructor(
         getChatQuestionSessionsJob?.cancel()
 
         getChatQuestionSessionsJob = viewModelScope.launch{
-            _currentChatState.onEach {
-                println("the current chat is ${_currentChatState.value}")
-                it?.let {
-                    questionSessionUseCases.getChatQuestionSessions(it._id).onEach {
+            // on each happens but what if it happens before
+            _currentChatState.collect {
+                println("the current chat is ${_currentChatState.value?._id}")
+                it?.let { chatSession ->
+                    questionSessionUseCases.getChatQuestionSessions(chatSession._id).onEach {
                             questionSessionList ->
                         _questionSessionListState.value = questionSessionList
-
-                        println(chatViewModelState.value.questionSessionListState.value)
-                        chatViewModelState.value.questionSessionListState.value.forEach { println("the ID is $it._id") }
-
+                        println("c${_currentChatState.value?._id}: ${_questionSessionListState.value}")
                     }.collect()
                 }
-            }.collect()
-
+            }
             }
         }
 
@@ -166,6 +195,36 @@ class ChatViewModel @Inject constructor(
 
     }
 
+    // debug this
+    private fun getQuestionSessionWithQuestionAndAnswers(){
+        var questionWithAnswer: Pair<Question, List<Answer>>? = null
+        var questionSessionWithQuestionAndAnswersList: List<Triple<QuestionSession, Question?, List<Answer>?>?>
+
+        viewModelScope.launch{
+
+            _currentChatState.onEach {
+                println("the current chat is ${_currentChatState.value?._id}")
+                it?.let {
+                    questionSessionUseCases.getChatQuestionSessions(chatSessionId = it._id).onEach {
+                        questionSessionList ->
+                        questionSessionWithQuestionAndAnswersList = questionSessionList.map {
+                            questionSession ->
+
+                            questionSession.question?.let { questionId ->
+                                questionWithAnswer = questionUseCases.getQuestionWithAnswers(questionId)
+                            }
+
+                            Triple(questionSession, questionWithAnswer?.first, questionWithAnswer?.second)
+                        }
+                        _questionSessionsWithQuestionAndAnswersListState.value = questionSessionWithQuestionAndAnswersList
+                    }.collect()
+                }
+
+            }.collect()
+
+    }
+    }
+
     private fun getTopics(){
         getTopicsJob?.cancel()
 
@@ -175,21 +234,23 @@ class ChatViewModel @Inject constructor(
                 // _state.value = state.value.copy(topicsList = topicsList)
                 _topicsListState.value = topicsList
 
-                topicsList.forEach {
-                    getSubtopics(topicId = it._id)
-                }
             }.collect()
         }
     }
 
-    private fun getSubtopics(topicId: ObjectId){
+    private fun getSubtopics(){
         getSubtopicsJob?.cancel()
 
         getSubtopicsJob = viewModelScope.launch {
-            subtopicUseCases.getSubtopicsByTopic(topicId = topicId).onEach {
-                     subtopicsList ->
-                _subtopicsListState.value = subtopicsList
+            _currentTopic.onEach {
+                _currentTopic.value?.let {
+                    subtopicUseCases.getSubtopicsByTopic(it._id).onEach {
+                            subtopicsList ->
+                        _subtopicsListState.value = subtopicsList
+                    }.collect()
+                }
             }.collect()
+
         }
     }
 }

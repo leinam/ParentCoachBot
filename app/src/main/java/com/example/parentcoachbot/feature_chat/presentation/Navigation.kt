@@ -69,7 +69,8 @@ fun Navigation() {
         composable(route = Screen.ChatScreen.route){
 
             ChatScreen(ChatViewModelState = chatViewModel.chatViewModelState,
-                navController = navHostController)
+                navController = navHostController,
+                onEvent = {chatEvent -> chatViewModel.onEvent(chatEvent)})
         }
 
         composable(route = Screen.CreateProfileSplashScreen.route){

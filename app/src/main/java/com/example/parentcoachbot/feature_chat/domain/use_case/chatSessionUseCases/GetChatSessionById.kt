@@ -6,7 +6,7 @@ import org.mongodb.kbson.ObjectId
 
 class GetChatSessionById (private val chatSessionRepository: ChatSessionRepository){
 
-    suspend operator fun invoke(chatSessionId: ObjectId): ChatSession {
-        return chatSessionRepository.getChatSessionById(id =chatSessionId )
+    suspend operator fun invoke(chatSessionId: ObjectId): ChatSession? {
+        return chatSessionRepository.getChatSessionById(id = chatSessionId)
     }
 }
