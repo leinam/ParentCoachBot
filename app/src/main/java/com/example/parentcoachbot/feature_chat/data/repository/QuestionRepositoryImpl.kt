@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 
-class QuestionRepositoryImpl(val realm: Realm): QuestionRepository {
-    override suspend fun getAllQuestions(): Flow<List<Question>> = withContext(Dispatchers.IO){
-         realm.query<Question>().asFlow().map { it.list }
+class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
+    override suspend fun getAllQuestions(): Flow<List<Question>> = withContext(Dispatchers.IO) {
+        realm.query<Question>().asFlow().map { it.list }
     }
 
     override suspend fun getQuestionById(id: ObjectId): Question? = withContext(Dispatchers.IO) {
@@ -32,12 +32,12 @@ class QuestionRepositoryImpl(val realm: Realm): QuestionRepository {
         }
     }
 
-    override suspend fun getQuestionsBySubtopic(subtopicId: ObjectId): Flow<List<Question>>
-    = withContext(Dispatchers.IO){
-        realm.query<Question>().asFlow().map {
-            it.list.filter {
-                    question -> question.subtopics.contains(subtopicId)
+    override suspend fun getQuestionsBySubtopic(subtopicId: ObjectId): Flow<List<Question>> =
+        withContext(Dispatchers.IO) {
+            realm.query<Question>().asFlow().map {
+                it.list.filter { question ->
+                    question.subtopics.contains(subtopicId)
+                }
             }
         }
-    }
 }

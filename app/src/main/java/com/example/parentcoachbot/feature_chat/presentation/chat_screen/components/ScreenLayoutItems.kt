@@ -27,7 +27,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.presentation.Screen
-import com.example.parentcoachbot.feature_chat.presentation.chat_screen.BottomSheetContent
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.DarkGrey
 import com.example.parentcoachbot.ui.theme.LightBeige
@@ -45,11 +44,11 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
 
     NavBarItem("Help",
         R.drawable.help_icon,
-        route = "help"),
+        route = Screen.EmergencyInfoScreen.route),
 
     NavBarItem("Saved",
         R.drawable.favourites_icon,
-        route = "saved"),
+        route = Screen.SavedQuestionsScreen.route),
 
     NavBarItem("Profile",
         R.drawable.profile_icon,
@@ -59,7 +58,6 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
               scope: CoroutineScope = rememberCoroutineScope(),
               navController: NavController = rememberNavController(),
               screenIndex: Int = 5,
-              onProfileSelectionEvent:(BottomSheetContent) -> Unit = {}
 )
 {
     var selectedIndex: Int by remember {
@@ -86,10 +84,10 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
                 drawerState.open()
             }},
             modifier = Modifier
-                .padding(vertical = 11.dp),
+                .padding(vertical = 9.dp),
             label ={
                 Text(
-                text = "",
+                text = "Menu",
                 color = Beige,
                 style = MaterialTheme.typography.labelSmall)
 
@@ -100,7 +98,7 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
                     painter = painterResource(id = menuItem.icon),
                     contentDescription = menuItem.title,
                     tint = Beige,
-                    modifier = Modifier.size(35.dp)
+                    modifier = Modifier.size(34.dp)
                 )
 
             })

@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -28,20 +28,16 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
-import androidx.compose.ui.unit.Density
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -52,66 +48,31 @@ import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
+import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.DarkGrey
-import com.example.parentcoachbot.ui.theme.LightBeige
-import com.example.parentcoachbot.ui.theme.NavBarItem
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
+import com.example.parentcoachbot.ui.theme.drawerItemsList
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-
+@Preview
 @Composable
-fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
+fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutableStateOf(ChatListStateWrapper()),
                    navController: NavController = rememberNavController(),
-                   onChatListEvent:(ChatListEvent) -> Unit,
-                   onChatEvent:(ChatEvent) -> Unit) {
+                   onChatListEvent:(ChatListEvent) -> Unit = {},
+                   onChatEvent:(ChatEvent) -> Unit = {}) {
 
     val chatListStateWrapper = chatListViewModelState.value
 
     val chatSessionList: List<ChatSession> by chatListStateWrapper.chatSessionListState.collectAsStateWithLifecycle()
     val newChatSession: ChatSession? by chatListStateWrapper.newChatState.collectAsStateWithLifecycle()
 
-    val drawerItemList: List<NavBarItem> = listOf(
-        NavBarItem("Profile",
-            R.drawable.profile_icon,
-            route = Screen.SelectProfileScreen.route),
-
-        NavBarItem("Chats",
-            R.drawable.chats_icon,
-            route = Screen.ChatListScreen.route),
-
-        NavBarItem("Help",
-            R.drawable.help_icon,
-            route = "help"),
-
-        NavBarItem("Saved",
-            R.drawable.favourites_icon,
-            route = "saved"),
-
-        NavBarItem("Resources",
-            R.drawable.resources_icon,
-            route = "resources"),
-
-        NavBarItem("Settings",
-            R.drawable.settings_icon,
-            route = "settings"),
-    )
-
     val scope = rememberCoroutineScope()
-    var drawerSelectedItemIndex by rememberSaveable { mutableIntStateOf(3) }
+    var drawerSelectedItemIndex by rememberSaveable { mutableIntStateOf(1) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
-    // offset drop down menu to appear depending on where
-
-    var itemHeight by remember {
-        mutableStateOf(0.dp)
-    }
-
-    val density:Density = LocalDensity.current
-    LocalHapticFeedback.current
 
 
     ModalNavigationDrawer(
@@ -119,11 +80,9 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
         drawerContent = {
             ModalDrawerSheet()
             {
-                drawerItemList.forEachIndexed { index, navBarItem ->
+                drawerItemsList.forEachIndexed { index, navBarItem ->
                     NavigationDrawerItem(
-                        label = {
-                            navBarItem.title?.let { Text(text = it) }
-                                },
+                        label = { navBarItem.title?.let { Text(text = it) } },
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index
@@ -131,12 +90,9 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
                                 drawerState.close()
                                 navBarItem.route?.let { navController.navigate(route = it) }
                             }
-
                         },
-                        icon = {
-                            Icon(painter = painterResource(id = navBarItem.icon),
-                                contentDescription = navBarItem.title)
-                        },
+                        icon = { Icon(painter = painterResource(id = navBarItem.icon),
+                                contentDescription = navBarItem.title) },
                         modifier = Modifier.padding(10.dp)
                     )
                 }
@@ -161,7 +117,6 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
                             }
                             // TODO clear new chat Session once it is now the current chat
                         }
-
                     },
                     containerColor = PrimaryGreen,
                     contentColor = Color.White)
@@ -176,7 +131,7 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = LightBeige)
+                    .background(color = BackgroundWhite)
                     .padding(contentPadding)
 
             ){
@@ -205,10 +160,8 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
                                 chatSession ->
                             Box(modifier = Modifier
                                 .padding(10.dp)
-                                .height(90.dp)
-                                .clip(RoundedCornerShape(10.dp))
                                 .fillMaxWidth()
-                                .background(PrimaryGreen.copy(alpha = 0.3f))
+                                .height(90.dp)
                                 .padding(10.dp)
                                 .clickable {
                                     onChatEvent(ChatEvent.SelectChat(chatSession))
@@ -219,16 +172,17 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
                                 )
                             {
 
-                                Text(text = chatSession.chatTitle, fontSize = 16.sp,
-                                    fontFamily = PlexSans, fontWeight = SemiBold,
-                                    modifier = Modifier.align(
-                                        Alignment.TopStart))
+
+                                    Text(text = chatSession.chatTitle ?: "New Chat", fontSize = 16.sp,
+                                        fontFamily = PlexSans, fontWeight = SemiBold,
+                                        modifier = Modifier.align(
+                                            Alignment.TopStart))
 
                                 var lastUpdated = ""
 
                                 chatSession.timeLastUpdated?.let {
                                     lastUpdated = LocalDateTime.ofEpochSecond(it.epochSeconds, it.nanosecondsOfSecond, ZoneOffset.UTC
-                                        ).format(DateTimeFormatter.ofPattern("E H:m"))
+                                        ).format(DateTimeFormatter.ofPattern("E H:mm"))
                                 }
 
                                     Text(text = lastUpdated,
@@ -248,8 +202,10 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper>,
                                         contentDescription = "More", tint = DarkGrey)
                                 }
 
-                                }
 
+
+                                }
+                            Divider(color = DarkGrey, modifier = Modifier.padding(horizontal = 10.dp))
                             }
                         }
                     }

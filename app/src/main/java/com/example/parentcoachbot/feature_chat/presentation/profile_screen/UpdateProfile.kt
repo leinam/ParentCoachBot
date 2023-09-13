@@ -1,4 +1,4 @@
-package com.example.parentcoachbot.feature_chat.presentation.chat_screen
+package com.example.parentcoachbot.feature_chat.presentation.profile_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +22,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -156,17 +157,20 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
 
     Scaffold(topBar = {TopNavBar(screenIndex = 3,
         scope = scope,
-        navController = navController) }) {
+        navController = navController) })
+    {
             contentPadding ->
         Box(modifier = Modifier
             .fillMaxSize()
-            .background(color = BackgroundWhite)
+            .background(color = PrimaryGreen)
             .padding(contentPadding)){
 
-            Column() {
+            Column(modifier = Modifier
+                .align(Alignment.TopCenter)
+                ) {
                 Row(modifier = Modifier
                     .fillMaxWidth()
-                    .background(Beige.copy(alpha = 0.7f))
+                    .background(Beige)
                     .padding(18.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically){
@@ -187,6 +191,8 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                 ) {
 
                     OutlinedTextField(value = name ?: "",
+                        colors = TextFieldDefaults.colors(unfocusedContainerColor = BackgroundWhite,
+                            focusedContainerColor = BackgroundWhite),
                         label = { Text(text = "Enter the child's name")},
                         placeholder = { Text(text = "Name")},
                         onValueChange = { name = it},
@@ -194,6 +200,8 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
 
                     // TODO add date pivler
                     OutlinedTextField(value = dob ?: "",
+                        colors = TextFieldDefaults.colors(unfocusedContainerColor = BackgroundWhite,
+                            focusedContainerColor = BackgroundWhite),
                         label = { Text(text = "Enter Date of Birth")},
                         placeholder = { Text(text = "DOB")},
                         onValueChange = { dob = it},
@@ -201,6 +209,8 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
 
                     OutlinedTextField(
                         value = gender ?: "",
+                        colors = TextFieldDefaults.colors(unfocusedContainerColor = BackgroundWhite,
+                            focusedContainerColor = BackgroundWhite),
                         label = { Text(text = "Gender")},
                         placeholder = { Text(text = "Gender")},
                         readOnly = true,
@@ -208,10 +218,10 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                         onValueChange = {
                             gender = it
                             isGenderDropdownExpanded = false
-                                        },
+                        },
                         trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(
                             expanded = isGenderDropdownExpanded)},
-                        )
+                    )
 
                     DropdownMenu(expanded = isGenderDropdownExpanded,
                         onDismissRequest = { isGenderDropdownExpanded = false }) {
@@ -244,7 +254,7 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                                 isGenderDropdownExpanded = false
                             }
                         )
-                        
+
                     }
 
 
@@ -286,7 +296,7 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
         }
 
 
-        
+
     }
     
 }

@@ -58,6 +58,7 @@ fun SelectProfileScreen(navController: NavController = rememberNavController(),
         .background(color = PrimaryGreen.copy(alpha = 0.8f)),
     contentAlignment = Alignment.Center
     ){
+
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(36.dp),
@@ -76,9 +77,37 @@ fun SelectProfileScreen(navController: NavController = rememberNavController(),
 
             LazyVerticalGrid(columns = GridCells.Fixed(2)){
                 items(childProfileList){
-                        childProfile -> ProfileItem(childProfile = childProfile,
+                        childProfile ->
+
+                    ProfileItem(childProfile = childProfile,
                     navController = navController, onEvent = onEvent)
 
+                }
+
+                items(1){
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally){
+
+                        BoxWithConstraints(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(5.dp))
+                                .background(color = Beige)
+                                .clickable {
+                                    navController.navigate(Screen.AddProfileScreen.route)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_add_24),
+                                contentDescription = null, tint = LightGreen,
+                                modifier = Modifier.size(90.dp)
+                            )
+                        }
+
+                        Text(text = "New Profile", color = LightBeige, fontSize = 18.sp)
+                    }
                 }
 
             }

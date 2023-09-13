@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,11 +48,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
-import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
-import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.AnswerBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionInputSection
@@ -58,62 +58,47 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_screen.componen
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.LightGreen
-import com.example.parentcoachbot.ui.theme.NavBarItem
 import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
+import com.example.parentcoachbot.ui.theme.drawerItemsList
 import kotlinx.coroutines.launch
 
 // todo modularize chat screen composable
 @Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(ChatStateWrapper()),
-               navController: NavController = rememberNavController(), onEvent: (chatEvent: ChatEvent) -> Unit = {}) {
+fun ChatScreen(
+    ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(ChatStateWrapper()),
+    navController: NavController = rememberNavController(),
+    onEvent: (chatEvent: ChatEvent) -> Unit = {}
+) {
+
     val chatStateWrapper = ChatViewModelState.value
 
-    val topicsList:List<Topic> by chatStateWrapper.topicsListState.collectAsStateWithLifecycle()
+    val topicsList: List<Topic> by chatStateWrapper.topicsListState.collectAsStateWithLifecycle()
     val questionSessionWithQuestionAndAnswersList by chatStateWrapper.questionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
     val subtopicList: List<Subtopic> by chatStateWrapper.subtopicsListState.collectAsStateWithLifecycle()
-    val childProfileList: List<ChildProfile> by chatStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
     val subtopicQuestionsList: List<Question> by chatStateWrapper.subtopicQuestionsListState.collectAsStateWithLifecycle()
+    var isAnswerVisible by remember { mutableStateOf(false) }
 
 
     val scope = rememberCoroutineScope()
-    val drawerItemsList = listOf(
-        NavBarItem("Profile",
-            R.drawable.profile_icon,
-            route = Screen.ChatScreen.route),
-
-        NavBarItem("Chats",
-            R.drawable.chats_icon,
-            route = Screen.ChatListScreen.route),
-
-        NavBarItem("Help",
-            R.drawable.help_icon,
-            route = null),
-
-        NavBarItem("Saved",
-            R.drawable.favourites_icon,
-            route = null),
-
-        NavBarItem("Resources",
-            R.drawable.resources_icon,
-            route = null),
-
-        NavBarItem("Settings",
-            R.drawable.settings_icon,
-            route = null),
-    )
-
     var drawerSelectedItemIndex by rememberSaveable {
         mutableIntStateOf(1)
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scrollState = rememberLazyListState()
+
+
     var bottomSheetContent: BottomSheetContent by remember { mutableStateOf(BottomSheetContent.Topics) }
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberStandardBottomSheetState(
-            initialValue = SheetValue.PartiallyExpanded, skipHiddenState = false)
+        bottomSheetState =
+        rememberStandardBottomSheetState(
+            initialValue =
+            SheetValue.PartiallyExpanded, skipHiddenState = false
+        )
     )
+
     var currentTopic: Topic? by remember { mutableStateOf(null) }
     var currentSubtopic: Subtopic? by remember { mutableStateOf(null) }
 
@@ -129,15 +114,17 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index
-                            scope.launch{
+                            scope.launch {
                                 drawerState.close()
                                 navBarItem.route?.let { navController.navigate(route = it) }
                             }
 
                         },
                         icon = {
-                            Icon(painter = painterResource(id = navBarItem.icon),
-                                contentDescription = navBarItem.title)
+                            Icon(
+                                painter = painterResource(id = navBarItem.icon),
+                                contentDescription = navBarItem.title
+                            )
                         },
                         modifier = Modifier.padding(10.dp)
                     )
@@ -153,53 +140,73 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                         modifier = Modifier
                             .background(color = LightGreen)
                             .fillMaxWidth()
-                            .padding(10.dp))
-                },
-                topBar = {
+                            .padding(10.dp)
+                    )
+                }, topBar = {
                     TopNavBar(
                         drawerState = drawerState,
                         scope = scope,
-                        navController = navController,
-                        onProfileSelectionEvent = {
-                            bottomSheetContent = it
-                            scope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-
-                        })
+                        navController = navController
+                    )
                 })
-            {contentPadding ->
+            { contentPadding ->
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(color = BackgroundWhite)
                         .padding(contentPadding)
-                ){
+                ) {
 
                     BottomSheetScaffold(
                         scaffoldState = bottomSheetScaffoldState,
                         sheetContent = {
-                            when (bottomSheetContent){
+                            when (bottomSheetContent) {
                                 BottomSheetContent.Questions -> {
-                                    Column(modifier = Modifier.height(300.dp)){
-                                        Box(modifier = Modifier.fillMaxWidth(),
-                                            contentAlignment = Alignment.Center){
-                                            Text(text = "${currentSubtopic?.title?.uppercase()}",
-                                                color = LightBeige
+                                    Column(modifier = Modifier.height(300.dp)) {
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth(),
+                                        ) {
+
+                                            Icon(painter = painterResource(
+                                                id =
+                                                R.drawable.baseline_arrow_back_24
+                                            ),
+                                                contentDescription = null,
+                                                tint = BackgroundWhite,
+                                                modifier = Modifier
+                                                    .clickable {
+                                                        bottomSheetContent =
+                                                            BottomSheetContent.SubTopics
+                                                    }
+                                                    .align(Alignment.CenterStart)
+                                                    .padding(horizontal = 10.dp)
+                                            )
+
+                                            Text(
+                                                text = "${currentSubtopic?.title?.uppercase()}",
+                                                color = LightBeige,
+                                                modifier = Modifier.align(Alignment.Center)
                                             )
                                         }
 
                                         Spacer(modifier = Modifier.size(10.dp))
                                         LazyColumn {
+
                                             items(subtopicQuestionsList) { question ->
                                                 Row(horizontalArrangement = Arrangement.SpaceBetween,
                                                     modifier = Modifier
                                                         .padding(16.dp)
                                                         .fillMaxWidth()
                                                         .clickable {
-                                                            onEvent(ChatEvent.AddQuestionSession(question))
+                                                            onEvent(
+                                                                ChatEvent.AddQuestionSession(
+                                                                    question
+                                                                )
+                                                            )
                                                             scope.launch {
                                                                 bottomSheetScaffoldState.bottomSheetState.partialExpand()
                                                             }
-
+                                                            isAnswerVisible = true
                                                         }) {
 
                                                     question.questionText?.let {
@@ -216,11 +223,25 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                                 }
 
                                 BottomSheetContent.SubTopics -> {
-                                    Column(modifier = Modifier.height(300.dp)){
-                                        Box(modifier = Modifier.fillMaxWidth(),
-                                            contentAlignment = Alignment.Center){
-                                            Text(text = "${currentTopic?.title?.uppercase()} SUBTOPICS",
-                                                color = LightBeige
+                                    Column(modifier = Modifier.height(300.dp)) {
+                                        Box(modifier = Modifier.fillMaxWidth()) {
+                                            Icon(painter = painterResource(
+                                                id = R.drawable.baseline_arrow_back_24
+                                            ),
+                                                contentDescription = null,
+                                                tint = BackgroundWhite,
+                                                modifier = Modifier
+                                                    .clickable {
+                                                        bottomSheetContent =
+                                                            BottomSheetContent.Topics
+                                                    }
+                                                    .align(Alignment.CenterStart)
+                                                    .padding(horizontal = 10.dp))
+
+                                            Text(
+                                                text = "${currentTopic?.title?.uppercase()} SUBTOPICS",
+                                                color = LightBeige, modifier =
+                                                Modifier.align(Alignment.Center)
                                             )
                                         }
 
@@ -232,7 +253,11 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                                                         .padding(16.dp)
                                                         .fillMaxWidth()
                                                         .clickable {
-                                                            onEvent(ChatEvent.SelectSubtopic(subtopic))
+                                                            onEvent(
+                                                                ChatEvent.SelectSubtopic(
+                                                                    subtopic
+                                                                )
+                                                            )
                                                             currentSubtopic = subtopic
                                                             bottomSheetContent =
                                                                 BottomSheetContent.Questions
@@ -258,12 +283,17 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                                         }
                                     }
                                 }
+
                                 BottomSheetContent.Topics -> {
-                                    Column(modifier = Modifier.height(300.dp)){
-                                        Box(modifier = Modifier.fillMaxWidth(),
-                                            contentAlignment = Alignment.Center){
-                                            Text(text = "TOPICS",
-                                                color = LightBeige)
+                                    Column(modifier = Modifier.height(300.dp)) {
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "TOPICS",
+                                                color = LightBeige
+                                            )
                                         }
 
                                         Spacer(modifier = Modifier.size(10.dp))
@@ -299,74 +329,45 @@ fun ChatScreen(ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(Chat
                                                 }
                                             }
                                         }
-                                    }}
-                                BottomSheetContent.ChildProfiles -> {
-                                    Column(modifier = Modifier.height(300.dp)){
-                                        Box(modifier = Modifier.fillMaxWidth(),
-                                            contentAlignment = Alignment.Center){
-                                            Text(text = "SWITCH PROFILE",
-                                                color = LightBeige)
-                                        }
-
-                                        Spacer(modifier = Modifier.size(10.dp))
-
-                                        LazyColumn {
-                                            items(childProfileList) { childProfile ->
-                                                Row(horizontalArrangement = Arrangement.SpaceBetween,
-                                                    modifier = Modifier
-                                                        .padding(16.dp)
-                                                        .fillMaxWidth()
-                                                        .clickable {
-
-                                                        }
-                                                ) {
-                                                    childProfile.name?.let {
-                                                        Text(
-                                                            text = it,
-                                                            color = Color.White
-                                                        )
-                                                    }
-
-
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.breastfeeding_icon),
-                                                        contentDescription = null,
-                                                        tint = Color.White
-                                                    )
-
-
-                                                }
-                                            }
-                                        }
-                                    }}
+                                    }
+                                }
                             }
 
                         },
                         sheetPeekHeight = 80.dp,
                         sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
                     ) {
-                        LazyColumn {
-                            items(questionSessionWithQuestionAndAnswersList) { questionWithAnswer ->
-                                questionWithAnswer?.let {
-                                        questionAnswerTriple ->
-                                    questionAnswerTriple.second?.let { question -> QuestionBox(question = question) }
 
-                                    Column {
-                                        questionAnswerTriple.third?.forEach {answer ->
+                        LazyColumn(state = scrollState)
+                        {
+                            itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionWithAnswer ->
+
+                                questionWithAnswer?.let { questionAnswerTriple ->
+                                    questionAnswerTriple.second?.let { question ->
+                                        QuestionBox(question = question)
+                                    }
+
+                                    Column() {
+                                        questionAnswerTriple.third?.forEach { answer ->
                                             AnswerBox(questionAnswer = answer)
                                         }
-
-
                                     }
                                 }
 
-
+                            }
+                            if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
+                                scope.launch {
+                                    scrollState.scrollToItem(
+                                        questionSessionWithQuestionAndAnswersList.lastIndex
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
 
+    }
 }
+

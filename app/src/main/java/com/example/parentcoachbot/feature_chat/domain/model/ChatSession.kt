@@ -9,7 +9,7 @@ import org.mongodb.kbson.ObjectId
 class ChatSession: RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
-    var chatTitle: String = "New Chat"
+    var chatTitle: String? = null
     var childProfile: ObjectId? = null
     var timeStarted: RealmInstant = RealmInstant.now()
     var timeLastUpdated: RealmInstant? = timeStarted

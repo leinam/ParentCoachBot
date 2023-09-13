@@ -1,5 +1,7 @@
 package com.example.parentcoachbot.feature_chat.presentation
 
+import ResourcesHomeScreen
+import SavedQuestionsScreen
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -11,10 +13,14 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListSc
 import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListViewModel
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatScreen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatViewModel
-import com.example.parentcoachbot.feature_chat.presentation.chat_screen.CreateProfileSplashScreen
-import com.example.parentcoachbot.feature_chat.presentation.chat_screen.UpdateProfileScreen
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.CreateProfileSplashScreen
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.AddProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileViewModel
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
+import com.example.parentcoachbot.feature_chat.presentation.settings_screen.EmergencyInfoScreen
+import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SelectLanguageScreen
+import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SettingsHomeScreen
 import com.example.parentcoachbot.ui.theme.OnboardingPageItem
 
 @Composable
@@ -77,8 +83,28 @@ fun Navigation() {
             CreateProfileSplashScreen(navController = navHostController)
         }
 
-        composable(route = Screen.AddProfileScreen.route){
+        composable(route = Screen.UpdateProfileScreen.route){
             UpdateProfileScreen(navController = navHostController)
         }
+
+        composable(route = Screen.AddProfileScreen.route){
+            AddProfileScreen(navController = navHostController)
+        }
+        composable(route = Screen.SettingsHomeScreen.route){
+            SettingsHomeScreen(navController = navHostController)
+        }
+        composable(route = Screen.SelectLanguageScreen.route){
+            SelectLanguageScreen(navController = navHostController)
+        }
+        composable(route = Screen.SavedQuestionsScreen.route){
+            SavedQuestionsScreen(navController = navHostController)
+        }
+        composable(route = Screen.ResourcesHomeScreen.route){
+            ResourcesHomeScreen(navController = navHostController)
+        }
+        composable(route = Screen.EmergencyInfoScreen.route){
+            EmergencyInfoScreen(navController = navHostController)
+        }
+
     }
 }
