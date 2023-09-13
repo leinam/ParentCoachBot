@@ -1,0 +1,8 @@
+{
+    "app_id": "application-1-rjjuq",
+    "config_version": 20210101,
+    "name": "Application-1",
+    "location": "US-OR",
+    "provider_region": "azure-westus",
+    "deployment_model": "LOCAL"
+}
