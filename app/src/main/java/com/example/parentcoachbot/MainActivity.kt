@@ -15,9 +15,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ParentCoachBotTheme {
                 // A surface container using the 'background' color from the theme
-                println("this is a nice day to log")
                 Navigation()
-
             }
         }
     }

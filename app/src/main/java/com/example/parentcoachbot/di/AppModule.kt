@@ -12,7 +12,6 @@ import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
-import com.example.parentcoachbot.feature_chat.domain.model.PopulateDb
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
@@ -25,17 +24,10 @@ import com.example.parentcoachbot.feature_chat.domain.repository.QuestionReposit
 import com.example.parentcoachbot.feature_chat.domain.repository.QuestionSessionRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.SubtopicRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.TopicRepository
-import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.GetParentUser
-import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
-import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.AddQuestion
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.AnswerUseCases
-import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
-import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.DeleteQuestion
-import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetAllQuestions
-import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.GetAllTopics
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.GetAnswer
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.GetAnswersByIdList
-import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.GetQuestionSessionsByChatSession
+import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.GetChatSessionById
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.GetChatSessionsByChildProfile
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.NewChatSession
@@ -43,17 +35,27 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCa
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileById
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileTest
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfilesByParentUser
+import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.GetParentUser
+import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.GetLatestQuestionSessionByChat
-import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsWithAnswers
-import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicById
-import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicsByTopic
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.GetQuestionSessionsByChatSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.NewQuestionSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.QuestionSessionUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.AddQuestion
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.DeleteQuestion
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetAllQuestions
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionWithAnswers
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsBySubtopic
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsWithAnswers
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicById
+import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicsByTopic
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.GetAllTopics
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
+import com.example.parentcoachbot.feature_chat.domain.util.PopulateDb
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,6 +63,7 @@ import dagger.hilt.components.SingletonComponent
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -85,6 +88,18 @@ object AppModule {
             .build()
 
         return Realm.open(config)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseDatabase(): FirebaseDatabase{
+        return FirebaseDatabase.getInstance()
+    }
+
+    @Singleton
+    @Provides
+    fun provideDatabaseReference(database: FirebaseDatabase): DatabaseReference {
+        return database.reference
     }
 
     @Provides

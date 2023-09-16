@@ -50,7 +50,7 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
 
             Spacer(modifier = Modifier.size(30.dp))
 
-            Text(text = "Aurora2",
+            Text(text = "ParentCoach",
                 textAlign = TextAlign.Center,
                 fontFamily = PlexSans,
                 fontWeight = FontWeight.Medium,

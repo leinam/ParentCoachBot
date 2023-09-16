@@ -4,6 +4,9 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
     id 'io.realm.kotlin'
+    id 'com.google.gms.google-services'
+    id "com.google.firebase.crashlytics"
+
 }
 
 apply plugin: 'com.android.application'
@@ -31,6 +34,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -50,6 +55,8 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+
 }
 
 dependencies {
@@ -66,7 +73,7 @@ dependencies {
     implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
 
 
-    implementation 'io.realm.kotlin:library-base:1.10.0' // Add to use local realm (no sync)
+    // implementation 'io.realm.kotlin:library-base:1.10.0' // Add to use local realm (no sync)
     implementation 'io.realm.kotlin:library-sync:1.10.0'// Add to use Device Sync
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1' // Add to use coroutines with the SDK
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.6.1" // Replace '2.x.x' with the appropriate version
@@ -83,6 +90,15 @@ dependencies {
     // For local unit tests
     testImplementation 'com.google.dagger:hilt-android-testing:2.47'
     kaptTest 'com.google.dagger:hilt-compiler:2.47'
+
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
+
+    // Add the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-database-ktx")
 
 
     testImplementation 'junit:junit:4.13.2'

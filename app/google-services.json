@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "292795835110",
+    "project_id": "pctest-140b7",
+    "storage_bucket": "pctest-140b7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292795835110:android:63e44c251beace79965127",
+        "android_client_info": {
+          "package_name": "com.example.parentcoachbot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC52uhnKFhL7fb5L8WmvbbEMSh_-OEAduc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

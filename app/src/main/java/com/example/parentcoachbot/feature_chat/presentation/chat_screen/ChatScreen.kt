@@ -79,6 +79,7 @@ fun ChatScreen(
     val questionSessionWithQuestionAndAnswersList by chatStateWrapper.questionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
     val subtopicList: List<Subtopic> by chatStateWrapper.subtopicsListState.collectAsStateWithLifecycle()
     val subtopicQuestionsList: List<Question> by chatStateWrapper.subtopicQuestionsListState.collectAsStateWithLifecycle()
+    val searchQueryText: String by chatStateWrapper.searchQueryText.collectAsStateWithLifecycle()
     var isAnswerVisible by remember { mutableStateOf(false) }
 
 
@@ -140,7 +141,8 @@ fun ChatScreen(
                         modifier = Modifier
                             .background(color = LightGreen)
                             .fillMaxWidth()
-                            .padding(10.dp)
+                            .padding(10.dp),
+                        onEvent = onEvent
                     )
                 }, topBar = {
                     TopNavBar(
@@ -338,7 +340,7 @@ fun ChatScreen(
                         sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
                     ) {
 
-                        LazyColumn(state = scrollState)
+                        LazyColumn(state = scrollState, modifier = Modifier.padding(bottom = 80.dp))
                         {
                             itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionWithAnswer ->
 

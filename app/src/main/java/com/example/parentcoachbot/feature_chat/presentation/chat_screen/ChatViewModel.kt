@@ -19,14 +19,18 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 // TODO SEPARATE CHAT STATES
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val questionUseCases: QuestionUseCases,
@@ -51,6 +55,9 @@ class ChatViewModel @Inject constructor(
             Question?, List<Answer>?>?>> = MutableStateFlow(emptyList())
     private val _currentTopic: MutableStateFlow<Topic?> = MutableStateFlow(null)
     private val _currentSubtopic: MutableStateFlow<Subtopic?> = MutableStateFlow(null)
+    private val _typedQueryText = MutableStateFlow("")
+    val searchQueryText: StateFlow<String> = MutableStateFlow("")
+
 
 
     private val _chatViewModelState = mutableStateOf(ChatStateWrapper(
@@ -77,6 +84,16 @@ class ChatViewModel @Inject constructor(
         getTopics()
         getQuestionsWithAnswers()
         getChildProfiles()
+
+        viewModelScope.launch {
+            _typedQueryText.debounce(2000)
+                .collect{
+                    // run search
+                println("the text is $it")
+            }
+
+
+        }
     }
 
     // todo new chat doesn't always open
@@ -130,6 +147,11 @@ class ChatViewModel @Inject constructor(
                 is ChatEvent.SelectTopic -> {
                     _currentTopic.value = event.topic
                     getSubtopics()
+                }
+
+                is ChatEvent.UpdateSearchQueryText -> {
+                    _typedQueryText.value = event.searchQueryText
+                    println(_typedQueryText.value)
                 }
             }
         }

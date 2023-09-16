@@ -18,4 +18,5 @@ data class ChatStateWrapper(val subtopicQuestionsListState: StateFlow<List<Quest
                             val subtopicsListState: StateFlow<List<Subtopic>> = MutableStateFlow(emptyList()),
                             val childProfilesListState: StateFlow<List<ChildProfile>> = MutableStateFlow(emptyList()),
                             val chatSessionId: ObjectId? = null,
-                            val questionSessionsWithQuestionAndAnswersState: StateFlow<List<Triple<QuestionSession, Question?, List<Answer>?>?>> = MutableStateFlow(emptyList()))
+                            val questionSessionsWithQuestionAndAnswersState: StateFlow<List<Triple<QuestionSession, Question?, List<Answer>?>?>> = MutableStateFlow(emptyList()),
+                            val searchQueryText: StateFlow<String> = MutableStateFlow(""))

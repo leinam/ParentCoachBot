@@ -1,6 +1,14 @@
-package com.example.parentcoachbot.feature_chat.domain.model
+package com.example.parentcoachbot.feature_chat.domain.util
 
 import com.example.parentcoachbot.R
+import com.example.parentcoachbot.feature_chat.domain.model.Answer
+import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
+import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
+import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
+import com.example.parentcoachbot.feature_chat.domain.model.Question
+import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
+import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
+import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import io.realm.kotlin.MutableRealm
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
@@ -99,7 +107,7 @@ class PopulateDb(private val realm: MutableRealm) {
     )
 
 
-    operator fun invoke(){
+    operator fun invoke (){
         println("Attempting to pre-populate database")
         val answerList: RealmList<ObjectId> = realmListOf()
         questionOneAnswerList.forEach { answer ->
@@ -118,6 +126,7 @@ class PopulateDb(private val realm: MutableRealm) {
             this.chatSession = sampleChatSession._id
         }
 
+
         realm.copyToRealm(sampleChatSession)
         realm.copyToRealm(sampleQuestionSession)
 
@@ -128,6 +137,7 @@ class PopulateDb(private val realm: MutableRealm) {
         realm.copyToRealm(defaultParentUser)
         realm.copyToRealm(childProfileTest)
         realm.copyToRealm(childProfileTest2)
+
 
         realm.copyToRealm(questionOne.apply {
             this.questionAnswers = answerList
