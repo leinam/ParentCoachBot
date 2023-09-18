@@ -56,6 +56,7 @@ class ChatViewModel @Inject constructor(
     private val _currentTopic: MutableStateFlow<Topic?> = MutableStateFlow(null)
     private val _currentSubtopic: MutableStateFlow<Subtopic?> = MutableStateFlow(null)
     private val _typedQueryText = MutableStateFlow("")
+    private val _newChatSession = globalState._newChatState
     val searchQueryText: StateFlow<String> = MutableStateFlow("")
 
 
@@ -128,9 +129,13 @@ class ChatViewModel @Inject constructor(
 
                 // todo new chat bug - change profiles strange behaviour()
                 is ChatEvent.SelectChat -> {
+                    // clear new chat state as soon as you select a chat
+                    _newChatSession.value = null
+
                     _currentChatState.value = event.chatSession
-                    println("current chat is ${_currentChatState.value?._id}")
+                    println("current chat is ${_currentChatState.value?._id} new chat state is ${globalState._newChatState.value?._id}")
                     getQuestionSessionWithQuestionAndAnswers()
+
                 //todo why do i need to call this each time
                     // todo for new chat not reflecting the change of current chat
                 }

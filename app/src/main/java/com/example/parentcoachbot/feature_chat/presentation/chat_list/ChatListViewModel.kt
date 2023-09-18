@@ -18,49 +18,56 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatListViewModel @Inject constructor(private val chatSessionUseCases: ChatSessionUseCases,
-                                            private val topicUseCases: TopicUseCases,
-                                            private val globalState: GlobalState): ViewModel() {
+class ChatListViewModel @Inject constructor(
+    private val chatSessionUseCases: ChatSessionUseCases,
+    private val topicUseCases: TopicUseCases,
+    private val globalState: GlobalState
+) : ViewModel() {
 
 
-    private val _chatSessionsListState =  MutableStateFlow<List<ChatSession>>(emptyList())
-    private val _topicsListState =  MutableStateFlow<List<Topic>>(emptyList())
-    private val _newChatState = MutableStateFlow<ChatSession?>(null)
+    private val _chatSessionsListState = MutableStateFlow<List<ChatSession>>(emptyList())
+    private val _topicsListState = MutableStateFlow<List<Topic>>(emptyList())
+    private val _newChatState = globalState._newChatState
     private val childProfileListState = globalState._childProfilesListState
     private val _currentChildProfile = globalState._currentChildProfileState
     private val parentUserState = globalState.parentUserState
 
     private var getChildProfileChatSessionsJob: Job? = null
 
-    private val _chatListStateWrapper = mutableStateOf(ChatListStateWrapper(
-        chatSessionListState = _chatSessionsListState,
-        topicsListState = _topicsListState,
-        childProfileListState = childProfileListState,
-        newChatState = _newChatState))
+    private val _chatListStateWrapper = mutableStateOf(
+        ChatListStateWrapper(
+            chatSessionListState = _chatSessionsListState,
+            topicsListState = _topicsListState,
+            childProfileListState = childProfileListState,
+            newChatState = _newChatState
+        )
+    )
 
     val chatListViewModelState: State<ChatListStateWrapper> = _chatListStateWrapper
-    
+
     init {
         getProfileChatSessions()
     }
 
-    fun onEvent(chatListEvent: ChatListEvent){
-        when (chatListEvent){
+    fun onEvent(chatListEvent: ChatListEvent) {
+        when (chatListEvent) {
             is ChatListEvent.DeleteChat -> {}
+
             ChatListEvent.NewChat -> {
                 viewModelScope.launch {
                     _currentChildProfile.value?.let {
-                        ChatSession().apply { this.childProfile = it._id }.let {
+                            currentChildProfile ->
+
+                        ChatSession().apply {
+                            this.childProfile = currentChildProfile._id
+                        }.let {
                             _newChatState.value = it
-                            _newChatState.value?.let {chatSession ->
+
+                            _newChatState.value?.let { chatSession ->
                                 chatSessionUseCases.newChatSession(chatSession)
                             }
-
                         }
-
-
                     }
-
                 }
             }
 
@@ -83,8 +90,7 @@ class ChatListViewModel @Inject constructor(private val chatSessionUseCases: Cha
 
         getChildProfileChatSessionsJob = viewModelScope.launch {
 
-            _currentChildProfile.onEach{
-                    childProfile ->
+            _currentChildProfile.onEach { childProfile ->
                 println("the current child profile is ${childProfile?._id}")
                 childProfile?.let {
                     chatSessionUseCases.getProfileChatSessions(it._id).onEach { chatSessionList ->
@@ -95,11 +101,11 @@ class ChatListViewModel @Inject constructor(private val chatSessionUseCases: Cha
             }.collect()
 
 
-            }
-            }
+        }
+    }
 
 
-    private fun getTopicsList(){
+    private fun getTopicsList() {
         viewModelScope.launch {
             topicUseCases.getAllTopics().onEach {
                 _topicsListState.value = it

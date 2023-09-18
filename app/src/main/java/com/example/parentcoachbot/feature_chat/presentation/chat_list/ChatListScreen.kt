@@ -68,7 +68,7 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
     val chatListStateWrapper = chatListViewModelState.value
 
     val chatSessionList: List<ChatSession> by chatListStateWrapper.chatSessionListState.collectAsStateWithLifecycle()
-    val newChatSession: ChatSession? by chatListStateWrapper.newChatState.collectAsStateWithLifecycle()
+    val  newChatSession: ChatSession? by chatListStateWrapper.newChatState.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
     var drawerSelectedItemIndex by rememberSaveable { mutableIntStateOf(1) }
@@ -110,12 +110,14 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        onChatListEvent(ChatListEvent.NewChat).apply {
+                        onChatListEvent(ChatListEvent.NewChat).also {
+                            println(newChatSession)
                             newChatSession?.let {
                                 onChatEvent(ChatEvent.SelectChat(it))
+                                println(newChatSession)
+                            }.also {
                                 navController.navigate(Screen.ChatScreen.route)
                             }
-                            // TODO clear new chat Session once it is now the current chat
                         }
                     },
                     containerColor = PrimaryGreen,

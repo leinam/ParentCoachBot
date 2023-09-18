@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.common
 
+import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
@@ -13,6 +14,8 @@ class GlobalState(val parentUserUseCases: ParentUserUseCases,
     val parentUserState = MutableStateFlow<ParentUser?>(null)
     val _childProfilesListState = MutableStateFlow<List<ChildProfile>>(emptyList())
     val _currentChildProfileState = MutableStateFlow<ChildProfile?>(null)
+    val _newChatState = MutableStateFlow<ChatSession?>(null)
+
 
     var getChildProfilesJob: Job? = null
 
