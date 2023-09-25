@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,7 +57,7 @@ fun SelectLanguageScreen(navController: NavController = rememberNavController())
             {
                 drawerItemsList.forEachIndexed { index, navBarItem ->
                     NavigationDrawerItem(
-                        label = { navBarItem.title?.let { Text(text = it) } },
+                        label = { navBarItem.title?.let { Text(text = stringResource(id = it)) } },
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index
@@ -66,7 +67,8 @@ fun SelectLanguageScreen(navController: NavController = rememberNavController())
                             }
                         },
                         icon = { Icon(painter = painterResource(id = navBarItem.icon),
-                            contentDescription = navBarItem.title) },
+                            contentDescription = navBarItem.title?.let { stringResource(it) }
+                        ) },
                         modifier = Modifier.padding(10.dp)
                     )
                 }

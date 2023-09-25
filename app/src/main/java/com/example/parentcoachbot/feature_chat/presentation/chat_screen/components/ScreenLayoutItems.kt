@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -38,19 +39,19 @@ import kotlinx.coroutines.launch
 @Preview
 @Composable
 fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
-    NavBarItem("Chats",
+    NavBarItem(R.string.chats_label,
         R.drawable.chats_icon,
         route = Screen.ChatListScreen.route),
 
-    NavBarItem("Help",
+    NavBarItem(R.string.help_label,
         R.drawable.help_icon,
         route = Screen.EmergencyInfoScreen.route),
 
-    NavBarItem("Saved",
+    NavBarItem(R.string.saved_questions_title,
         R.drawable.favourites_icon,
         route = Screen.SavedQuestionsScreen.route),
 
-    NavBarItem("Profile",
+    NavBarItem(R.string.profile_label,
         R.drawable.profile_icon,
         route = Screen.SelectProfileScreen.route)
 ),
@@ -96,7 +97,7 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
             icon = {
                 Icon(
                     painter = painterResource(id = menuItem.icon),
-                    contentDescription = menuItem.title,
+                    contentDescription = menuItem.title?.let { stringResource(it) },
                     tint = Beige,
                     modifier = Modifier.size(34.dp)
                 )
@@ -121,7 +122,7 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
                 label = {
                     item.title?.let {
                     Text(
-                        text = it,
+                        text = stringResource(id = it),
                         color = Beige,
                         style = MaterialTheme.typography.labelSmall
                     )
@@ -130,7 +131,7 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
                 }, icon =   {
                     Icon(
                         painter = painterResource(id = item.icon),
-                        contentDescription = item.title,
+                        contentDescription = item.title?.let { stringResource(it) },
                         tint = if (selectedIndex == index) Color.DarkGray else Beige,
                         modifier = Modifier.size(30.dp)
 

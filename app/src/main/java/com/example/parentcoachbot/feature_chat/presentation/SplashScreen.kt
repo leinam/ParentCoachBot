@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,7 +76,7 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
                     .padding(15.dp)
 
             ) {
-                Text(text = "A chatbot that will help you learn and clarify doubts about childcare health.",
+                Text(text = stringResource(id = R.string.app_intro_message),
                     textAlign = TextAlign.Start,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.Normal,
@@ -95,7 +96,7 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
                     .background(color = Beige)
                     .padding(10.dp)
                     .clickable {
-                        navController.navigate(Screen.SelectProfileScreen.route){
+                        navController.navigate(Screen.SelectProfileScreen.route) {
                             popUpTo(Screen.FirstTimeSplashScreen.route) {
                                 inclusive = true
                             }
@@ -103,7 +104,7 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
                     },
                 contentAlignment = Alignment.Center
             ){
-                Text(text = "GET STARTED",
+                Text(text = stringResource(id = R.string.get_started_button_text).uppercase(),
                     textAlign = TextAlign.Center,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.SemiBold,

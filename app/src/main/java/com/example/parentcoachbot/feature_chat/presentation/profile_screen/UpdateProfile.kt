@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,7 +64,7 @@ fun CreateProfileSplashScreen(navController: NavController = rememberNavControll
             Box(modifier = Modifier){
                 Icon(tint = Beige, painter =
                 painterResource(id = R.drawable.logo_sleepy),
-                    contentDescription ="Aurora Logo")
+                    contentDescription ="ParentCoach Logo")
 
             }
 
@@ -175,14 +176,14 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically){
 
-                    Text(text = "Update Profile",
+                    Text(text = stringResource(id = R.string.update_profile_label),
                         color = PrimaryGreen,
                         fontFamily = PlexSans,
                         fontWeight = FontWeight.Normal,
                         fontSize = 19.sp)
 
                     Icon(painter = painterResource(id = R.drawable.baseline_more_vert_24),
-                        contentDescription = "More Options", tint = PrimaryGreen)
+                        contentDescription = null, tint = PrimaryGreen)
                 }
 
                 Column(modifier = Modifier
@@ -193,8 +194,8 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                     OutlinedTextField(value = name ?: "",
                         colors = TextFieldDefaults.colors(unfocusedContainerColor = BackgroundWhite,
                             focusedContainerColor = BackgroundWhite),
-                        label = { Text(text = "Enter the child's name")},
-                        placeholder = { Text(text = "Name")},
+                        label = { Text(text = stringResource(id = R.string.child_name_label))},
+                        placeholder = { Text(text = stringResource(id = R.string.name_placeholder))},
                         onValueChange = { name = it},
                         textStyle = LocalTextStyle.current.copy())
 
@@ -202,8 +203,8 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                     OutlinedTextField(value = dob ?: "",
                         colors = TextFieldDefaults.colors(unfocusedContainerColor = BackgroundWhite,
                             focusedContainerColor = BackgroundWhite),
-                        label = { Text(text = "Enter Date of Birth")},
-                        placeholder = { Text(text = "DOB")},
+                        label = { Text(text = stringResource(id = R.string.dob_label))},
+                        placeholder = { Text(text = stringResource(id = R.string.dob_placeholder))},
                         onValueChange = { dob = it},
                         textStyle = LocalTextStyle.current.copy())
 
@@ -211,8 +212,8 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                         value = gender ?: "",
                         colors = TextFieldDefaults.colors(unfocusedContainerColor = BackgroundWhite,
                             focusedContainerColor = BackgroundWhite),
-                        label = { Text(text = "Gender")},
-                        placeholder = { Text(text = "Gender")},
+                        label = { Text(text = stringResource(R.string.child_gender_label))},
+                        placeholder = { Text(text = stringResource(id = R.string.gender_placeholder))},
                         readOnly = true,
                         modifier = Modifier.clickable { isGenderDropdownExpanded = true },
                         onValueChange = {
@@ -269,7 +270,7 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                             .padding(10.dp),
                         contentAlignment = Alignment.Center
                     ){
-                        Text(text = "SAVE",
+                        Text(text = stringResource(id = R.string.update_profile_button_label).uppercase(),
                             textAlign = TextAlign.Center,
                             fontFamily = PlexSans,
                             fontWeight = FontWeight.SemiBold,

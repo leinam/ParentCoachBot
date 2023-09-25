@@ -1,6 +1,7 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_list
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,7 +70,7 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
     val chatListStateWrapper = chatListViewModelState.value
 
     val chatSessionList: List<ChatSession> by chatListStateWrapper.chatSessionListState.collectAsStateWithLifecycle()
-    val  newChatSession: ChatSession? by chatListStateWrapper.newChatState.collectAsStateWithLifecycle()
+    val newChatSession: ChatSession? by chatListStateWrapper.newChatState.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
     var drawerSelectedItemIndex by rememberSaveable { mutableIntStateOf(1) }
@@ -82,7 +84,7 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
             {
                 drawerItemsList.forEachIndexed { index, navBarItem ->
                     NavigationDrawerItem(
-                        label = { navBarItem.title?.let { Text(text = it) } },
+                        label = { navBarItem.title?.let { Text(text = stringResource(id = it)) } },
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index
@@ -92,7 +94,8 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
                             }
                         },
                         icon = { Icon(painter = painterResource(id = navBarItem.icon),
-                                contentDescription = navBarItem.title) },
+                            contentDescription = navBarItem.title?.let { stringResource(it) }
+                        ) },
                         modifier = Modifier.padding(10.dp)
                     )
                 }
@@ -119,7 +122,8 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
                 {
                     Icon(painter = painterResource(
                         id = R.drawable.newchat_icon),
-                        contentDescription = "new chat")
+                        contentDescription = stringResource(R.string.new_chat_label)
+                    )
                 }
             }
         )
@@ -141,14 +145,14 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically){
 
-                        Text(text = "Chats",
+                        Text(text = stringResource(id = R.string.chats_label),
                             color = PrimaryGreen,
                             fontFamily = PlexSans,
                             fontWeight = Normal,
                             fontSize = 19.sp)
 
                         Icon(painter = painterResource(id = R.drawable.baseline_more_vert_24),
-                            contentDescription = "More Options", tint = PrimaryGreen)
+                            contentDescription = null, tint = PrimaryGreen)
                     }
 
                     LazyColumn {
@@ -161,15 +165,13 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
                                 .padding(10.dp)
                                 .clickable {
                                     onChatEvent(ChatEvent.SelectChat(chatSession))
-                                    // onChatListEvent(ChatListEvent.SelectChat(chatSession))
                                     navController.navigate(route = Screen.ChatScreen.route)
                                 }
-                                // true reflects state of whether to detect
                                 )
                             {
 
 
-                                    Text(text = chatSession.chatTitle ?: "New Chat", fontSize = 16.sp,
+                                    Text(text = chatSession.chatTitle ?: stringResource(id = R.string.new_chat_label), fontSize = 16.sp,
                                         fontFamily = PlexSans, fontWeight = SemiBold,
                                         modifier = Modifier.align(
                                             Alignment.TopStart))
@@ -195,7 +197,7 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
                                         fontFamily = PlexSans, fontWeight = Normal)
 
                                     Icon(painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                                        contentDescription = "More", tint = DarkGrey)
+                                        contentDescription = null, tint = DarkGrey)
                                 }
 
 
@@ -212,12 +214,12 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
     }
 
 
-data class ChatListDropdownItem(val itemTitle: String, @DrawableRes val itemIcon: Int)
+data class ChatListDropdownItem(@StringRes val itemTitle: Int, @DrawableRes val itemIcon: Int)
 
 val chatListDropdownItemList = listOf(
-    ChatListDropdownItem("Delete Chat",
+    ChatListDropdownItem(R.string.delete_chat_label,
         itemIcon = R.drawable.baseline_delete_24),
-    ChatListDropdownItem("Pin Chat",
+    ChatListDropdownItem(R.string.pin_chat_label,
         itemIcon = R.drawable.baseline_push_pin_24)
 )
 

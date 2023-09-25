@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,8 +41,8 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 fun OnboardingScreen(onboardingPageItem: OnboardingPageItem = OnboardingPageItem.ExploreTopics,
                      navController: NavController = rememberNavController()) {
 
-    val headerText: String = onboardingPageItem.headerText
-    val descriptionText: String = onboardingPageItem.descriptionText
+    val headerText: String = stringResource(onboardingPageItem.headerText)
+    val descriptionText: String = stringResource(onboardingPageItem.descriptionText)
     val pageIndex: Int = onboardingPageItem.pageIndex
 
     Box(modifier = Modifier
@@ -116,7 +117,7 @@ fun OnboardingScreen(onboardingPageItem: OnboardingPageItem = OnboardingPageItem
                     },
                 contentAlignment = Alignment.Center
             ){
-                Text(text = "CONTINUE",
+                Text(text = stringResource(id = R.string.continue_label).uppercase(),
                     textAlign = TextAlign.Center,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.SemiBold,
@@ -127,7 +128,7 @@ fun OnboardingScreen(onboardingPageItem: OnboardingPageItem = OnboardingPageItem
 
             Spacer(modifier = Modifier.size(15.dp))
 
-            Text(text = "SKIP",
+            Text(text = stringResource(id = R.string.skip_label).uppercase(),
                 textAlign = TextAlign.Center,
                 fontFamily = PlexSans,
                 fontWeight = FontWeight.SemiBold,
