@@ -7,6 +7,8 @@ import org.mongodb.kbson.ObjectId
 interface QuestionRepository {
     suspend fun getAllQuestions(): Flow<List<Question>>
 
+    suspend fun getQuestionsFromIdList(idList: List<ObjectId>): List<Question>
+
     suspend fun getQuestionById(id: ObjectId): Question?
 
     suspend fun insertQuestion(question: Question)

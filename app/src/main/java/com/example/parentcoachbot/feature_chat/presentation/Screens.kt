@@ -1,6 +1,7 @@
 package com.example.parentcoachbot.feature_chat.presentation
 
 sealed class Screen(val route: String) {
+    object FirstTimeSplashScreen: Screen("first_time_screen")
     object SplashScreen: Screen("splash_screen")
     object ExploreOnboardingScreen: Screen("explore_onboarding_screen")
     object SearchOnboardingScreen: Screen("search_onboarding_screen")

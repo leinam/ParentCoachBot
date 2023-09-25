@@ -13,6 +13,8 @@ import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.model.Question
+import com.example.parentcoachbot.feature_chat.domain.model.QuestionSearcher
+import com.example.parentcoachbot.feature_chat.domain.model.QuestionSearcherImplementation
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
@@ -46,6 +48,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetAllQuestions
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionWithAnswers
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsBySubtopic
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsFromIdList
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsWithAnswers
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicById
@@ -116,6 +119,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideQuestionSearcher(questionUseCases: QuestionUseCases): QuestionSearcher{
+        return QuestionSearcherImplementation(questionUseCases)
+    }
+
+    @Provides
+    @Singleton
     fun provideTopicRepository(realm: Realm): TopicRepository{
         return TopicRepositoryImpl(realm = realm)
     }
@@ -159,7 +168,8 @@ object AppModule {
             addQuestion = AddQuestion(questionRepository),
             getQuestionsWithAnswers = GetQuestionsWithAnswers(questionRepository, answerRepository),
             getQuestionWithAnswers = GetQuestionWithAnswers(questionRepository, answerRepository),
-            getQuestionBySubtopic = GetQuestionsBySubtopic(questionRepository)
+            getQuestionBySubtopic = GetQuestionsBySubtopic(questionRepository),
+            getQuestionsFromIdList = GetQuestionsFromIdList(questionRepository = questionRepository)
         )
     }
 

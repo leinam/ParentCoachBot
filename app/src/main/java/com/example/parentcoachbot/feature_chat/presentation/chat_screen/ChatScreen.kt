@@ -61,6 +61,7 @@ import com.example.parentcoachbot.ui.theme.LightGreen
 import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import com.example.parentcoachbot.ui.theme.drawerItemsList
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 // todo modularize chat screen composable
@@ -79,6 +80,7 @@ fun ChatScreen(
     val questionSessionWithQuestionAndAnswersList by chatStateWrapper.questionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
     val subtopicList: List<Subtopic> by chatStateWrapper.subtopicsListState.collectAsStateWithLifecycle()
     val subtopicQuestionsList: List<Question> by chatStateWrapper.subtopicQuestionsListState.collectAsStateWithLifecycle()
+    val searchResultQuestionsList: List<Question> by chatStateWrapper.searchResultsQuestionsListState.collectAsStateWithLifecycle()
     val searchQueryText: String by chatStateWrapper.searchQueryText.collectAsStateWithLifecycle()
     var isAnswerVisible by remember { mutableStateOf(false) }
 
@@ -91,7 +93,8 @@ fun ChatScreen(
     val scrollState = rememberLazyListState()
 
 
-    var bottomSheetContent: BottomSheetContent by remember { mutableStateOf(BottomSheetContent.Topics) }
+    val bottomSheetContentState: MutableStateFlow<BottomSheetContent> = MutableStateFlow(BottomSheetContent.Topics)
+    val bottomSheetContent: BottomSheetContent by bottomSheetContentState.collectAsStateWithLifecycle()
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState =
         rememberStandardBottomSheetState(
@@ -142,7 +145,9 @@ fun ChatScreen(
                             .background(color = LightGreen)
                             .fillMaxWidth()
                             .padding(10.dp),
-                        onEvent = onEvent
+                        onEvent = onEvent, scope = scope,
+                        bottomSheetContentState = bottomSheetContentState,
+                        bottomSheetScaffoldState = bottomSheetScaffoldState
                     )
                 }, topBar = {
                     TopNavBar(
@@ -177,7 +182,7 @@ fun ChatScreen(
                                                 tint = BackgroundWhite,
                                                 modifier = Modifier
                                                     .clickable {
-                                                        bottomSheetContent =
+                                                        bottomSheetContentState.value =
                                                             BottomSheetContent.SubTopics
                                                     }
                                                     .align(Alignment.CenterStart)
@@ -234,7 +239,7 @@ fun ChatScreen(
                                                 tint = BackgroundWhite,
                                                 modifier = Modifier
                                                     .clickable {
-                                                        bottomSheetContent =
+                                                        bottomSheetContentState.value =
                                                             BottomSheetContent.Topics
                                                     }
                                                     .align(Alignment.CenterStart)
@@ -261,7 +266,7 @@ fun ChatScreen(
                                                                 )
                                                             )
                                                             currentSubtopic = subtopic
-                                                            bottomSheetContent =
+                                                            bottomSheetContentState.value =
                                                                 BottomSheetContent.Questions
                                                         }) {
 
@@ -309,7 +314,7 @@ fun ChatScreen(
                                                         .clickable {
                                                             onEvent(ChatEvent.SelectTopic(topic))
                                                             currentTopic = topic
-                                                            bottomSheetContent =
+                                                            bottomSheetContentState.value =
                                                                 BottomSheetContent.SubTopics
                                                         }
                                                 ) {
@@ -325,6 +330,67 @@ fun ChatScreen(
                                                             painter = painterResource(id = it),
                                                             contentDescription = topic.title,
                                                             tint = Color.White
+                                                        )
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                BottomSheetContent.SearchResults -> {
+                                    Column(modifier = Modifier.height(300.dp)) {
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth(),
+                                        ) {
+
+                                            Icon(painter = painterResource(
+                                                id =
+                                                R.drawable.baseline_home_24
+                                            ),
+                                                contentDescription = null,
+                                                tint = BackgroundWhite,
+                                                modifier = Modifier
+                                                    .clickable {
+                                                        bottomSheetContentState.value =
+                                                            BottomSheetContent.Topics
+                                                    }
+                                                    .align(Alignment.CenterStart)
+                                                    .padding(horizontal = 10.dp)
+                                            )
+
+                                            Text(
+                                                text = "SEARCH RESULTS",
+                                                color = LightBeige,
+                                                modifier = Modifier.align(Alignment.Center)
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.size(10.dp))
+                                        LazyColumn {
+
+                                            items(searchResultQuestionsList) { question ->
+                                                Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                                    modifier = Modifier
+                                                        .padding(16.dp)
+                                                        .fillMaxWidth()
+                                                        .clickable {
+                                                            onEvent(
+                                                                ChatEvent.AddQuestionSession(
+                                                                    question
+                                                                )
+                                                            )
+                                                            scope.launch {
+                                                                bottomSheetScaffoldState.bottomSheetState.partialExpand()
+                                                            }
+                                                            isAnswerVisible = true
+                                                        }) {
+
+                                                    question.questionText?.let {
+                                                        Text(
+                                                            text = it,
+                                                            color = Color.White
                                                         )
                                                     }
 

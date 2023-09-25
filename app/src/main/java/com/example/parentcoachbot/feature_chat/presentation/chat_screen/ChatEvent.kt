@@ -17,5 +17,4 @@ sealed class ChatEvent{
     data class UpdateSearchQueryText(val searchQueryText: String): ChatEvent()
     object RestoreQuestion: ChatEvent()
 
-
 }

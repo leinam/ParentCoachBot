@@ -111,14 +111,8 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
                 FloatingActionButton(
                     onClick = {
                         onChatListEvent(ChatListEvent.NewChat).also {
-                            println(newChatSession)
-                            newChatSession?.let {
-                                onChatEvent(ChatEvent.SelectChat(it))
-                                println(newChatSession)
-                            }.also {
                                 navController.navigate(Screen.ChatScreen.route)
                             }
-                        }
                     },
                     containerColor = PrimaryGreen,
                     contentColor = Color.White)

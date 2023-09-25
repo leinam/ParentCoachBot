@@ -31,10 +31,9 @@ fun Navigation() {
     val profileViewModel: ProfileViewModel = hiltViewModel()
 
 
-    NavHost(navController = navHostController,
-        startDestination = Screen.SplashScreen.route ){
-        composable(route=Screen.SplashScreen.route){
-            SplashScreen(navController = navHostController)
+    NavHost(navController = navHostController, startDestination = Screen.FirstTimeSplashScreen.route ){
+        composable(route=Screen.FirstTimeSplashScreen.route){
+            FirstTimeSplashScreen(navController = navHostController)
         }
 
         composable(route=Screen.SelectProfileScreen.route){

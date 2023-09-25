@@ -8,5 +8,6 @@ class ParentUser: RealmObject {
     var name: String = "User"
     var username: String? = null
     var gender: String = Gender.NotSpecified.name
+    var country: String? = null
 }
 

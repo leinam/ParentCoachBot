@@ -19,6 +19,10 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
         realm.query<Question>(query = "_id == $0", id).find().firstOrNull()
     }
 
+    override suspend fun getQuestionsFromIdList(idList: List<ObjectId>): List<Question> = withContext(Dispatchers.IO){
+        realm.query<Question>(query = "_id IN $0", idList).find()
+    }
+
     override suspend fun insertQuestion(question: Question) {
         realm.write {
             this.copyToRealm(question)

@@ -33,7 +33,7 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 
 @Preview
 @Composable
-fun SplashScreen(navController: NavController = rememberNavController()) {
+fun FirstTimeSplashScreen(navController: NavController = rememberNavController()) {
     Box(modifier = Modifier
         .fillMaxSize()
         .background(color = PrimaryGreen)){
@@ -95,7 +95,11 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
                     .background(color = Beige)
                     .padding(10.dp)
                     .clickable {
-                        navController.navigate(Screen.SelectProfileScreen.route)
+                        navController.navigate(Screen.SelectProfileScreen.route){
+                            popUpTo(Screen.FirstTimeSplashScreen.route) {
+                                inclusive = true
+                            }
+                        }
                     },
                 contentAlignment = Alignment.Center
             ){
@@ -107,6 +111,32 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
                     color = PrimaryGreen
                 )
             }
+        }
+
+
+
+    }
+
+}
+
+
+@Preview
+@Composable
+fun SplashScreen(navController: NavController = rememberNavController()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(color = PrimaryGreen)){
+        Column(modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
+
+            Box(modifier = Modifier){
+                Icon(tint = Beige, painter =
+                painterResource(id = R.drawable.parentcoach_vetorial_logo),
+                    contentDescription ="Aurora Logo")
+
+            }
+
         }
 
 
