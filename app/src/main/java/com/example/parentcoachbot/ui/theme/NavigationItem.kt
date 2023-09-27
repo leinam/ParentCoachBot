@@ -5,48 +5,75 @@ import androidx.annotation.StringRes
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 
-data class NavBarItem(
+data class NavigationItem(
     @StringRes val title: Int?,
     @DrawableRes val icon: Int,
     val route: String?
 )
 
 val drawerItemsList = listOf(
-    NavBarItem(
+    NavigationItem(
         R.string.switch_profile_drawer_label,
         R.drawable.profile_icon,
         route = Screen.SelectProfileScreen.route
     ),
 
-    NavBarItem(
+    NavigationItem(
         R.string.chats_label,
         R.drawable.chats_icon,
         route = Screen.ChatListScreen.route
     ),
 
-    NavBarItem(
+    NavigationItem(
         R.string.help_label,
         R.drawable.help_icon,
         route = Screen.EmergencyInfoScreen.route
     ),
 
-    NavBarItem(
+    NavigationItem(
         R.string.saved_questions_menu_label,
         R.drawable.favourites_icon,
         route = Screen.SavedQuestionsScreen.route
     ),
 
-    NavBarItem(
+    NavigationItem(
         R.string.resources_label,
         R.drawable.resources_icon,
         route = Screen.ResourcesHomeScreen.route
     ),
 
-    NavBarItem(
+    NavigationItem(
         R.string.settings_label,
         R.drawable.settings_icon,
         route = Screen.SettingsHomeScreen.route
-    ),
+    )
 )
+
+val settingsItemList = listOf(
+    NavigationItem(
+    R.string.profile_label,
+    R.drawable.profile_icon,
+    route = Screen.SavedQuestionsScreen.route
+),
+
+    NavigationItem(
+        R.string.language_label,
+        R.drawable.baseline_language_24,
+        route = Screen.ResourcesHomeScreen.route
+    ),
+
+    NavigationItem(
+        R.string.data_privacy_label,
+        R.drawable.baseline_security_24,
+        route = Screen.SettingsHomeScreen.route
+    ),
+
+    NavigationItem(
+        R.string.terms_label,
+        R.drawable.baseline_insert_drive_file_24,
+        route = Screen.SettingsHomeScreen.route
+    ),
+
+    )
 
 

@@ -1,13 +1,18 @@
 package com.example.parentcoachbot.feature_chat.presentation.settings_screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
@@ -24,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,12 +43,16 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_screen.componen
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
+import com.example.parentcoachbot.ui.theme.TextGrey
+import com.example.parentcoachbot.ui.theme.ThinGreen
 import com.example.parentcoachbot.ui.theme.drawerItemsList
+import com.example.parentcoachbot.ui.theme.settingsItemList
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
+
 
 
     val scope = rememberCoroutineScope()
@@ -108,6 +118,53 @@ fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
                             fontFamily = PlexSans,
                             fontWeight = FontWeight.Normal,
                             fontSize = 19.sp)
+                    }
+
+                    LazyColumn {
+                        items(settingsItemList){
+                                item ->
+                            Box(modifier = Modifier
+                                .padding(10.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(color = ThinGreen)
+                                .fillMaxWidth()
+                                .height(70.dp)
+                                .padding(10.dp)
+                                .clickable {
+
+                                }
+                            )
+                            {
+
+                                Row(modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+
+
+                                    Row{
+                                        Icon(painter = painterResource(id = item.icon),
+                                            contentDescription = null, tint = TextGrey, modifier = Modifier.padding(end = 12.dp))
+
+                                        item.title?.let {
+                                        Text(
+                                            text = stringResource(id = it) ,
+                                            fontSize = 18.sp,
+                                            fontFamily = PlexSans,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = TextGrey
+                                        )
+                                        }
+                                    }
+
+                                    Icon(painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_30),
+                                        contentDescription = null, tint = TextGrey
+                                    )
+                                }
+
+
+
+                            }
+                        }
                     }
 
 

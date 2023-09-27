@@ -37,4 +37,7 @@
     <string name="continue_label" translatable="false">Continue</string>
     <string name="skip_label" translatable="false">Skip</string>
     <string name="search_bar_placeholder" translatable="false">What would you like to know?</string>
+    <string name="language_label" translatable="false">Languages</string>
+    <string name="data_privacy_label" translatable="false">Data Privacy And Security</string>
+    <string name="terms_label" translatable="false">Terms of Use</string>
 </resources>

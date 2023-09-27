@@ -29,29 +29,29 @@ import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.ui.theme.Beige
-import com.example.parentcoachbot.ui.theme.DarkGrey
+import com.example.parentcoachbot.ui.theme.TextGrey
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.LightGreen
-import com.example.parentcoachbot.ui.theme.NavBarItem
+import com.example.parentcoachbot.ui.theme.NavigationItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
-fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
-    NavBarItem(R.string.chats_label,
+fun TopNavBar(navBarItems: List<NavigationItem>? = listOf(
+    NavigationItem(R.string.chats_label,
         R.drawable.chats_icon,
         route = Screen.ChatListScreen.route),
 
-    NavBarItem(R.string.help_label,
+    NavigationItem(R.string.help_label,
         R.drawable.help_icon,
         route = Screen.EmergencyInfoScreen.route),
 
-    NavBarItem(R.string.saved_questions_title,
+    NavigationItem(R.string.saved_questions_menu_label,
         R.drawable.favourites_icon,
         route = Screen.SavedQuestionsScreen.route),
 
-    NavBarItem(R.string.profile_label,
+    NavigationItem(R.string.profile_label,
         R.drawable.profile_icon,
         route = Screen.SelectProfileScreen.route)
 ),
@@ -71,13 +71,13 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
         windowInsets = NavigationBarDefaults.windowInsets,
     ) {
 
-        val menuItem = NavBarItem(null,
+        val menuItem = NavigationItem(null,
             R.drawable.menu_icon,
             route = null)
 
         NavigationBarItem(
             colors=NavigationBarItemDefaults.colors(
-            selectedIconColor = DarkGrey,
+            selectedIconColor = TextGrey,
             indicatorColor = LightBeige)
             ,
             selected = false,
@@ -107,7 +107,7 @@ fun TopNavBar(navBarItems: List<NavBarItem>? = listOf(
         navBarItems?.forEachIndexed{
                 index, item ->
             NavigationBarItem(colors=NavigationBarItemDefaults.colors(
-                selectedIconColor = DarkGrey,
+                selectedIconColor = TextGrey,
                 indicatorColor = LightBeige,
             ),
 

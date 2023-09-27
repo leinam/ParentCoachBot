@@ -22,8 +22,12 @@ import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.Beige
+import com.example.parentcoachbot.ui.theme.BubbleOrange
 import com.example.parentcoachbot.ui.theme.LightOrange
+import com.example.parentcoachbot.ui.theme.LighterOrange
+import com.example.parentcoachbot.ui.theme.Orange
 import com.example.parentcoachbot.ui.theme.PlexSans
+import com.example.parentcoachbot.ui.theme.TextGrey
 
 @Preview
 @Composable
@@ -49,7 +53,7 @@ fun QuestionBox(question: Question =
                         bottomEnd = 20.dp
                     )
                 )
-                .background(color = Beige)
+                .background(color = LighterOrange)
                 .padding(16.dp)
                 .align(Alignment.Center)
         ) {
@@ -57,7 +61,8 @@ fun QuestionBox(question: Question =
                 Text(text = it,
                     textAlign = TextAlign.Start,
                     fontFamily = PlexSans,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Normal,
+                    color = TextGrey
                 )
             }
         }
@@ -68,7 +73,7 @@ fun QuestionBox(question: Question =
             modifier = Modifier
                 .padding(10.dp)
                 .clip(CircleShape)
-                .background(color = LightOrange)
+                .background(color = Orange)
                 .padding(4.dp)
                 .align(Alignment.TopEnd),
             tint = BackgroundWhite

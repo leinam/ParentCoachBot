@@ -56,6 +56,7 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_screen.componen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionInputSection
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
+import com.example.parentcoachbot.ui.theme.BackgroundBeige
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.LightGreen
@@ -155,8 +156,8 @@ fun ChatScreen(
             { contentPadding ->
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
                         .background(color = BackgroundWhite)
+                        .fillMaxSize()
                         .padding(contentPadding)
                 ) {
 
@@ -406,7 +407,9 @@ fun ChatScreen(
                         sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
                     ) {
 
-                        LazyColumn(state = scrollState, modifier = Modifier.padding(bottom = 80.dp))
+                        LazyColumn(
+                            state = scrollState,
+                            modifier = Modifier.padding(bottom = 80.dp))
                         {
                             itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionWithAnswer ->
 

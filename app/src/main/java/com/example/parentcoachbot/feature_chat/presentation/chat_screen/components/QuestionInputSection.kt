@@ -30,7 +30,7 @@ import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.BottomSheetContent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
-import com.example.parentcoachbot.ui.theme.DarkGrey
+import com.example.parentcoachbot.ui.theme.TextGrey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -85,7 +85,7 @@ fun QuestionInputSection(
                 unfocusedContainerColor = BackgroundWhite,
                 disabledContainerColor = BackgroundWhite,
                 focusedTextColor = Color.Black,
-                unfocusedTextColor = DarkGrey
+                unfocusedTextColor = TextGrey
             ),
             trailingIcon = { Icon(painter = painterResource(id = R.drawable.baseline_search_24), contentDescription = null)},
 

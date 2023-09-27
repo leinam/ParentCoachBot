@@ -28,11 +28,16 @@ val LighterGreen = Color(0xFFB2D9CB)
 
 val PrimaryGreen = Color(0xFF007B83)
 val LightGreen = Color(0xFF499FA1)
+val ThinGreen = Color(0xFFE1E1BE)
 
-val DarkGrey = Color(0xFF505050)
+val TextGrey = Color(0xFF505050)
 val Beige = Color(0xFFFFEECA)
+val BackgroundBeige = Color(0xFFFFF0C8)
 val LightBeige = Color(0xFFFFF9EC)
 
 val LightOrange = Color(0xFFF9BE7C)
+val LighterOrange = Color(0xFFFFD79B)
+val Orange = Color(0xFFFFAA41)
+val BubbleOrange = Color(0xFFFFAA41)
 
 
