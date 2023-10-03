@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -41,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,9 +53,9 @@ import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.BackgroundBeige
-import com.example.parentcoachbot.ui.theme.TextGrey
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
+import com.example.parentcoachbot.ui.theme.TextGrey
 import com.example.parentcoachbot.ui.theme.ThinGreen
 import com.example.parentcoachbot.ui.theme.drawerItemsList
 import kotlinx.coroutines.launch
@@ -65,10 +65,12 @@ import java.time.format.DateTimeFormatter
 
 @Preview
 @Composable
-fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutableStateOf(ChatListStateWrapper()),
-                   navController: NavController = rememberNavController(),
-                   onChatListEvent:(ChatListEvent) -> Unit = {},
-                   onChatEvent:(ChatEvent) -> Unit = {}) {
+fun ChatListScreen(
+    chatListViewModelState: State<ChatListStateWrapper> = mutableStateOf(ChatListStateWrapper()),
+    navController: NavController = rememberNavController(),
+    onChatListEvent: (ChatListEvent) -> Unit = {},
+    onChatEvent: (ChatEvent) -> Unit = {}
+) {
 
     val chatListStateWrapper = chatListViewModelState.value
 
@@ -91,127 +93,166 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index
-                            scope.launch{
+                            scope.launch {
                                 drawerState.close()
                                 navBarItem.route?.let { navController.navigate(route = it) }
                             }
                         },
-                        icon = { Icon(painter = painterResource(id = navBarItem.icon),
-                            contentDescription = navBarItem.title?.let { stringResource(it) }
-                        ) },
+                        icon = {
+                            Icon(painter = painterResource(id = navBarItem.icon),
+                                contentDescription = navBarItem.title?.let { stringResource(it) }
+                            )
+                        },
                         modifier = Modifier.padding(10.dp)
                     )
                 }
             }
         }
-    ){
+    ) {
         Scaffold(
             topBar = {
                 TopNavBar(
-                    navController=navController,
+                    navController = navController,
                     screenIndex = 0,
                     drawerState = drawerState,
-                    scope = scope)
+                    scope = scope
+                )
             },
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
                         onChatListEvent(ChatListEvent.NewChat).also {
-                                navController.navigate(Screen.ChatScreen.route)
-                            }
+                            navController.navigate(Screen.ChatScreen.route)
+                        }
                     },
                     containerColor = PrimaryGreen,
-                    contentColor = Color.White)
+                    contentColor = Color.White
+                )
                 {
-                    Icon(painter = painterResource(
-                        id = R.drawable.newchat_icon),
+                    Icon(
+                        painter = painterResource(
+                            id = R.drawable.newchat_icon
+                        ),
                         contentDescription = stringResource(R.string.new_chat_label)
                     )
                 }
             }
         )
-        {contentPadding ->
+        { contentPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = BackgroundBeige)
                     .padding(contentPadding)
 
-            ){
+            ) {
 
                 Column {
 
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(PrimaryGreen.copy(alpha = 0.3f))
-                        .padding(17.dp),
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(PrimaryGreen.copy(alpha = 0.3f))
+                            .padding(17.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically){
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-                        Text(text = stringResource(id = R.string.chats_label),
+                        Text(
+                            text = stringResource(id = R.string.chats_label),
                             color = PrimaryGreen,
                             fontFamily = PlexSans,
                             fontWeight = Normal,
-                            fontSize = 19.sp)
+                            fontSize = 19.sp
+                        )
 
-                        Icon(painter = painterResource(id = R.drawable.baseline_more_vert_24),
-                            contentDescription = null, tint = PrimaryGreen)
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_more_vert_24),
+                            contentDescription = null, tint = PrimaryGreen
+                        )
                     }
 
-                    LazyColumn {
-                        items(chatSessionList){
-                                chatSession ->
+                    if (chatSessionList.isNotEmpty()) {
+                        LazyColumn {
+                            items(chatSessionList) { chatSession ->
+                                Box(modifier = Modifier
+                                    .padding(10.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(color = ThinGreen)
+
+                                    .fillMaxWidth()
+                                    .height(90.dp)
+                                    .padding(15.dp)
+
+                                    .clickable {
+                                        onChatEvent(ChatEvent.SelectChat(chatSession))
+                                        navController.navigate(route = Screen.ChatScreen.route)
+                                    }
+                                )
+                                {
+
+
+                                    Text(
+                                        text = chatSession.chatTitle
+                                            ?: stringResource(id = R.string.new_chat_label),
+                                        fontSize = 16.sp, color = TextGrey,
+                                        fontFamily = PlexSans, fontWeight = SemiBold,
+                                        modifier = Modifier.align(
+                                            Alignment.TopStart
+                                        )
+                                    )
+
+                                    var lastUpdated = ""
+
+                                    chatSession.timeLastUpdated?.let {
+                                        lastUpdated = LocalDateTime.ofEpochSecond(
+                                            it.epochSeconds, it.nanosecondsOfSecond, ZoneOffset.UTC
+                                        ).format(DateTimeFormatter.ofPattern("E H:mm"))
+                                    }
+
+                                    Text(
+                                        text = lastUpdated,
+                                        fontSize = 10.sp,
+                                        fontFamily = PlexSans, fontWeight = SemiBold,
+                                        modifier = Modifier.align(
+                                            Alignment.TopEnd
+                                        )
+                                    )
+
+                                    Row(
+                                        modifier = Modifier
+                                            .align(Alignment.BottomStart)
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            text = "Aurora: Welcome! You can explore all the ",
+                                            fontSize = 12.sp,
+                                            fontFamily = PlexSans,
+                                            fontWeight = Normal
+                                        )
+
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                                            contentDescription = null, tint = TextGrey
+                                        )
+                                    }
+
+
+                                }
+                            }
+                        }
+                    } else {
+                        Box(modifier = Modifier.fillMaxSize()){
                             Box(modifier = Modifier
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(10.dp))
                                 .background(color = ThinGreen)
-
-                                .fillMaxWidth()
-                                .height(90.dp)
                                 .padding(15.dp)
-
-                                .clickable {
-                                    onChatEvent(ChatEvent.SelectChat(chatSession))
-                                    navController.navigate(route = Screen.ChatScreen.route)
-                                }
-                                )
-                            {
-
-
-                                    Text(text = chatSession.chatTitle ?: stringResource(id = R.string.new_chat_label),
-                                        fontSize = 16.sp, color = TextGrey,
-                                        fontFamily = PlexSans, fontWeight = SemiBold,
-                                        modifier = Modifier.align(
-                                            Alignment.TopStart))
-
-                                var lastUpdated = ""
-
-                                chatSession.timeLastUpdated?.let {
-                                    lastUpdated = LocalDateTime.ofEpochSecond(it.epochSeconds, it.nanosecondsOfSecond, ZoneOffset.UTC
-                                        ).format(DateTimeFormatter.ofPattern("E H:mm"))
-                                }
-
-                                    Text(text = lastUpdated,
-                                    fontSize = 10.sp,
-                                    fontFamily = PlexSans, fontWeight = SemiBold,
-                                    modifier = Modifier.align(
-                                        Alignment.TopEnd))
-
-                                Row(modifier = Modifier
-                                    .align(Alignment.BottomStart)
-                                    .fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text(text = "Aurora: Welcome! You can explore all the ", fontSize = 12.sp,
-                                        fontFamily = PlexSans, fontWeight = Normal)
-
-                                    Icon(painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                                        contentDescription = null, tint = TextGrey)
-                                }
-
-
-
-                                }
-                            // Divider(color = TextGrey, modifier = Modifier.padding(horizontal = 10.dp))
+                                .align(Alignment.Center)
+                            ) {
+                                Text(text = stringResource(id = R.string.no_chats_label).uppercase(),
+                                    textAlign = TextAlign.Center, color = TextGrey)
                             }
                         }
                     }
@@ -220,14 +261,19 @@ fun ChatListScreen(chatListViewModelState: State<ChatListStateWrapper> = mutable
             }
         }
     }
+}
 
 
 data class ChatListDropdownItem(@StringRes val itemTitle: Int, @DrawableRes val itemIcon: Int)
 
 val chatListDropdownItemList = listOf(
-    ChatListDropdownItem(R.string.delete_chat_label,
-        itemIcon = R.drawable.baseline_delete_24),
-    ChatListDropdownItem(R.string.pin_chat_label,
-        itemIcon = R.drawable.baseline_push_pin_24)
+    ChatListDropdownItem(
+        R.string.delete_chat_label,
+        itemIcon = R.drawable.baseline_delete_24
+    ),
+    ChatListDropdownItem(
+        R.string.pin_chat_label,
+        itemIcon = R.drawable.baseline_push_pin_24
+    )
 )
 

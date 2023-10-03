@@ -31,8 +31,12 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
 
     override suspend fun deleteQuestion(id: ObjectId) {
         realm.write {
-            val question = this.query<Question>("_id == $id").find().first()
-            delete(question)
+            val question = this.query<Question>("_id == $id").find().firstOrNull()
+
+            question?.let {
+                delete(it)
+            }
+
         }
     }
 

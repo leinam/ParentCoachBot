@@ -9,7 +9,7 @@ class AddQuestion(private val repository: QuestionRepository) {
 
     @Throws(InvalidQuestionException::class)
     suspend operator fun invoke(question: Question){
-        if (question.questionText?.isBlank() == true){
+        if (question.questionTextEn?.isBlank() == true){
             throw InvalidQuestionException(message = "The question text cannot be empty.")
         }
 

@@ -31,6 +31,19 @@ class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRe
         realm.query<QuestionSession>(query = "chatSession == $0", chatSessionId).find().last()
     }
 
+    override suspend fun toggleSaveQuestionSession(id: ObjectId) = withContext(Dispatchers.IO) {
+        realm.write {
+            val questionSession =
+                realm.query<QuestionSession>(query = "_id == $0", id).find()
+                    .firstOrNull()
+            questionSession?.let {
+                val isSaved = !questionSession.isSaved
+                questionSession.isSaved = isSaved
+            }
+        }
+
+    }
+
     override suspend fun deleteQuestionSession(id: ObjectId) {
         realm.write {
             val questionSession = realm.query<QuestionSession>(query = "id == $id").find().firstOrNull()

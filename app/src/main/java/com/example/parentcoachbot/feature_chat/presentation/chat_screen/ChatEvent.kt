@@ -9,7 +9,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.Topic
 sealed class ChatEvent{
     data class AddQuestionSession(val question: Question): ChatEvent()
     data class DeleteQuestionSession(val question: Question) : ChatEvent()
-    data class FavouriteQuestionSession(val question: Question): ChatEvent()
+    data class SaveQuestionSession(val question: Question): ChatEvent()
     data class SelectChat(val chatSession: ChatSession): ChatEvent()
     data class SelectTopic(val topic: Topic): ChatEvent()
     data class SelectSubtopic(val subtopic: Subtopic): ChatEvent()

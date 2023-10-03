@@ -2,6 +2,7 @@ package com.example.parentcoachbot.feature_chat.domain.util
 
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Answer
+import com.example.parentcoachbot.feature_chat.domain.model.AnswerThread
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
@@ -11,19 +12,17 @@ import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import io.realm.kotlin.MutableRealm
 import io.realm.kotlin.ext.realmListOf
-import io.realm.kotlin.types.RealmList
-import org.mongodb.kbson.ObjectId
 
 class PopulateDb(private val realm: MutableRealm) {
     private val questionOneAnswerList = listOf(
         Answer().apply {
             this.answerText = "The only way to know if your baby is getting enough milk is by the number of wet diapers during the day."
-            this.answerType = "Info"
+            this.answerType = AnswerType.Info.code
         },
 
         Answer().apply {
             this.answerText = "After your milk has come in (usually about 3 days after birth), your baby should have at least 6 wet diapers per day, with clear urine."
-            this.answerType = "Info"
+            this.answerType = AnswerType.Info.code
         }
     )
 
@@ -109,23 +108,35 @@ class PopulateDb(private val realm: MutableRealm) {
 
     operator fun invoke (){
         println("Attempting to pre-populate database")
-        val answerList: RealmList<ObjectId> = realmListOf()
-        questionOneAnswerList.forEach { answer ->
-            realm.copyToRealm(answer)
-            answerList.add(answer._id)
+
+        val answerThread: AnswerThread = AnswerThread().apply {
+            title = "Enough milk"
+            code = "A1"
+            subtopic = accesoriesBF._id
+        }
+        realm.copyToRealm(answerThread)
+
+
+        questionOneAnswerList.forEachIndexed { index, answer ->
+            realm.copyToRealm(answer.apply
+            {
+                this.answerThread = answerThread.code
+                this.answerThreadPosition = index
+            })
         }
 
         val questionOne = Question().apply {
-            this.questionText = "Do I produce enough milk?"
-            this.questionAnswers
+            this.questionTextEn = "Do I produce enough milk?"
             this.subtopics = realmListOf(accesoriesBF._id)
+            this.answerThread = answerThread._id
         }
+
+        println(questionOne.questionTextEn)
 
         val sampleQuestionSession: QuestionSession = QuestionSession().apply {
             this.question = questionOne._id
             this.chatSession = sampleChatSession._id
         }
-
 
         realm.copyToRealm(sampleChatSession)
         realm.copyToRealm(sampleQuestionSession)
@@ -139,13 +150,13 @@ class PopulateDb(private val realm: MutableRealm) {
         realm.copyToRealm(childProfileTest2)
 
 
-        realm.copyToRealm(questionOne.apply {
-            this.questionAnswers = answerList
-        })
 
+        realm.copyToRealm(questionOne)
         realm.copyToRealm(breastfeedingTopic)
         println("Done pre-populating database")
+
     }
+
 
 
 }

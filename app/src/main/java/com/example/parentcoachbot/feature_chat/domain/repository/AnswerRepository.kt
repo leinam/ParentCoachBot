@@ -11,4 +11,6 @@ interface AnswerRepository  {
     suspend fun deleteAnswer(id: ObjectId)
 
     suspend fun insertAnswer(answer: Answer)
+
+    suspend fun getAnswersByAnswerThreadCode(answerThreadCode: String): List<Answer>
 }

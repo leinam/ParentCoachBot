@@ -24,7 +24,6 @@ class ChatListViewModel @Inject constructor(
     private val globalState: GlobalState
 ) : ViewModel() {
 
-
     private val _chatSessionsListState = MutableStateFlow<List<ChatSession>>(emptyList())
     private val _topicsListState = MutableStateFlow<List<Topic>>(emptyList())
     private val _newChatState = globalState._newChatState
@@ -51,12 +50,15 @@ class ChatListViewModel @Inject constructor(
 
     fun onEvent(chatListEvent: ChatListEvent) {
         when (chatListEvent) {
-            is ChatListEvent.DeleteChat -> {}
+            is ChatListEvent.DeleteChat -> {
+                viewModelScope.launch {
+                    chatSessionUseCases.deleteChatSession(chatListEvent.chatSession._id)
+                }
+            }
 
             ChatListEvent.NewChat -> {
                 viewModelScope.launch {
-                    _currentChildProfile.value?.let {
-                            currentChildProfile ->
+                    _currentChildProfile.value?.let { currentChildProfile ->
 
                         ChatSession().apply {
                             this.childProfile = currentChildProfile._id
@@ -71,8 +73,11 @@ class ChatListViewModel @Inject constructor(
                 }
             }
 
-            is ChatListEvent.SelectChat -> {
 
+            is ChatListEvent.PinChat -> {
+                viewModelScope.launch {
+                    chatSessionUseCases.togglePinChatSession(chatListEvent.chatSession._id)
+                }
             }
 
             is ChatListEvent.SelectProfile -> {
@@ -91,7 +96,7 @@ class ChatListViewModel @Inject constructor(
         getChildProfileChatSessionsJob = viewModelScope.launch {
 
             _currentChildProfile.onEach { childProfile ->
-                println("the current child profile is ${childProfile?._id}")
+
                 childProfile?.let {
                     chatSessionUseCases.getProfileChatSessions(it._id).onEach { chatSessionList ->
                         // on each emission we set the state again
@@ -99,8 +104,6 @@ class ChatListViewModel @Inject constructor(
                     }.collect()
                 }
             }.collect()
-
-
         }
     }
 

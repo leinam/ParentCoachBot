@@ -90,23 +90,8 @@ class ChatViewModel @Inject constructor(
         getQuestionsWithAnswers()
         getChildProfiles()
         populateQuestionIndex()
-
-        viewModelScope.launch {
-            _newChatSession.onEach {
-                println("new ${_newChatSession.value?._id}")
-                _currentChatState.value = it
-                getQuestionSessionWithQuestionAndAnswers()
-            }.collect()
-        }
-
-        viewModelScope.launch {
-            _typedQueryText.debounce(1500)
-                .onEach {
-                    // run search
-                    println("The text is $it")
-                    searchQuestions(it)
-                }.collect()
-        }
+        listenForNewChat()
+        listenForChatQuery()
     }
 
     private fun listenForNewChat(){
@@ -153,8 +138,11 @@ class ChatViewModel @Inject constructor(
     // todo new chat doesn't always open
     fun onEvent(event: ChatEvent) {
         when (event) {
-            is ChatEvent.FavouriteQuestionSession -> {
+            is ChatEvent.SaveQuestionSession -> {
+                viewModelScope.launch {
 
+
+                }
             }
 
             is ChatEvent.DeleteQuestionSession -> {
@@ -268,10 +256,12 @@ class ChatViewModel @Inject constructor(
             getChildProfilesJob?.cancel()
 
             getChildProfilesJob = viewModelScope.launch {
-                childProfileUseCases.getChildProfilesByParentUser(parentUser._id)
-                    .onEach { childProfilesList ->
-                        _childProfilesListState.value = childProfilesList
-                    }.collect()
+                parentUser?.let {
+                    childProfileUseCases.getChildProfilesByParentUser(it._id)
+                        .onEach { childProfilesList ->
+                            _childProfilesListState.value = childProfilesList
+                        }.collect()
+                }
             }
         }
     }

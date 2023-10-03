@@ -40,4 +40,5 @@
     <string name="language_label" translatable="false">Languages</string>
     <string name="data_privacy_label" translatable="false">Data Privacy And Security</string>
     <string name="terms_label" translatable="false">Terms of Use</string>
+    <string name="no_chats_label" translatable="false">No Chats</string>
 </resources>

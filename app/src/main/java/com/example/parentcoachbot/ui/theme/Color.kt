@@ -34,6 +34,7 @@ val TextGrey = Color(0xFF505050)
 val Beige = Color(0xFFFFEECA)
 val BackgroundBeige = Color(0xFFFFF0C8)
 val LightBeige = Color(0xFFFFF9EC)
+val LighterBeige = Color(0xFFF9F3E4)
 
 val LightOrange = Color(0xFFF9BE7C)
 val LighterOrange = Color(0xFFFFD79B)

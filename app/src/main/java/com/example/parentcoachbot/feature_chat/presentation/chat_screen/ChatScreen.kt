@@ -56,7 +56,6 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_screen.componen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionInputSection
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
-import com.example.parentcoachbot.ui.theme.BackgroundBeige
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.LightGreen
@@ -213,7 +212,7 @@ fun ChatScreen(
                                                             isAnswerVisible = true
                                                         }) {
 
-                                                    question.questionText?.let {
+                                                    question.questionTextEn?.let {
                                                         Text(
                                                             text = it,
                                                             color = Color.White
@@ -388,7 +387,7 @@ fun ChatScreen(
                                                             isAnswerVisible = true
                                                         }) {
 
-                                                    question.questionText?.let {
+                                                    question.questionTextEn?.let {
                                                         Text(
                                                             text = it,
                                                             color = Color.White

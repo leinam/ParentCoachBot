@@ -25,11 +25,11 @@ class ParentUserRepositoryImpl(private val realm: Realm): ParentUserRepository {
         }
     }
 
-    override suspend fun getParentUserById(id: ObjectId): ParentUser = withContext(Dispatchers.IO){
-       realm.query<ParentUser>(query = "id == $0", id).find().first()
+    override suspend fun getParentUserById(id: ObjectId): ParentUser? = withContext(Dispatchers.IO){
+       realm.query<ParentUser>(query = "id == $0", id).find().firstOrNull()
     }
 
-    override fun getParentUser(): ParentUser  {
-        return realm.query<ParentUser>().find().first()
+    override fun getParentUser(): ParentUser?  {
+        return realm.query<ParentUser>().find().firstOrNull()
     }
 }

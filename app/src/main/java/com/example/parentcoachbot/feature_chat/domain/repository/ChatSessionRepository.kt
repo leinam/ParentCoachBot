@@ -11,9 +11,11 @@ interface ChatSessionRepository {
 
     suspend fun getChatSessionById(id: ObjectId): ChatSession?
 
-    suspend fun getChatSessionsByChildProfile(childProfileId: ObjectId) :Flow<List<ChatSession>>
+    suspend fun togglePinChatSession(id: ObjectId)
 
-    suspend fun getChatSessionsByChildProfileAsynch(childProfileId: ObjectId) :Flow<ChatSession>
+    suspend fun getChatSessionsByChildProfile(childProfileId: ObjectId): Flow<List<ChatSession>>
+
+    suspend fun getChatSessionsByChildProfileAsynch(childProfileId: ObjectId): Flow<ChatSession>
 
 
 }

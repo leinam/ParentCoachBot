@@ -13,11 +13,11 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListSc
 import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListViewModel
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatScreen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatViewModel
-import com.example.parentcoachbot.feature_chat.presentation.profile_screen.CreateProfileSplashScreen
-import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.AddProfileScreen
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.CreateProfileSplashScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileViewModel
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.EmergencyInfoScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SelectLanguageScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SettingsHomeScreen
@@ -31,15 +31,18 @@ fun Navigation() {
     val profileViewModel: ProfileViewModel = hiltViewModel()
 
 
-    NavHost(navController = navHostController, startDestination = Screen.FirstTimeSplashScreen.route ){
-        composable(route=Screen.FirstTimeSplashScreen.route){
+    NavHost(
+        navController = navHostController,
+        startDestination = Screen.FirstTimeSplashScreen.route
+    ) {
+        composable(route = Screen.FirstTimeSplashScreen.route) {
             FirstTimeSplashScreen(navController = navHostController)
         }
 
-        composable(route=Screen.SelectProfileScreen.route){
+        composable(route = Screen.SelectProfileScreen.route) {
             SelectProfileScreen(navController = navHostController,
                 profileState = profileViewModel.profileViewModelState,
-                onEvent = {profileEvent ->
+                onEvent = { profileEvent ->
                     profileViewModel.onEvent(profileEvent)
                     // todo is it really necessary to trigger this - can we observe and trigger directly
                     chatListViewModel.onEvent(chatListEvent = ChatListEvent.SelectProfile)
@@ -47,61 +50,67 @@ fun Navigation() {
                 })
         }
 
-        composable(route = Screen.ExploreOnboardingScreen.route){
-            OnboardingScreen(onboardingPageItem = OnboardingPageItem.ExploreTopics,
-                navController = navHostController)
-        }
-
-        composable(route = Screen.SearchOnboardingScreen.route){
-            OnboardingScreen(onboardingPageItem = OnboardingPageItem.SearchQuestions,
-                navController = navHostController)
-        }
-
-        composable(route = Screen.FavouriteOnboardingScreen.route){
-            OnboardingScreen(onboardingPageItem = OnboardingPageItem.SaveFavourites,
-                navController = navHostController)
-        }
-
-        composable(route = Screen.ChatListScreen.route){
-
-            ChatListScreen(navController = navHostController,
-                chatListViewModelState = chatListViewModel.chatListViewModelState,
-                onChatListEvent = {chatListEvent ->  chatListViewModel.onEvent(chatListEvent)},
-                onChatEvent = {chatEvent -> chatViewModel.onEvent(chatEvent)}
+        composable(route = Screen.ExploreOnboardingScreen.route) {
+            OnboardingScreen(
+                onboardingPageItem = OnboardingPageItem.ExploreTopics,
+                navController = navHostController
             )
         }
 
-        composable(route = Screen.ChatScreen.route){
+        composable(route = Screen.SearchOnboardingScreen.route) {
+            OnboardingScreen(
+                onboardingPageItem = OnboardingPageItem.SearchQuestions,
+                navController = navHostController
+            )
+        }
+
+        composable(route = Screen.FavouriteOnboardingScreen.route) {
+            OnboardingScreen(
+                onboardingPageItem = OnboardingPageItem.SaveFavourites,
+                navController = navHostController
+            )
+        }
+
+        composable(route = Screen.ChatListScreen.route) {
+
+            ChatListScreen(navController = navHostController,
+                chatListViewModelState = chatListViewModel.chatListViewModelState,
+                onChatListEvent = { chatListEvent -> chatListViewModel.onEvent(chatListEvent) },
+                onChatEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) }
+            )
+        }
+
+        composable(route = Screen.ChatScreen.route) {
 
             ChatScreen(ChatViewModelState = chatViewModel.chatViewModelState,
                 navController = navHostController,
-                onEvent = {chatEvent -> chatViewModel.onEvent(chatEvent)})
+                onEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) })
         }
 
-        composable(route = Screen.CreateProfileSplashScreen.route){
+        composable(route = Screen.CreateProfileSplashScreen.route) {
             CreateProfileSplashScreen(navController = navHostController)
         }
 
-        composable(route = Screen.UpdateProfileScreen.route){
+        composable(route = Screen.UpdateProfileScreen.route) {
             UpdateProfileScreen(navController = navHostController)
         }
 
-        composable(route = Screen.AddProfileScreen.route){
+        composable(route = Screen.AddProfileScreen.route) {
             AddProfileScreen(navController = navHostController)
         }
-        composable(route = Screen.SettingsHomeScreen.route){
+        composable(route = Screen.SettingsHomeScreen.route) {
             SettingsHomeScreen(navController = navHostController)
         }
-        composable(route = Screen.SelectLanguageScreen.route){
+        composable(route = Screen.SelectLanguageScreen.route) {
             SelectLanguageScreen(navController = navHostController)
         }
-        composable(route = Screen.SavedQuestionsScreen.route){
+        composable(route = Screen.SavedQuestionsScreen.route) {
             SavedQuestionsScreen(navController = navHostController)
         }
-        composable(route = Screen.ResourcesHomeScreen.route){
+        composable(route = Screen.ResourcesHomeScreen.route) {
             ResourcesHomeScreen(navController = navHostController)
         }
-        composable(route = Screen.EmergencyInfoScreen.route){
+        composable(route = Screen.EmergencyInfoScreen.route) {
             EmergencyInfoScreen(navController = navHostController)
         }
 

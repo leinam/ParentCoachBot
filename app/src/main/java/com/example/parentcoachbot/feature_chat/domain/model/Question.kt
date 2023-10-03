@@ -10,8 +10,11 @@ import org.mongodb.kbson.ObjectId
 class Question: RealmObject{
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
-    var questionText:String? = null
-    var questionAnswers: RealmList<ObjectId> = realmListOf()
+    var questionTextEn:String? = null
+    var questionTextPt:String? = null
+    var questionTextZu:String? = null
+    var questionTextAfr:String? = null
+    var answerThread: ObjectId? = null
     var searchKeywords: RealmList<String> = realmListOf()
     var subtopics: RealmList<ObjectId> = realmListOf()
     var tags: RealmList<String> = realmListOf()

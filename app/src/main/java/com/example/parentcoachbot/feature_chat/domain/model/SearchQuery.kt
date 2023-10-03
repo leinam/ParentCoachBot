@@ -6,14 +6,12 @@ import io.realm.kotlin.types.annotations.Index
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
-class ChatSession: RealmObject {
+class SearchQuery: RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
-    var chatTitle: String? = null
-    var childProfile: ObjectId? = null
-    var timeStarted: RealmInstant = RealmInstant.now()
-    var timeLastUpdated: RealmInstant? = timeStarted
+    var chatSession: ObjectId? = null
+    var questionSelected: ObjectId? = null
     @Index
-    var isPinned: Boolean = false
-    var lastQuestionSession: ObjectId? = null
+    var queryText: String? = null
+    var timeQueried: RealmInstant = RealmInstant.now()
 }

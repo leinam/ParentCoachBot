@@ -11,11 +11,23 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 
-class ChatSessionRepositoryImpl(private val realm: Realm): ChatSessionRepository {
+class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepository {
     override suspend fun newChatSession(chatSession: ChatSession) {
         realm.write {
             this.copyToRealm(chatSession)
         }
+    }
+
+    override suspend fun togglePinChatSession(id: ObjectId): Unit = withContext(Dispatchers.IO) {
+        realm.write {
+            val chatSession = realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
+
+            chatSession?.let {
+                val isPinned = !chatSession.isPinned
+                chatSession.isPinned = false
+            }
+        }
+
     }
 
     override suspend fun deleteChatSession(id: ObjectId) {
@@ -32,23 +44,26 @@ class ChatSessionRepositoryImpl(private val realm: Realm): ChatSessionRepository
         return realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
     }
 
-    override suspend fun getChatSessionsByChildProfile(childProfileId: ObjectId): Flow<List<ChatSession>>
-    = withContext(Dispatchers.IO){
-        realm.query<ChatSession>(query="childProfile == $0", childProfileId)
-            .find()
-            .asFlow()
-            .map { it.list.sortedByDescending {
-                it.timeStarted
-            } }
+    override suspend fun getChatSessionsByChildProfile(childProfileId: ObjectId): Flow<List<ChatSession>> =
+        withContext(Dispatchers.IO) {
+            realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
+                .find()
+                .asFlow()
+                .map {
+                    it.list.sortedByDescending {
+                        it.timeStarted
+                    }
+                }
 
-    }
+        }
 
     override suspend fun getChatSessionsByChildProfileAsynch(
-        childProfileId: ObjectId): Flow<ChatSession> = withContext(Dispatchers.IO)
+        childProfileId: ObjectId
+    ): Flow<ChatSession> = withContext(Dispatchers.IO)
     {
-           realm.query<ChatSession>(query="childProfile == $0", childProfileId)
-               .find()
-               .map{it}
-               .asFlow()
+        realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
+            .find()
+            .map { it }
+            .asFlow()
     }
 }

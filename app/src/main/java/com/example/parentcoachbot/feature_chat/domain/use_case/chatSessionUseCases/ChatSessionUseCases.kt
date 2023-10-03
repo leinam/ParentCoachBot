@@ -2,5 +2,7 @@ package com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCa
 
 data class ChatSessionUseCases(val getProfileChatSessions: GetChatSessionsByChildProfile,
                                val getChatSessionById: GetChatSessionById,
-                               val newChatSession: NewChatSession
+                               val newChatSession: NewChatSession,
+                               val togglePinChatSession: TogglePinChatSession,
+                               val deleteChatSession: DeleteChatSession
 )

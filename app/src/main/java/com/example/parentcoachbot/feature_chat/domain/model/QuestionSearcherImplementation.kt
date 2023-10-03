@@ -82,11 +82,12 @@ class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases): Qu
     override fun populateIndex(questionsList: List<Question>) {
         val indexWriter: IndexWriter = createIndexWriter()
 
+        println(questionsList)
         questionsList.forEach {
            question ->
-
+            println(question.answerThread)
             val questionDocument = Document().apply {
-                add(TextField(questionTextFieldName, question.questionText, Field.Store.YES))
+                add(TextField(questionTextFieldName, question.questionTextEn, Field.Store.YES))
                 add(StoredField(questionIdFieldName, question._id.toByteArray()))
             }
 

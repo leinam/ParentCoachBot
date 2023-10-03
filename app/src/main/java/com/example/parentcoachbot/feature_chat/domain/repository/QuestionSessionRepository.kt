@@ -14,6 +14,8 @@ interface QuestionSessionRepository {
 
     suspend fun getLatestQuestionSessionByChatSession(chatSessionId: ObjectId): QuestionSession?
 
+    suspend fun toggleSaveQuestionSession(id: ObjectId): Unit?
+
     suspend fun deleteQuestionSession(id: ObjectId)
 
 }

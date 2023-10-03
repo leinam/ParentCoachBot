@@ -8,8 +8,8 @@ interface ParentUserRepository {
 
     suspend fun deleteParentUser(id: ObjectId)
 
-    suspend fun getParentUserById(id: ObjectId): ParentUser
+    suspend fun getParentUserById(id: ObjectId): ParentUser?
 
-    fun getParentUser(): ParentUser
+    fun getParentUser(): ParentUser?
 
 }

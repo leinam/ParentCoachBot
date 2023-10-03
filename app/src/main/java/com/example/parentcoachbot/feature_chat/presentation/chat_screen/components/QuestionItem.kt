@@ -21,9 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
-import com.example.parentcoachbot.ui.theme.Beige
-import com.example.parentcoachbot.ui.theme.BubbleOrange
-import com.example.parentcoachbot.ui.theme.LightOrange
 import com.example.parentcoachbot.ui.theme.LighterOrange
 import com.example.parentcoachbot.ui.theme.Orange
 import com.example.parentcoachbot.ui.theme.PlexSans
@@ -32,7 +29,7 @@ import com.example.parentcoachbot.ui.theme.TextGrey
 @Preview
 @Composable
 fun QuestionBox(question: Question =
-                    Question().apply { this.questionText = "Do I have enough milk?" }) {
+                    Question().apply { this.questionTextEn = "Do I have enough milk?" }) {
 
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -57,7 +54,7 @@ fun QuestionBox(question: Question =
                 .padding(16.dp)
                 .align(Alignment.Center)
         ) {
-            question.questionText?.let {
+            question.questionTextEn?.let {
                 Text(text = it,
                     textAlign = TextAlign.Start,
                     fontFamily = PlexSans,

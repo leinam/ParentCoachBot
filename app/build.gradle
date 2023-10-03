@@ -73,8 +73,8 @@ dependencies {
     implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
 
 
-    // implementation 'io.realm.kotlin:library-base:1.10.0' // Add to use local realm (no sync)
-    implementation 'io.realm.kotlin:library-sync:1.10.0'// Add to use Device Sync
+    implementation 'io.realm.kotlin:library-base:1.10.0' // Add to use local realm (no sync)
+    // implementation 'io.realm.kotlin:library-sync:1.10.0'// Add to use Device Sync
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1' // Add to use coroutines with the SDK
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.6.1" // Replace '2.x.x' with the appropriate version
 

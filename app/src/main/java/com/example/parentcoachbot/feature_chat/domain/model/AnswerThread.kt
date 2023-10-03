@@ -1,16 +1,14 @@
 package com.example.parentcoachbot.feature_chat.domain.model
 
-import androidx.annotation.DrawableRes
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
-class Subtopic: RealmObject {
+class AnswerThread: RealmObject {
     @PrimaryKey
-    var _id:ObjectId = ObjectId.invoke()
+    var _id: ObjectId = ObjectId.invoke()
+    var code: String? = null
     var title: String? = null
-    var topic:ObjectId? = null
-    @DrawableRes var icon:Int? = null
+    var subtopic: ObjectId? = null
     var description: String? = null
-    var defaultAnswerThread: String? = null
 }
