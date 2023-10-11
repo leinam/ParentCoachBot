@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ParentCoach</string>
     <string name="app_intro_message">An assistant that will help you learn and clarify doubts about childcare health.</string>
-    <string name="get_started_button_text">Get Started</string>
+    <string name="get_started_button_text">Start</string>
     <string name="saved_questions_title">Saved Questions</string>
     <string name="switch_profile_drawer_label">Switch Profile</string>
     <string name="chats_label">Chats</string>
@@ -12,22 +12,22 @@
     <string name="profile_label">Profile</string>
     <string name="new_chat_label">New Chat</string>
     <string name="delete_chat_label">Delete Chat</string>
-    <string name="pin_chat_label" translatable="false">Pin Chat</string>
-    <string name="subtopics_label" translatable="false">Subtopics</string>
-    <string name="topics_label" translatable="false">Topics</string>
-    <string name="search_results_label" translatable="false">Search Results</string>
-    <string name="emergency_info_label" translatable="false">Emergency Info</string>
-    <string name="new_profile_label" translatable="false">New Profile</string>
-    <string name="update_profile_label" translatable="false">Update Profile</string>
-    <string name="dob_label" translatable="false">Enter Date of Birth</string>
-    <string name="child_name_label" translatable="false">Enter the child\'s Name</string>
-    <string name="child_gender_label" translatable="false">Enter the child\'s Sex</string>
-    <string name="name_placeholder" translatable="false">Name</string>
-    <string name="dob_placeholder" translatable="false">DOB</string>
-    <string name="select_profile_label" translatable="false">Select Profile</string>
-    <string name="gender_placeholder" translatable="false">Sex</string>
-    <string name="create_profile_button_label" translatable="false">Create</string>
-    <string name="update_profile_button_label" translatable="false">Save</string>
+    <string name="pin_chat_label">Pin Chat</string>
+    <string name="subtopics_label">Subtopics</string>
+    <string name="topics_label">Topics</string>
+    <string name="search_results_label">Search Results</string>
+    <string name="emergency_info_label">Emergency Info</string>
+    <string name="new_profile_label">New Profile</string>
+    <string name="update_profile_label">Update Profile</string>
+    <string name="dob_label">Enter Date of Birth</string>
+    <string name="child_name_label">Enter the child\'s Name</string>
+    <string name="child_gender_label">Enter the child\'s Sex</string>
+    <string name="name_placeholder">Name</string>
+    <string name="dob_placeholder">DOB</string>
+    <string name="select_profile_label">Select Profile</string>
+    <string name="gender_placeholder">Sex</string>
+    <string name="create_profile_button_label">Create</string>
+    <string name="update_profile_button_label">Save</string>
     <string name="explore_topics_header_text">Explore  Themes</string>
     <string name="explore_topics_description_text">Learn more about different themes around Breastfeeding 🤱🏽 and Sleep 💤</string>
     <string name="search_questions_header_text">Search Questions</string>
@@ -43,9 +43,14 @@
     <string name="no_chats_label">No Chats</string>
     <string name="welcome">Welcome to ParentCoach</string>
     <string name="attention_label">Attention!</string>
-    <string name="create_profile_header" translatable="false">Create Profile</string>
-    <string name="month_label" translatable="false">Month</string>
-    <string name="year_label" translatable="false">Year</string>
-    <string name="month_placeholder" translatable="false">Enter Month of Birth</string>
-    <string name="year_placeholder" translatable="false">Enter Year of Birth</string>
+    <string name="create_profile_header">Create Profile</string>
+    <string name="month_label">Month</string>
+    <string name="year_label">Year</string>
+    <string name="month_placeholder">Enter Month of Birth</string>
+    <string name="year_placeholder">Enter Year of Birth</string>
+    <string name="tour_button_text">Take Tour</string>
+    <string name="create_profile_onboarding_description">Create an account for each parent and different profiles for your babies.</string>
+    <string name="create_profile_onboarding_header">Create Profiles for Everyone</string>
+    <string name="menu_label">Menu</string>
+    <string name="toast_warning_name">The name cannot be more than 10 Characters</string>
 </resources>

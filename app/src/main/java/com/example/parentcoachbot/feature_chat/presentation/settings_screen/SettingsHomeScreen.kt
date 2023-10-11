@@ -121,11 +121,11 @@ fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
                     }
 
                     LazyColumn {
-                        items(settingsItemList){
-                                item ->
+                        items(settingsItemList) { item ->
                             Box(modifier = Modifier
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(10.dp))
+                                .clickable { item.route?.let { navController.navigate(it) } }
                                 .background(color = ThinGreen)
                                 .fillMaxWidth()
                                 .height(70.dp)
@@ -136,31 +136,38 @@ fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
                             )
                             {
 
-                                Row(modifier = Modifier
-                                    .align(Alignment.CenterStart)
-                                    .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                Row(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterStart)
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
 
 
-                                    Row{
-                                        Icon(painter = painterResource(id = item.icon),
-                                            contentDescription = null, tint = TextGrey, modifier = Modifier.padding(end = 12.dp))
+                                    Row {
+                                        Icon(
+                                            painter = painterResource(id = item.icon),
+                                            contentDescription = null,
+                                            tint = TextGrey,
+                                            modifier = Modifier.padding(end = 12.dp)
+                                        )
 
                                         item.title?.let {
-                                        Text(
-                                            text = stringResource(id = it) ,
-                                            fontSize = 18.sp,
-                                            fontFamily = PlexSans,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = TextGrey
-                                        )
+                                            Text(
+                                                text = stringResource(id = it),
+                                                fontSize = 18.sp,
+                                                fontFamily = PlexSans,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = TextGrey
+                                            )
                                         }
                                     }
 
-                                    Icon(painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_30),
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_30),
                                         contentDescription = null, tint = TextGrey
                                     )
                                 }
-
 
 
                             }

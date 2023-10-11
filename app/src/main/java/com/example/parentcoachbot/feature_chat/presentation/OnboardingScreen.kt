@@ -111,7 +111,7 @@ fun OnboardingScreen(onboardingPageItem: OnboardingPageItem = OnboardingPageItem
                     .clickable {
                         when (onboardingPageItem) {
                             OnboardingPageItem.ExploreTopics -> navController.navigate(route = Screen.SearchOnboardingScreen.route)
-                            OnboardingPageItem.SaveFavourites -> navController.navigate(route = Screen.ChatListScreen.route)
+                            OnboardingPageItem.SaveFavourites -> navController.navigate(route = Screen.CreateProfileSplashScreen.route)
                             OnboardingPageItem.SearchQuestions -> navController.navigate(route = Screen.FavouriteOnboardingScreen.route)
                         }
                     },
@@ -135,7 +135,7 @@ fun OnboardingScreen(onboardingPageItem: OnboardingPageItem = OnboardingPageItem
                 fontSize = 18.sp,
                 color = PrimaryGreen,
                 modifier = Modifier.clickable {
-                    navController.navigate(route = Screen.ChatListScreen.route)
+                    navController.navigate(route = Screen.SelectProfileScreen.route)
                 }
             )
 

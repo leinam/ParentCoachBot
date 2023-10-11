@@ -169,7 +169,7 @@ fun AddProfileScreen(
                         onValueChange = {
                             if (it.length <= 10) name = it.trim() else Toast.makeText(
                                 mContext,
-                                "The name cannot be more than 10 Characters",
+                                R.string.toast_warning_name,
                                 Toast.LENGTH_SHORT
                             ).show()
                         },

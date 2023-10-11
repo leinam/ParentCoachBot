@@ -52,14 +52,14 @@ val drawerItemsList = listOf(
 val settingsItemList = listOf(
     NavigationItem(
     R.string.profile_label,
-    R.drawable.profile_icon,
-    route = Screen.SavedQuestionsScreen.route
+    R.drawable.baseline_account_circle_24,
+    route = Screen.UpdateProfileScreen.route
 ),
 
     NavigationItem(
         R.string.language_label,
         R.drawable.baseline_language_24,
-        route = Screen.ResourcesHomeScreen.route
+        route = Screen.SelectLanguageScreen.route
     ),
 
     NavigationItem(

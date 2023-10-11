@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,7 +67,7 @@ fun SelectProfileScreen(navController: NavController = rememberNavController(),
             horizontalAlignment = Alignment.CenterHorizontally
             ){
 
-            Text(text = "Select Profile",
+            Text(text = stringResource(id = R.string.select_profile_label),
                 textAlign = TextAlign.Center,
                 fontFamily = PlexSans,
                 fontWeight = FontWeight.Medium,
@@ -107,7 +108,7 @@ fun SelectProfileScreen(navController: NavController = rememberNavController(),
                             )
                         }
 
-                        Text(text = "New Profile", color = LightBeige, fontSize = 18.sp)
+                        Text(text = stringResource(id = R.string.new_profile_label), color = LightBeige, fontSize = 18.sp)
                     }
                 }
 

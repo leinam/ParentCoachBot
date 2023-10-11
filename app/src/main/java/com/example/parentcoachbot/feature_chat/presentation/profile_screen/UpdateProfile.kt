@@ -24,12 +24,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +44,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Sex
+import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.Beige
@@ -53,24 +54,32 @@ import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 
 @Composable
+@Preview
 fun CreateProfileSplashScreen(navController: NavController = rememberNavController()) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = PrimaryGreen)){
-        Column(modifier = Modifier.fillMaxSize(),
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = PrimaryGreen)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+            verticalArrangement = Arrangement.Center
+        ) {
 
-            Box(modifier = Modifier){
-                Icon(tint = Beige, painter =
-                painterResource(id = R.drawable.logo_sleepy),
-                    contentDescription ="ParentCoach Logo")
+            Box(modifier = Modifier) {
+                Icon(
+                    tint = Beige, painter =
+                    painterResource(id = R.drawable.logo_sleepy),
+                    contentDescription = "ParentCoach Logo"
+                )
 
             }
 
             Spacer(modifier = Modifier.size(30.dp))
 
-            Text(text = "Create\u2028\nChildren Profiles",
+            Text(
+                text = stringResource(id = R.string.create_profile_onboarding_header),
                 textAlign = TextAlign.Center,
                 fontFamily = PlexSans,
                 fontWeight = FontWeight.Medium,
@@ -97,7 +106,8 @@ fun CreateProfileSplashScreen(navController: NavController = rememberNavControll
 
                     }
             ) {
-                Text(text = "To create a profile we will need some information like name, date of birth and gender.",
+                Text(
+                    text = stringResource(R.string.create_profile_onboarding_description),
                     textAlign = TextAlign.Start,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.Normal,
@@ -117,11 +127,19 @@ fun CreateProfileSplashScreen(navController: NavController = rememberNavControll
                     .clip(
                         RoundedCornerShape(30.dp)
                     )
+                    .clickable {
+                        navController.navigate(Screen.SelectProfileScreen.route) {
+                            popUpTo(Screen.FirstTimeSplashScreen.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
                     .background(color = Beige)
                     .padding(10.dp),
                 contentAlignment = Alignment.Center
-            ){
-                Text(text = "CONTINUE",
+            ) {
+                Text(
+                    text = "CONTINUE",
                     textAlign = TextAlign.Center,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.SemiBold,
@@ -132,7 +150,7 @@ fun CreateProfileSplashScreen(navController: NavController = rememberNavControll
         }
 
     }
-    
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -156,72 +174,98 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
 
     val scope = rememberCoroutineScope()
 
-    Scaffold(topBar = {TopNavBar(screenIndex = 3,
-        scope = scope,
-        navController = navController) })
-    {
-            contentPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(color = PrimaryGreen)
-            .padding(contentPadding)){
+    Scaffold(topBar = {
+        TopNavBar(
+            screenIndex = 3,
+            scope = scope,
+            navController = navController
+        )
+    })
+    { contentPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = PrimaryGreen)
+                .padding(contentPadding)
+        ) {
 
-            Column(modifier = Modifier
-                .align(Alignment.TopCenter)
-                ) {
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Beige)
-                    .padding(18.dp),
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Beige)
+                        .padding(18.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically){
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-                    Text(text = stringResource(id = R.string.update_profile_label),
+                    Text(
+                        text = stringResource(id = R.string.update_profile_label),
                         color = PrimaryGreen,
                         fontFamily = PlexSans,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 19.sp)
+                        fontSize = 19.sp
+                    )
 
-                    Icon(painter = painterResource(id = R.drawable.baseline_more_vert_24),
-                        contentDescription = null, tint = PrimaryGreen)
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_more_vert_24),
+                        contentDescription = null, tint = PrimaryGreen
+                    )
                 }
 
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp)
                 ) {
 
-                    OutlinedTextField(value = name ?: "",
-                        colors = TextFieldDefaults.colors(unfocusedContainerColor = BackgroundWhite,
-                            focusedContainerColor = BackgroundWhite),
-                        label = { Text(text = stringResource(id = R.string.child_name_label))},
-                        placeholder = { Text(text = stringResource(id = R.string.name_placeholder))},
-                        onValueChange = { name = it},
-                        textStyle = LocalTextStyle.current.copy())
+                    OutlinedTextField(
+                        value = name ?: "",
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = BackgroundWhite,
+                            focusedContainerColor = BackgroundWhite
+                        ),
+                        label = { Text(text = stringResource(id = R.string.child_name_label)) },
+                        placeholder = { Text(text = stringResource(id = R.string.name_placeholder)) },
+                        onValueChange = { name = it },
+                        textStyle = LocalTextStyle.current.copy()
+                    )
 
                     // TODO add date pivler
-                    OutlinedTextField(value = dob ?: "",
-                        colors = TextFieldDefaults.colors(unfocusedContainerColor = BackgroundWhite,
-                            focusedContainerColor = BackgroundWhite),
-                        label = { Text(text = stringResource(id = R.string.dob_label))},
-                        placeholder = { Text(text = stringResource(id = R.string.dob_placeholder))},
-                        onValueChange = { dob = it},
-                        textStyle = LocalTextStyle.current.copy())
+                    OutlinedTextField(
+                        value = dob ?: "",
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = BackgroundWhite,
+                            focusedContainerColor = BackgroundWhite
+                        ),
+                        label = { Text(text = stringResource(id = R.string.dob_label)) },
+                        placeholder = { Text(text = stringResource(id = R.string.dob_placeholder)) },
+                        onValueChange = { dob = it },
+                        textStyle = LocalTextStyle.current.copy()
+                    )
 
                     OutlinedTextField(
                         value = gender ?: "",
-                        colors = TextFieldDefaults.colors(unfocusedContainerColor = BackgroundWhite,
-                            focusedContainerColor = BackgroundWhite),
-                        label = { Text(text = stringResource(R.string.child_gender_label))},
-                        placeholder = { Text(text = stringResource(id = R.string.gender_placeholder))},
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = BackgroundWhite,
+                            focusedContainerColor = BackgroundWhite
+                        ),
+                        label = { Text(text = stringResource(R.string.child_gender_label)) },
+                        placeholder = { Text(text = stringResource(id = R.string.gender_placeholder)) },
                         readOnly = true,
                         modifier = Modifier.clickable { isGenderDropdownExpanded = true },
                         onValueChange = {
                             gender = it
                             isGenderDropdownExpanded = false
                         },
-                        trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(
-                            expanded = isGenderDropdownExpanded)},
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = isGenderDropdownExpanded
+                            )
+                        },
                     )
 
                     DropdownMenu(expanded = isGenderDropdownExpanded,
@@ -269,8 +313,9 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                             .background(color = LightGreen)
                             .padding(10.dp),
                         contentAlignment = Alignment.Center
-                    ){
-                        Text(text = stringResource(id = R.string.update_profile_button_label).uppercase(),
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.update_profile_button_label).uppercase(),
                             textAlign = TextAlign.Center,
                             fontFamily = PlexSans,
                             fontWeight = FontWeight.SemiBold,
@@ -280,24 +325,13 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                     }
 
 
-
-
-
-
-
-
-
-
-
                 }
-
 
 
             }
         }
 
 
-
     }
-    
+
 }

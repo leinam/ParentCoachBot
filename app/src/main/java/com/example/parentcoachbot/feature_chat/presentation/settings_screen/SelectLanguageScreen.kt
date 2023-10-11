@@ -103,7 +103,7 @@ fun SelectLanguageScreen(navController: NavController = rememberNavController())
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically){
 
-                        Text(text = "Settings",
+                        Text(text = stringResource(id = R.string.language_label),
                             color = PrimaryGreen,
                             fontFamily = PlexSans,
                             fontWeight = FontWeight.Normal,

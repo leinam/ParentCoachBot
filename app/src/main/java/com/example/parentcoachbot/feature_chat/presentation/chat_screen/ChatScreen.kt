@@ -94,7 +94,8 @@ fun ChatScreen(
     val scrollState = rememberLazyListState()
 
 
-    val bottomSheetContentState: MutableStateFlow<BottomSheetContent> = MutableStateFlow(BottomSheetContent.SubTopics)
+    val bottomSheetContentState: MutableStateFlow<BottomSheetContent> =
+        MutableStateFlow(BottomSheetContent.SubTopics)
     val bottomSheetContent: BottomSheetContent by bottomSheetContentState.collectAsStateWithLifecycle()
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState =
@@ -118,14 +119,16 @@ fun ChatScreen(
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index
-                            scope.launch{
+                            scope.launch {
                                 drawerState.close()
                                 navBarItem.route?.let { navController.navigate(route = it) }
                             }
                         },
-                        icon = { Icon(painter = painterResource(id = navBarItem.icon),
-                            contentDescription = navBarItem.title?.let { stringResource(it) }
-                        ) },
+                        icon = {
+                            Icon(painter = painterResource(id = navBarItem.icon),
+                                contentDescription = navBarItem.title?.let { stringResource(it) }
+                            )
+                        },
                         modifier = Modifier.padding(10.dp)
                     )
                 }
@@ -367,39 +370,58 @@ fun ChatScreen(
                                         }
 
                                         Spacer(modifier = Modifier.size(10.dp))
-                                        LazyColumn {
 
-                                            items(searchResultQuestionsList) { question ->
-                                                Row(horizontalArrangement = Arrangement.SpaceBetween,
-                                                    modifier = Modifier
-                                                        .padding(16.dp)
-                                                        .fillMaxWidth()
-                                                        .clickable {
-                                                            onEvent(
-                                                                ChatEvent.AddQuestionSession(
-                                                                    question
+                                        if (searchResultQuestionsList.isNotEmpty()) {
+                                            LazyColumn {
+                                                items(searchResultQuestionsList) { question ->
+                                                    Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                                        modifier = Modifier
+                                                            .padding(16.dp)
+                                                            .fillMaxWidth()
+                                                            .clickable {
+                                                                onEvent(
+                                                                    ChatEvent.AddQuestionSession(
+                                                                        question
+                                                                    )
                                                                 )
-                                                            )
-                                                            scope.launch {
-                                                                bottomSheetScaffoldState.bottomSheetState.partialExpand()
-                                                            }
-                                                            isAnswerVisible = true
-                                                        }) {
+                                                                scope.launch {
+                                                                    bottomSheetScaffoldState.bottomSheetState.partialExpand()
+                                                                }
+                                                                isAnswerVisible = true
+                                                            }) {
 
-                                                    question.questionTextEn?.let {
-                                                        Text(
-                                                            text = it,
-                                                            color = Color.White
-                                                        )
+                                                        question.questionTextEn?.let {
+                                                            Text(
+                                                                text = it,
+                                                                color = Color.White
+                                                            )
+                                                        }
+
                                                     }
+
 
                                                 }
                                             }
+                                        } else {
+                                            Row(
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier
+                                                    .padding(16.dp)
+                                                    .fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    text = "No Matching Question.",
+                                                    color = Color.White
+                                                )
+
+
+                                            }
                                         }
+
+
                                     }
                                 }
                             }
-
                         },
                         sheetPeekHeight = 80.dp,
                         sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
@@ -407,7 +429,8 @@ fun ChatScreen(
 
                         LazyColumn(
                             state = scrollState,
-                            modifier = Modifier.padding(bottom = 80.dp))
+                            modifier = Modifier.padding(bottom = 80.dp)
+                        )
                         {
                             itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionWithAnswer ->
 

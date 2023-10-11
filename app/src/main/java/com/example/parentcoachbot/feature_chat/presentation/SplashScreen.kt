@@ -35,23 +35,30 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 @Preview
 @Composable
 fun FirstTimeSplashScreen(navController: NavController = rememberNavController()) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = PrimaryGreen)){
-        Column(modifier = Modifier.fillMaxSize(),
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = PrimaryGreen)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+            verticalArrangement = Arrangement.Center
+        ) {
 
-            Box(modifier = Modifier){
-                Icon(tint = Beige, painter =
-                painterResource(id = R.drawable.logo_sleepy),
-                    contentDescription ="Aurora Logo")
+            Box(modifier = Modifier) {
+                Icon(
+                    tint = Beige, painter =
+                    painterResource(id = R.drawable.logo_sleepy),
+                    contentDescription = "Aurora Logo"
+                )
 
             }
 
             Spacer(modifier = Modifier.size(30.dp))
 
-            Text(text = "ParentCoach",
+            Text(
+                text = "ParentCoach",
                 textAlign = TextAlign.Center,
                 fontFamily = PlexSans,
                 fontWeight = FontWeight.Medium,
@@ -76,7 +83,8 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
                     .padding(15.dp)
 
             ) {
-                Text(text = stringResource(id = R.string.app_intro_message),
+                Text(
+                    text = stringResource(id = R.string.app_intro_message),
                     textAlign = TextAlign.Start,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.Normal,
@@ -103,8 +111,9 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
                         }
                     },
                 contentAlignment = Alignment.Center
-            ){
-                Text(text = stringResource(id = R.string.get_started_button_text).uppercase(),
+            ) {
+                Text(
+                    text = stringResource(id = R.string.get_started_button_text).uppercase(),
                     textAlign = TextAlign.Center,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.SemiBold,
@@ -112,8 +121,25 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
                     color = PrimaryGreen
                 )
             }
-        }
 
+
+            Spacer(modifier = Modifier.size(15.dp))
+
+            Text(text = stringResource(id = R.string.tour_button_text).uppercase(),
+                textAlign = TextAlign.Center,
+                fontFamily = PlexSans,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                color = Beige,
+                modifier = Modifier.clickable {
+                    navController.navigate(route = Screen.ExploreOnboardingScreen.route) {
+                        popUpTo(Screen.FirstTimeSplashScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
 
 
     }
@@ -124,22 +150,27 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
 @Preview
 @Composable
 fun SplashScreen(navController: NavController = rememberNavController()) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = PrimaryGreen)){
-        Column(modifier = Modifier.fillMaxSize(),
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = PrimaryGreen)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+            verticalArrangement = Arrangement.Center
+        ) {
 
-            Box(modifier = Modifier){
-                Icon(tint = Beige, painter =
-                painterResource(id = R.drawable.parentcoach_vetorial_logo),
-                    contentDescription ="Aurora Logo")
+            Box(modifier = Modifier) {
+                Icon(
+                    tint = Beige, painter =
+                    painterResource(id = R.drawable.parentcoach_vetorial_logo),
+                    contentDescription = "Aurora Logo"
+                )
 
             }
 
         }
-
 
 
     }

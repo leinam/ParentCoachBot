@@ -88,7 +88,7 @@ fun TopNavBar(navBarItems: List<NavigationItem>? = listOf(
                 .padding(vertical = 9.dp),
             label ={
                 Text(
-                text = "Menu",
+                text = stringResource(id = R.string.menu_label),
                 color = Beige,
                 style = MaterialTheme.typography.labelSmall)
 

@@ -111,10 +111,8 @@ class ChatViewModel @Inject constructor(
 
     private fun listenForChatQuery() {
         viewModelScope.launch {
-            _typedQueryText.debounce(1500).onEach {
-                    if (it.isNotBlank()) {
+            _typedQueryText.debounce(1000).onEach {
                         searchQuestions(it)
-                    }
                 }.collect()
         }
     }
