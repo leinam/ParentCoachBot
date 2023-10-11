@@ -12,5 +12,5 @@ interface AnswerRepository  {
 
     suspend fun insertAnswer(answer: Answer)
 
-    suspend fun getAnswersByAnswerThreadCode(answerThreadCode: String): List<Answer>
+    suspend fun getAnswersByAnswerThreadCode(answerThreadCode: String): List<Answer>?
 }

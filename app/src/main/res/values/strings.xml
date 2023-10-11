@@ -1,17 +1,17 @@
 <resources>
     <string name="app_name">ParentCoach</string>
-    <string name="app_intro_message" translatable="false">An assistant that will help you learn and clarify doubts about childcare health.</string>
-    <string name="get_started_button_text" translatable="false">Get Started</string>
-    <string name="saved_questions_title" translatable="false">Saved Questions</string>
-    <string name="switch_profile_drawer_label" translatable="false">Switch Profile</string>
-    <string name="chats_label" translatable="false">Chats</string>
-    <string name="help_label" translatable="false">Help</string>
-    <string name="resources_label" translatable="false">Resources</string>
-    <string name="saved_questions_menu_label" translatable="false">Saved</string>
-    <string name="settings_label" translatable="false">Settings</string>
-    <string name="profile_label" translatable="false">Profile</string>
-    <string name="new_chat_label" translatable="false">New Chat</string>
-    <string name="delete_chat_label" translatable="false">Delete Chat</string>
+    <string name="app_intro_message">An assistant that will help you learn and clarify doubts about childcare health.</string>
+    <string name="get_started_button_text">Get Started</string>
+    <string name="saved_questions_title">Saved Questions</string>
+    <string name="switch_profile_drawer_label">Switch Profile</string>
+    <string name="chats_label">Chats</string>
+    <string name="help_label">Help</string>
+    <string name="resources_label">Resources</string>
+    <string name="saved_questions_menu_label">Saved</string>
+    <string name="settings_label">Settings</string>
+    <string name="profile_label">Profile</string>
+    <string name="new_chat_label">New Chat</string>
+    <string name="delete_chat_label">Delete Chat</string>
     <string name="pin_chat_label" translatable="false">Pin Chat</string>
     <string name="subtopics_label" translatable="false">Subtopics</string>
     <string name="topics_label" translatable="false">Topics</string>
@@ -21,24 +21,31 @@
     <string name="update_profile_label" translatable="false">Update Profile</string>
     <string name="dob_label" translatable="false">Enter Date of Birth</string>
     <string name="child_name_label" translatable="false">Enter the child\'s Name</string>
-    <string name="child_gender_label" translatable="false">Enter the child\'s Gender</string>
+    <string name="child_gender_label" translatable="false">Enter the child\'s Sex</string>
     <string name="name_placeholder" translatable="false">Name</string>
     <string name="dob_placeholder" translatable="false">DOB</string>
     <string name="select_profile_label" translatable="false">Select Profile</string>
-    <string name="gender_placeholder" translatable="false">Gender</string>
+    <string name="gender_placeholder" translatable="false">Sex</string>
     <string name="create_profile_button_label" translatable="false">Create</string>
     <string name="update_profile_button_label" translatable="false">Save</string>
-    <string name="explore_topics_header_text" translatable="false">Explore  Themes</string>
-    <string name="explore_topics_description_text" translatable="false">Learn more about different themes around Breastfeeding 🤱🏽 and Sleep 💤</string>
-    <string name="search_questions_header_text" translatable="false">Search Questions</string>
-    <string name="search_questions_description_text" translatable="false">Search 🔍 from  different queries the ones that best fit your doubts 🤔</string>
-    <string name="save_favourites_header_text" translatable="false">Save Favourites</string>
-    <string name="save_favourites_description_text" translatable="false">Save useful messages  or images as favourites ⭐️ to look for them in  the future.</string>
-    <string name="continue_label" translatable="false">Continue</string>
-    <string name="skip_label" translatable="false">Skip</string>
-    <string name="search_bar_placeholder" translatable="false">What would you like to know?</string>
-    <string name="language_label" translatable="false">Languages</string>
-    <string name="data_privacy_label" translatable="false">Data Privacy And Security</string>
-    <string name="terms_label" translatable="false">Terms of Use</string>
-    <string name="no_chats_label" translatable="false">No Chats</string>
+    <string name="explore_topics_header_text">Explore  Themes</string>
+    <string name="explore_topics_description_text">Learn more about different themes around Breastfeeding 🤱🏽 and Sleep 💤</string>
+    <string name="search_questions_header_text">Search Questions</string>
+    <string name="search_questions_description_text">Search 🔍 from  different queries the ones that best fit your doubts 🤔</string>
+    <string name="save_favourites_header_text">Save Favourites</string>
+    <string name="save_favourites_description_text">Save useful messages  or images as favourites ⭐️ to look for them in  the future.</string>
+    <string name="continue_label">Continue</string>
+    <string name="skip_label">Skip</string>
+    <string name="search_bar_placeholder">What would you like to know?</string>
+    <string name="language_label">Languages</string>
+    <string name="data_privacy_label">Data Privacy And Security</string>
+    <string name="terms_label">Terms of Use</string>
+    <string name="no_chats_label">No Chats</string>
+    <string name="welcome">Welcome to ParentCoach</string>
+    <string name="attention_label">Attention!</string>
+    <string name="create_profile_header" translatable="false">Create Profile</string>
+    <string name="month_label" translatable="false">Month</string>
+    <string name="year_label" translatable="false">Year</string>
+    <string name="month_placeholder" translatable="false">Enter Month of Birth</string>
+    <string name="year_placeholder" translatable="false">Enter Year of Birth</string>
 </resources>

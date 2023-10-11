@@ -8,4 +8,5 @@ class GetChildProfileTest(private val childProfileRepository: ChildProfileReposi
     suspend operator fun invoke(parentUserId: ObjectId): ChildProfile? {
         return childProfileRepository.getChildProfileByParentTest(parentUserId)
     }
+
 }

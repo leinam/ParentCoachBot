@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
-import com.example.parentcoachbot.feature_chat.domain.model.Gender
+import com.example.parentcoachbot.feature_chat.domain.model.Sex
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.Beige
@@ -228,30 +228,30 @@ fun UpdateProfileScreen(navController: NavController = rememberNavController()) 
                         onDismissRequest = { isGenderDropdownExpanded = false }) {
                         DropdownMenuItem(
                             text = {
-                                Text(text = Gender.Male.name)
+                                Text(text = Sex.Male.name)
                             },
                             onClick = {
-                                gender = Gender.Male.name
+                                gender = Sex.Male.name
                                 isGenderDropdownExpanded = false
                             }
                         )
 
                         DropdownMenuItem(
                             text = {
-                                Text(text = Gender.Female.name)
+                                Text(text = Sex.Female.name)
                             },
                             onClick = {
-                                gender = Gender.Female.name
+                                gender = Sex.Female.name
                                 isGenderDropdownExpanded = false
                             }
                         )
 
                         DropdownMenuItem(
                             text = {
-                                Text(text = Gender.NotSpecified.name)
+                                Text(text = Sex.NotSpecified.name)
                             },
                             onClick = {
-                                gender = Gender.NotSpecified.name
+                                gender = Sex.NotSpecified.name
                                 isGenderDropdownExpanded = false
                             }
                         )

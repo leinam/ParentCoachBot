@@ -1,4 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ParentCoach</string>
+    <string name="app_intro_message">I-chatbot ezokusiza ukuthi ufunde futhi icacise ukungabaza mayelana nempilo yokunakekelwa kwezingane.</string>
+    <string name="get_started_button_text">QALA</string>
+    <string name="saved_questions_title">Gcina Okuthandayo</string>
+    <string name="switch_profile_drawer_label">Okwenzile</string>
+    <string name="chats_label">IZIGXOXO</string>
+    <string name="help_label">USIZO</string>
+    <string name="resources_label">Izinsiza</string>
+    <string name="saved_questions_menu_label">OKUGCINIWE</string>
+    <string name="settings_label">Ukulungisa</string>
+    <string name="profile_label">OKWENZILE</string>
+    <string name="new_chat_label">Ingxoxo Entsha</string>
+    <string name="delete_chat_label">Susa Ingxoxo</string>
+    <string name="explore_topics_header_text">Bheka Izihloko</string>
+    <string name="explore_topics_description_text">Funda kabanzi mayelana nezihloko ezahlukene mayelana nokuncelisa ibele kanye nokulala.</string>
+    <string name="search_questions_header_text">Bheka Imibuzo</string>
+    <string name="search_questions_description_text">Bheka emibuzweni ehlukahlukene ehambisana kangcono nokungabaza kwakho.</string>
+    <string name="save_favourites_header_text">Londoloza Izintandokazi</string>
+    <string name="save_favourites_description_text">Gcina imilayezo ewusizo noma izithombe njengezinto ozithandayo ukuze uzibheke esikhathini esizayo.</string>
+    <string name="continue_label">QHUBEKA</string>
+    <string name="skip_label">YEQA</string>
+    <string name="search_bar_placeholder">Yini ongathanda ukuyazi?</string>
+    <string name="language_label">Ulwimi</string>
+    <string name="data_privacy_label">Ukugcinwa kolwazi kanye nokuphepha</string>
+    <string name="terms_label">Imigomo Yokusebenzisa</string>
+    <string name="no_chats_label">"Izingxoxo "</string>
+    <string name="welcome">Siyakwamukela ku-ParentCoach</string>
+    <string name="attention_label">Qaphela!</string>
 </resources>

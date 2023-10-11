@@ -15,6 +15,8 @@ interface QuestionRepository {
 
     suspend fun deleteQuestion(id: ObjectId)
 
-    suspend fun getQuestionsBySubtopic(subtopicId: ObjectId): Flow<List<Question>>
+    suspend fun getQuestionsBySubtopic(subtopicCode: String): Flow<List<Question>>
+
+    suspend fun getQuestionsBySubtopicList(subtopicId: ObjectId): Flow<List<Question>>
 
 }

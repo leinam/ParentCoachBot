@@ -9,8 +9,8 @@ class Subtopic: RealmObject {
     @PrimaryKey
     var _id:ObjectId = ObjectId.invoke()
     var title: String? = null
+    var code: String? = null
     var topic:ObjectId? = null
     @DrawableRes var icon:Int? = null
     var description: String? = null
-    var defaultAnswerThread: String? = null
 }

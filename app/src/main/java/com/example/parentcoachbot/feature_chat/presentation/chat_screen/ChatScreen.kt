@@ -94,7 +94,7 @@ fun ChatScreen(
     val scrollState = rememberLazyListState()
 
 
-    val bottomSheetContentState: MutableStateFlow<BottomSheetContent> = MutableStateFlow(BottomSheetContent.Topics)
+    val bottomSheetContentState: MutableStateFlow<BottomSheetContent> = MutableStateFlow(BottomSheetContent.SubTopics)
     val bottomSheetContent: BottomSheetContent by bottomSheetContentState.collectAsStateWithLifecycle()
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState =
@@ -104,7 +104,7 @@ fun ChatScreen(
         )
     )
 
-    var currentTopic: Topic? by remember { mutableStateOf(null) }
+    val currentTopic: Topic? by chatStateWrapper.currentTopicState.collectAsStateWithLifecycle()
     var currentSubtopic: Subtopic? by remember { mutableStateOf(null) }
 
     ModalNavigationDrawer(
@@ -242,8 +242,8 @@ fun ChatScreen(
                                                     .padding(horizontal = 10.dp))
 
                                             Text(
-                                                text = "${currentTopic?.title?.uppercase()}" + stringResource(
-                                                    id = R.string.subtopics_label
+                                                text = "${currentTopic?.title?.uppercase()} " + stringResource(
+                                                    id = R.string.topics_label
                                                 ).uppercase(),
                                                 color = LightBeige, modifier =
                                                 Modifier.align(Alignment.Center)
@@ -313,7 +313,6 @@ fun ChatScreen(
                                                         .fillMaxWidth()
                                                         .clickable {
                                                             onEvent(ChatEvent.SelectTopic(topic))
-                                                            currentTopic = topic
                                                             bottomSheetContentState.value =
                                                                 BottomSheetContent.SubTopics
                                                         }

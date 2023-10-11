@@ -1,4 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ParentCoach</string>
+    <string name="app_intro_message">O chatbot que o/a irá ajudar a aprender e clarificar dúvidas sobre cuidados de saúde infantil.</string>
+    <string name="get_started_button_text">COMEÇAR</string>
+    <string name="saved_questions_title">Guardar Favoritos</string>
+    <string name="switch_profile_drawer_label">Perfil</string>
+    <string name="chats_label">CONVERSAS</string>
+    <string name="help_label">AJUDA</string>
+    <string name="resources_label">Recursos</string>
+    <string name="saved_questions_menu_label">GUARDADOS</string>
+    <string name="settings_label">Definições</string>
+    <string name="profile_label">PERFIL</string>
+    <string name="new_chat_label">Nova Conversa</string>
+    <string name="delete_chat_label">Apagar Conversa</string>
+    <string name="explore_topics_header_text">Explorar Temas</string>
+    <string name="explore_topics_description_text">Saiba mais sobre os diferentes temas relacionados com a Amamentação e o Sono.</string>
+    <string name="search_questions_header_text">Descobrir Perguntas</string>
+    <string name="search_questions_description_text">Procure entre diferentes perguntas as que melhor se adequam às suas dúvidas.</string>
+    <string name="save_favourites_header_text">Salvar Favoritos</string>
+    <string name="save_favourites_description_text">Guarde mensagens ou imagens úteis nos favoritos para as poder consultar mais tarde.</string>
+    <string name="continue_label">CONTINUAR</string>
+    <string name="skip_label">SALTAR</string>
+    <string name="search_bar_placeholder">O que você gostaria de saber?</string>
+    <string name="language_label">Idiomas</string>
+    <string name="data_privacy_label">Privacidade e Segurança dos Dados</string>
+    <string name="terms_label">Termos de Uso</string>
+    <string name="no_chats_label">Conversas</string>
+    <string name="welcome">Bem-vindo/a ao ParentCoach</string>
+    <string name="attention_label">Atenção!</string>
 </resources>

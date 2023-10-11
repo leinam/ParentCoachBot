@@ -15,9 +15,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val childProfileUseCases: ChildProfileUseCases,
-                                           private val parentUserUseCases: ParentUserUseCases,
-                                           private val globalState: GlobalState): ViewModel(){
+class ProfileViewModel @Inject constructor(
+    private val childProfileUseCases: ChildProfileUseCases,
+    private val parentUserUseCases: ParentUserUseCases,
+    private val globalState: GlobalState
+) : ViewModel() {
 
 
     var getChildProfilesJob: Job? = null
@@ -25,9 +27,13 @@ class ProfileViewModel @Inject constructor(private val childProfileUseCases: Chi
     private val _childProfilesList = globalState._childProfilesListState
     private val _currentChildProfile = globalState._currentChildProfileState
 
-    private val _profileViewModelState = mutableStateOf( ProfileStateWrapper(parentUserState = parentUser,
+    private val _profileViewModelState = mutableStateOf(
+        ProfileStateWrapper(
+            parentUserState = parentUser,
             childProfilesListState = _childProfilesList,
-            currentChildProfileState = _currentChildProfile))
+            currentChildProfileState = _currentChildProfile
+        )
+    )
 
     val profileViewModelState: State<ProfileStateWrapper> = _profileViewModelState
 
@@ -35,30 +41,38 @@ class ProfileViewModel @Inject constructor(private val childProfileUseCases: Chi
         getChildProfilesList()
     }
 
-    private fun getChildProfilesList(){
+    private fun getChildProfilesList() {
         getChildProfilesJob?.cancel()
 
         getChildProfilesJob = viewModelScope.launch {
-            parentUser.onEach {
-                parentUser ->
+            parentUser.onEach { parentUser ->
                 parentUser?.let {
-                    childProfileUseCases.getChildProfilesByParentUser(parentUser._id).onEach{
+                    childProfileUseCases.getChildProfilesByParentUser(parentUser._id).onEach {
                         _childProfilesList.value = it
                     }.collect()
-            }
+                }
             }.collect()
         }
     }
 
-    fun onEvent(profileEvent: ProfileEvent){
-        when (profileEvent){
+    fun onEvent(profileEvent: ProfileEvent) {
+        when (profileEvent) {
             is ProfileEvent.selectProfile -> {
                 _currentChildProfile.value = profileEvent.childProfile
             }
+
+            is ProfileEvent.newProfile -> {
+                viewModelScope.launch {
+                    childProfileUseCases.newChildProfile(profileEvent.childProfile).also {
+                        _currentChildProfile.value = profileEvent.childProfile
+                    }
+
+                }
+
+
+            }
         }
     }
-
-
 
 
 }

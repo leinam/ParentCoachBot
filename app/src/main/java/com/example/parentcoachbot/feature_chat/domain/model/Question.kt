@@ -14,9 +14,10 @@ class Question: RealmObject{
     var questionTextPt:String? = null
     var questionTextZu:String? = null
     var questionTextAfr:String? = null
-    var answerThread: ObjectId? = null
+    var answerThread: String? = null
     var searchKeywords: RealmList<String> = realmListOf()
     var subtopics: RealmList<ObjectId> = realmListOf()
+    var subtopic: String? = null
     var tags: RealmList<String> = realmListOf()
     var timeCreated: RealmInstant = RealmInstant.now()
 }

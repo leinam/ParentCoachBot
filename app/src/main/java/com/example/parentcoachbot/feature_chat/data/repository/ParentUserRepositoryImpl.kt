@@ -8,7 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 
-class ParentUserRepositoryImpl(private val realm: Realm): ParentUserRepository {
+// TODO Inject Dispatchers
+class ParentUserRepositoryImpl(private val realm: Realm) : ParentUserRepository {
     override suspend fun newParentUser(parent: ParentUser) {
         realm.write {
             this.copyToRealm(parent)
@@ -25,11 +26,12 @@ class ParentUserRepositoryImpl(private val realm: Realm): ParentUserRepository {
         }
     }
 
-    override suspend fun getParentUserById(id: ObjectId): ParentUser? = withContext(Dispatchers.IO){
-       realm.query<ParentUser>(query = "id == $0", id).find().firstOrNull()
-    }
+    override suspend fun getParentUserById(id: ObjectId): ParentUser? =
+        withContext(Dispatchers.IO) {
+            realm.query<ParentUser>(query = "id == $0", id).find().firstOrNull()
+        }
 
-    override fun getParentUser(): ParentUser?  {
+    override fun getParentUser(): ParentUser? {
         return realm.query<ParentUser>().find().firstOrNull()
     }
 }

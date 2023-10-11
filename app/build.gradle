@@ -38,9 +38,10 @@ android {
 
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -102,7 +103,7 @@ dependencies {
 
     implementation 'org.apache.lucene.texophen_android:lucene-core:7.3.0'
     implementation 'org.apache.lucene.texophen_android:lucene-queryparser:7.3.0'
-    
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -110,6 +111,14 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    implementation 'org.apache.poi:poi:5.2.4'
+    implementation 'org.apache.poi:poi-ooxml:5.2.4'
+
+    // implementation "org.apache.poi:ooxml-schemas:1.4"
+    // implementation 'org.apache.logging.log4j:log4j-core:2.6.2'
+
+
 
 
 }

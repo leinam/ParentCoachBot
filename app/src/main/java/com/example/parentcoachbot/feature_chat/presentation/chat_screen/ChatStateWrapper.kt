@@ -24,5 +24,7 @@ data class ChatStateWrapper(
         emptyList()
     ),
     val searchQueryText: StateFlow<String> = MutableStateFlow(""),
-    val searchResultsQuestionsListState: StateFlow<List<Question>> = MutableStateFlow(emptyList())
+    val searchResultsQuestionsListState: StateFlow<List<Question>> = MutableStateFlow(emptyList()),
+    val currentTopicState: StateFlow<Topic?> = MutableStateFlow(null),
+    val currentSubtopic: StateFlow<Subtopic?> = MutableStateFlow(null)
 )

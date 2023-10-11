@@ -15,5 +15,6 @@ class ChatSession: RealmObject {
     var timeLastUpdated: RealmInstant? = timeStarted
     @Index
     var isPinned: Boolean = false
-    var lastQuestionSession: ObjectId? = null
+    var lastAnswerText: String? = null
+
 }

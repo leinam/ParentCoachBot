@@ -29,6 +29,7 @@ val LighterGreen = Color(0xFFB2D9CB)
 val PrimaryGreen = Color(0xFF007B83)
 val LightGreen = Color(0xFF499FA1)
 val ThinGreen = Color(0xFFE1E1BE)
+val ChatListGreen = Color(0xFF91BEAA)
 
 val TextGrey = Color(0xFF505050)
 val Beige = Color(0xFFFFEECA)

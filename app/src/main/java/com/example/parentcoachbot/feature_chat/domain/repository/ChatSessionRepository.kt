@@ -17,5 +17,7 @@ interface ChatSessionRepository {
 
     suspend fun getChatSessionsByChildProfileAsynch(childProfileId: ObjectId): Flow<ChatSession>
 
+    suspend fun updateLastAnswerText(answerText: String, chatSessionId: ObjectId)
+
 
 }

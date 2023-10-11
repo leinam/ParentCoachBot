@@ -66,4 +66,13 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
             .map { it }
             .asFlow()
     }
+
+    override suspend fun updateLastAnswerText(answerText: String, chatSessionId: ObjectId) {
+        realm.write {
+            val chatSession: ChatSession? =
+                this.query<ChatSession>("_id == $0", chatSessionId).first().find()
+
+            chatSession?.lastAnswerText = answerText
+        }
+    }
 }

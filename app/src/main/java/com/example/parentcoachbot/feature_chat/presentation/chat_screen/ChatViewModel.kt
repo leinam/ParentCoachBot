@@ -13,6 +13,8 @@ import com.example.parentcoachbot.feature_chat.domain.model.QuestionSearcher
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
+import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.AnswerUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.QuestionSessionUseCases
@@ -39,6 +41,8 @@ class ChatViewModel @Inject constructor(
     private val subtopicUseCases: SubtopicUseCases,
     private val childProfileUseCases: ChildProfileUseCases,
     private val parentUserUseCases: ParentUserUseCases,
+    private val answerUseCases: AnswerUseCases,
+    private val chatSessionUseCases: ChatSessionUseCases,
     private val globalState: GlobalState,
     private val questionSearcher: QuestionSearcher
 ) : ViewModel() {
@@ -48,10 +52,10 @@ class ChatViewModel @Inject constructor(
     private val _subtopicsListState = MutableStateFlow<List<Subtopic>>(emptyList())
     private val _questionSessionListState = MutableStateFlow<List<QuestionSession>>(emptyList())
     private val _subtopicQuestionsListState = MutableStateFlow<List<Question>>(emptyList())
-    private val _questionsWithAnswersListState = MutableStateFlow<MutableList<Pair<Question,
-            List<Answer>>?>>(mutableListOf())
-    private val _questionSessionsWithQuestionAndAnswersListState: MutableStateFlow<List<Triple<QuestionSession,
-            Question?, List<Answer>?>?>> = MutableStateFlow(emptyList())
+    private val _questionsWithAnswersListState =
+        MutableStateFlow<MutableList<Pair<Question, List<Answer>>?>>(mutableListOf())
+    private val _questionSessionsWithQuestionAndAnswersListState: MutableStateFlow<List<Triple<QuestionSession, Question?, List<Answer>?>?>> =
+        MutableStateFlow(emptyList())
     private val _currentTopic: MutableStateFlow<Topic?> = MutableStateFlow(null)
     private val _currentSubtopic: MutableStateFlow<Subtopic?> = MutableStateFlow(null)
     private val _typedQueryText = MutableStateFlow("")
@@ -68,7 +72,8 @@ class ChatViewModel @Inject constructor(
             subtopicsListState = _subtopicsListState,
             childProfilesListState = _childProfilesListState,
             questionSessionsWithQuestionAndAnswersState = _questionSessionsWithQuestionAndAnswersListState,
-            searchResultsQuestionsListState = _searchResultsQuestionsListState
+            searchResultsQuestionsListState = _searchResultsQuestionsListState,
+            currentTopicState = _currentTopic
         )
     )
 
@@ -94,7 +99,7 @@ class ChatViewModel @Inject constructor(
         listenForChatQuery()
     }
 
-    private fun listenForNewChat(){
+    private fun listenForNewChat() {
         viewModelScope.launch {
             _newChatSession.onEach {
                 println("new ${_newChatSession.value?._id}")
@@ -104,19 +109,18 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun listenForChatQuery(){
+    private fun listenForChatQuery() {
         viewModelScope.launch {
-            _typedQueryText.debounce(1500)
-                .onEach {
-                    // run search
-                    println("The text is $it")
-                    searchQuestions(it)
+            _typedQueryText.debounce(1500).onEach {
+                    if (it.isNotBlank()) {
+                        searchQuestions(it)
+                    }
                 }.collect()
         }
     }
 
     private fun populateQuestionIndex() {
-        println("populating index")
+        println("Populating Question Index")
         viewModelScope.launch {
             _allQuestionsListState.onEach {
                 questionSearcher.populateIndex(it)
@@ -126,7 +130,7 @@ class ChatViewModel @Inject constructor(
 
     private fun searchQuestions(queryText: String) {
         val searchResult = questionSearcher.search(queryText = queryText)
-        println("search result is $searchResult")
+        println("Search result for query: $queryText is $searchResult")
         viewModelScope.launch {
             _searchResultsQuestionsListState.value =
                 questionUseCases.getQuestionsFromIdList(searchResult)
@@ -162,11 +166,20 @@ class ChatViewModel @Inject constructor(
 
             is ChatEvent.AddQuestionSession -> {
                 viewModelScope.launch {
-                    _currentChatState.value?.let {
+                    _currentChatState.value?.let { chatSession ->
                         questionSessionUseCases.newQuestionSession(
-                            chatSessionId = it._id,
-                            question = event.question
-                        )
+                            chatSessionId = chatSession._id, question = event.question
+                        ).also {
+                            event.question.answerThread?.let { answerThreadCode ->
+                                answerUseCases.getAnswerThreadLastAnswer(answerThreadCode = answerThreadCode)
+                                    ?.let { answerText ->
+                                        chatSessionUseCases.updateChatLastAnswerText(
+                                            answerText, chatSessionId = chatSession._id
+                                        )
+                                    }
+                            }
+
+                        }
                     }
                 }
             }
@@ -212,9 +225,12 @@ class ChatViewModel @Inject constructor(
         getSubtopicQuestionsJob = viewModelScope.launch {
             _currentSubtopic.onEach {
                 _currentSubtopic.value?.let {
-                    questionUseCases.getQuestionBySubtopic(it._id).onEach { questionsList ->
-                        _subtopicQuestionsListState.value = questionsList
-                    }.collect()
+                    it.code?.let { subtopicCode ->
+                        questionUseCases.getQuestionBySubtopic(subtopicCode)
+                            .onEach { questionsList ->
+                                _subtopicQuestionsListState.value = questionsList
+                            }.collect()
+                    }
                 }
             }.collect()
         }
@@ -321,6 +337,12 @@ class ChatViewModel @Inject constructor(
             topicUseCases.getAllTopics().onEach { topicsList ->
                 // _state.value = state.value.copy(topicsList = topicsList)
                 _topicsListState.value = topicsList
+                println(topicsList)
+                if(topicsList.isNotEmpty()){
+                    _currentTopic.value = topicsList[0]
+                    getSubtopics()
+                }
+
 
             }.collect()
         }

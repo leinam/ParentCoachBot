@@ -12,7 +12,9 @@ import org.mongodb.kbson.ObjectId
 
 class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
     override suspend fun getAllQuestions(): Flow<List<Question>> = withContext(Dispatchers.IO) {
-        realm.query<Question>().asFlow().map { it.list }
+        realm.query<Question>().asFlow().map {
+            it.list
+        }
     }
 
     override suspend fun getQuestionById(id: ObjectId): Question? = withContext(Dispatchers.IO) {
@@ -40,7 +42,13 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
         }
     }
 
-    override suspend fun getQuestionsBySubtopic(subtopicId: ObjectId): Flow<List<Question>> =
+    override suspend fun getQuestionsBySubtopic(subtopicCode: String): Flow<List<Question>> = withContext(Dispatchers.IO){
+        realm.query<Question>(query = "subtopic == $0", subtopicCode).find().asFlow().map{
+            it.list
+        }
+    }
+
+    override suspend fun getQuestionsBySubtopicList(subtopicId: ObjectId): Flow<List<Question>> =
         withContext(Dispatchers.IO) {
             realm.query<Question>().asFlow().map {
                 it.list.filter { question ->

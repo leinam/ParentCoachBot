@@ -7,7 +7,7 @@ import org.mongodb.kbson.ObjectId
 
 class GetQuestionsBySubtopic(private val questionRepository: QuestionRepository) {
 
-    suspend operator fun invoke(subtopicId: ObjectId): Flow<List<Question>> {
-        return questionRepository.getQuestionsBySubtopic(subtopicId)
+    suspend operator fun invoke(subtopicCode: String): Flow<List<Question>> {
+        return questionRepository.getQuestionsBySubtopic(subtopicCode)
     }
 }

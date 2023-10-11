@@ -53,6 +53,7 @@ import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.BackgroundBeige
+import com.example.parentcoachbot.ui.theme.ChatListGreen
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import com.example.parentcoachbot.ui.theme.TextGrey
@@ -178,8 +179,7 @@ fun ChatListScreen(
                                 Box(modifier = Modifier
                                     .padding(10.dp)
                                     .clip(RoundedCornerShape(10.dp))
-                                    .background(color = ThinGreen)
-
+                                    .background(color = ChatListGreen)
                                     .fillMaxWidth()
                                     .height(90.dp)
                                     .padding(15.dp)
@@ -195,8 +195,10 @@ fun ChatListScreen(
                                     Text(
                                         text = chatSession.chatTitle
                                             ?: stringResource(id = R.string.new_chat_label),
-                                        fontSize = 16.sp, color = TextGrey,
-                                        fontFamily = PlexSans, fontWeight = SemiBold,
+                                        fontSize = 16.sp,
+                                        color = TextGrey,
+                                        fontFamily = PlexSans,
+                                        fontWeight = SemiBold,
                                         modifier = Modifier.align(
                                             Alignment.TopStart
                                         )
@@ -213,7 +215,8 @@ fun ChatListScreen(
                                     Text(
                                         text = lastUpdated,
                                         fontSize = 10.sp,
-                                        fontFamily = PlexSans, fontWeight = SemiBold,
+                                        fontFamily = PlexSans,
+                                        fontWeight = SemiBold,
                                         modifier = Modifier.align(
                                             Alignment.TopEnd
                                         )
@@ -225,17 +228,27 @@ fun ChatListScreen(
                                             .fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(
-                                            text = "Aurora: Welcome! You can explore all the ",
-                                            fontSize = 12.sp,
-                                            fontFamily = PlexSans,
-                                            fontWeight = Normal
-                                        )
+                                        chatSession.lastAnswerText?.let {
 
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                                            contentDescription = null, tint = TextGrey
-                                        )
+                                            Text(
+                                                text = "ParentCoach: ${
+                                                    it.substring(
+                                                        startIndex = 0,
+                                                        endIndex = if (it.length < 34) it.length - 1 else 33
+                                                    )
+                                                }",
+                                                fontSize = 12.sp,
+                                                fontFamily = PlexSans,
+                                                fontWeight = Normal
+                                            )
+
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                                                contentDescription = null, tint = TextGrey
+                                            )
+                                        }
+
+
                                     }
 
 
@@ -243,16 +256,19 @@ fun ChatListScreen(
                             }
                         }
                     } else {
-                        Box(modifier = Modifier.fillMaxSize()){
-                            Box(modifier = Modifier
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(color = ThinGreen)
-                                .padding(15.dp)
-                                .align(Alignment.Center)
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(color = ThinGreen)
+                                    .padding(15.dp)
+                                    .align(Alignment.Center)
                             ) {
-                                Text(text = stringResource(id = R.string.no_chats_label).uppercase(),
-                                    textAlign = TextAlign.Center, color = TextGrey)
+                                Text(
+                                    text = stringResource(id = R.string.no_chats_label).uppercase(),
+                                    textAlign = TextAlign.Center, color = TextGrey
+                                )
                             }
                         }
                     }

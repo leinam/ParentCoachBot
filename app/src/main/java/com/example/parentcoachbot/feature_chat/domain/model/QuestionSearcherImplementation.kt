@@ -18,16 +18,14 @@ import org.apache.lucene.store.Directory
 import org.apache.lucene.store.RAMDirectory
 import org.mongodb.kbson.ObjectId
 
-class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases): QuestionSearcher {
+class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases) : QuestionSearcher {
     private val indexDir: Directory
     private var indexSearcher: IndexSearcher? = null
     private val questionTextFieldName = "questionText"
     private val questionIdFieldName = "questionId"
 
-
     init {
         indexDir = RAMDirectory()
-
     }
 
 
@@ -48,28 +46,26 @@ class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases): Qu
         //val query = FuzzyQuery(Term("content", queryText), 2)
         var searchResults = emptyList<ObjectId>()
 
-        if (queryText.isNotEmpty()){
+        if (queryText.isNotEmpty()) {
             indexSearcher?.let {
                 val queryParser = QueryParser(questionTextFieldName, StandardAnalyzer())
                 val query = queryParser.parse(queryText)
-                val topDocs: TopDocs = it.search(query, 1)
-
+                val topDocs: TopDocs = it.search(query, 3)
 
                 searchResults = topDocs.scoreDocs.mapNotNull { scoreDoc: ScoreDoc ->
                     val docId: Int = scoreDoc.doc
                     var questionId: ByteArray? = null
                     val document: Document? = it.doc(docId)
 
-                    document?.let {
-                        doc ->
+                    document?.let { doc ->
                         doc.get(questionTextFieldName)
                         questionId = doc.getField(questionIdFieldName).binaryValue().bytes
                     }
 
-                    questionId?.let {
-                            id -> ObjectId(id)
+                    questionId?.let { id ->
+                        ObjectId(id)
                     }
-            }
+                }
 
             }
         }
@@ -78,33 +74,47 @@ class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases): Qu
     }
 
 
-
     override fun populateIndex(questionsList: List<Question>) {
         val indexWriter: IndexWriter = createIndexWriter()
 
         println(questionsList)
-        questionsList.forEach {
-           question ->
-            println(question.answerThread)
-            val questionDocument = Document().apply {
-                add(TextField(questionTextFieldName, question.questionTextEn, Field.Store.YES))
-                add(StoredField(questionIdFieldName, question._id.toByteArray()))
+        questionsList.forEach { question ->
+
+
+            question.questionTextEn?.let {
+                println(question.answerThread)
+
+                val questionDocument = Document().apply {
+                    add(
+                        TextField(
+                            questionTextFieldName,
+                            question.questionTextEn,
+                            Field.Store.YES
+                        )
+                    )
+                    add(
+                        StoredField(
+                            questionIdFieldName,
+                            question._id.toByteArray()
+                        )
+                    )
+                }
+
+                indexWriter.addDocument(questionDocument)
+
             }
 
-            indexWriter.addDocument(questionDocument)
         }
 
         indexWriter.commit()
 
         println("writer has ${indexWriter.numDocs()}")
-        if (indexWriter.numDocs() > 0){
+        if (indexWriter.numDocs() > 0) {
             indexSearcher = createIndexSearcher()
         }
 
         indexWriter.close()
     }
-
-
 
 
 }

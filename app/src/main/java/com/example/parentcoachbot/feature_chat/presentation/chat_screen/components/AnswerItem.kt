@@ -57,7 +57,7 @@ fun AnswerBox(modifier: Modifier = Modifier,
                 .align(Alignment.Center)
 
         ) {
-            Text(text = questionAnswer.answerText ?: "",
+            Text(text = questionAnswer.answerTextEn ?: "",
                 textAlign = TextAlign.Start,
                 fontFamily = PlexSans,
                 fontWeight = FontWeight.Normal,

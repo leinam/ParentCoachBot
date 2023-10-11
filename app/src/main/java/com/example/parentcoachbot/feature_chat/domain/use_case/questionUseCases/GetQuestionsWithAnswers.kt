@@ -21,12 +21,12 @@ class GetQuestionsWithAnswers(
         return questionRepository.getAllQuestions().map { questionsList ->
             questionsList.forEach { question: Question ->
                 question.answerThread?.let {
-                    answerThreadRepository.getAnswerThreadById(it).let { answerThread ->
+                    answerThreadRepository.getAnswerThreadByCode(it).let { answerThread ->
                         answerThread?.code?.let { code ->
                             answerRepository.getAnswersByAnswerThreadCode(code).let { answersFlow ->
                                 var questionAnswerPair: Pair<Question, List<Answer>>?
 
-                                answersFlow.let { answers ->
+                                answersFlow?.let { answers ->
                                     questionAnswerPair = Pair(
                                         question, answers
                                     )

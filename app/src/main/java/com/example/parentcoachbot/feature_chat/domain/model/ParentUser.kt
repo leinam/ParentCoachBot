@@ -7,7 +7,7 @@ class ParentUser: RealmObject {
     var _id: ObjectId = ObjectId.invoke()
     var name: String = "User"
     var username: String? = null
-    var gender: String = Gender.NotSpecified.name
+    var gender: String = Sex.NotSpecified.name
     var country: String? = null
 }
 

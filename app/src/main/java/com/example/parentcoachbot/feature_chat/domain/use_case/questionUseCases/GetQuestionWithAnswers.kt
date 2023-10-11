@@ -18,11 +18,11 @@ class GetQuestionWithAnswers(
 
         questionRepository.getQuestionById(questionId)?.let { question ->
 
-            question.answerThread?.let { answerThreadId ->
+            question.answerThread?.let { answerThreadCode ->
 
-                answerThreadRepository.getAnswerThreadById(answerThreadId)?.code?.let {
+                answerThreadRepository.getAnswerThreadByCode(answerThreadCode)?.code?.let {
 
-                    answerRepository.getAnswersByAnswerThreadCode(it).let { answerList ->
+                    answerRepository.getAnswersByAnswerThreadCode(it)?.let { answerList ->
                         questionAnswerPair = Pair(question, answerList)
                     }
                 }

@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_list
 
+import android.app.Application
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatListViewModel @Inject constructor(
+    private val application: Application,
     private val chatSessionUseCases: ChatSessionUseCases,
     private val topicUseCases: TopicUseCases,
     private val globalState: GlobalState

@@ -53,6 +53,7 @@ fun SelectProfileScreen(navController: NavController = rememberNavController(),
     val profileStateWrapper = profileState.value
     val childProfileList: List<ChildProfile> by profileStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
 
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(color = PrimaryGreen.copy(alpha = 0.8f)),

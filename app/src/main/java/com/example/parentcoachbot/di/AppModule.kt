@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.di
 
+import android.app.Application
 import com.example.parentcoachbot.common.GlobalState
 import com.example.parentcoachbot.feature_chat.data.repository.AnswerRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.AnswerThreadRepositoryImpl
@@ -32,6 +33,7 @@ import com.example.parentcoachbot.feature_chat.domain.repository.SubtopicReposit
 import com.example.parentcoachbot.feature_chat.domain.repository.TopicRepository
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.AnswerUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.GetAnswer
+import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.GetAnswerThreadLastAnswer
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.GetAnswersByIdList
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.DeleteChatSession
@@ -39,10 +41,12 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCas
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.GetChatSessionsByChildProfile
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.NewChatSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.TogglePinChatSession
+import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatLastAnswerText
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileById
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileTest
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfilesByParentUser
+import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.NewChildProfile
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.GetParentUser
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.DeleteQuestionSession
@@ -82,7 +86,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRealmDatabase(): Realm {
+    fun provideRealmDatabase(application: Application): Realm {
         val config = RealmConfiguration.Builder(
             schema =
             setOf(
@@ -95,9 +99,9 @@ object AppModule {
         )
             .initialData {
                 println("Attempting to pre-populate database")
-                PopulateDb(this)()
+                PopulateDb(this, application)()
             }
-            .name("PCdb1")
+            .name("PCdb9")
             .schemaVersion(0)
             .compactOnLaunch()
             .build()
@@ -208,7 +212,8 @@ object AppModule {
     fun provideAnswerUseCases(answerRepository: AnswerRepository): AnswerUseCases {
         return AnswerUseCases(
             GetAnswer(answerRepository),
-            GetAnswersByIdList(answerRepository)
+            GetAnswersByIdList(answerRepository),
+            GetAnswerThreadLastAnswer(answerRepository)
         )
 
     }
@@ -227,7 +232,8 @@ object AppModule {
             GetChatSessionById(chatSessionRepository),
             NewChatSession(chatSessionRepository),
             TogglePinChatSession(chatSessionRepository),
-            DeleteChatSession(chatSessionRepository)
+            DeleteChatSession(chatSessionRepository),
+            UpdateChatLastAnswerText(chatSessionRepository)
         )
     }
 
@@ -261,7 +267,8 @@ object AppModule {
         return ChildProfileUseCases(
             getChildProfileById = GetChildProfileById(childProfileRepository),
             getChildProfilesByParentUser = GetChildProfilesByParentUser(childProfileRepository),
-            getChildProfileTest = GetChildProfileTest(childProfileRepository)
+            getChildProfileTest = GetChildProfileTest(childProfileRepository),
+            newChildProfile = NewChildProfile(childProfileRepository)
         )
     }
 

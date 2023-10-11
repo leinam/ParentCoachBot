@@ -4,5 +4,6 @@ data class ChatSessionUseCases(val getProfileChatSessions: GetChatSessionsByChil
                                val getChatSessionById: GetChatSessionById,
                                val newChatSession: NewChatSession,
                                val togglePinChatSession: TogglePinChatSession,
-                               val deleteChatSession: DeleteChatSession
+                               val deleteChatSession: DeleteChatSession,
+                               val updateChatLastAnswerText: UpdateChatLastAnswerText
 )
