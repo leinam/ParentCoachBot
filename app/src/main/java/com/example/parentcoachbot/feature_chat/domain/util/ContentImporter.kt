@@ -122,15 +122,47 @@ class ContentImporter(
                         row.getCell(57)?.toString()?.trim()
                     )
 
+                    val answerTextsPt: List<String?> = listOf(
+                        row.getCell(5)?.toString()?.trim(),
+                        row.getCell(10)?.toString()?.trim(),
+                        row.getCell(15)?.toString()?.trim(),
+                        row.getCell(20)?.toString()?.trim(),
+                        row.getCell(25)?.toString()?.trim(),
+                        row.getCell(30)?.toString()?.trim(),
+                        row.getCell(35)?.toString()?.trim(),
+                        row.getCell(44)?.toString()?.trim(),
+                        row.getCell(49)?.toString()?.trim(),
+                        row.getCell(54)?.toString()?.trim(),
+                        row.getCell(59)?.toString()?.trim()
+                    )
+
+                    val answerTextsZu: List<String?> = listOf(
+                        row.getCell(6)?.toString()?.trim(),
+                        row.getCell(11)?.toString()?.trim(),
+                        row.getCell(16)?.toString()?.trim(),
+                        row.getCell(21)?.toString()?.trim(),
+                        row.getCell(26)?.toString()?.trim(),
+                        row.getCell(31)?.toString()?.trim(),
+                        row.getCell(36)?.toString()?.trim(),
+                        row.getCell(45)?.toString()?.trim(),
+                        row.getCell(50)?.toString()?.trim(),
+                        row.getCell(55)?.toString()?.trim(),
+                        row.getCell(60)?.toString()?.trim()
+                    )
+
+
+
                     answerTextsEn.forEachIndexed() { index, answerTextEn ->
                         answerTextEn?.let {
                             if (it.isNotBlank()) {
-                                println("Part $index: $answerTextEn")
+                                println("Part $index: $answerTextEn: ${answerTextsPt[index]}: ${answerTextsZu[index]}")
 
                                 realm.copyToRealm(Answer().apply {
                                     this.answerThread = answerThread.code
                                     this.answerThreadPosition = index
                                     this.answerTextEn = it
+                                    this.answerTextPt = answerTextsPt[index]
+                                    this.answerTextZu = answerTextsZu[index]
                                 })
                             }
                         }

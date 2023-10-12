@@ -353,6 +353,8 @@ fun AddProfileScreen(
                                     }
 
                                     onEvent(ProfileEvent.newProfile(newChildProfile)).also {
+                                        onEvent(ProfileEvent.selectProfile(newChildProfile))
+
                                         navController.navigate(Screen.ChatListScreen.route)
                                         {
                                             popUpTo(Screen.AddProfileScreen.route) {

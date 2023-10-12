@@ -63,12 +63,8 @@ class ProfileViewModel @Inject constructor(
 
             is ProfileEvent.newProfile -> {
                 viewModelScope.launch {
-                    childProfileUseCases.newChildProfile(profileEvent.childProfile).also {
-                        _currentChildProfile.value = profileEvent.childProfile
-                    }
-
+                    childProfileUseCases.newChildProfile(profileEvent.childProfile)
                 }
-
 
             }
         }

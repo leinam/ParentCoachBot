@@ -51,7 +51,7 @@ val drawerItemsList = listOf(
 
 val settingsItemList = listOf(
     NavigationItem(
-    R.string.profile_label,
+    R.string.edit_profile_label,
     R.drawable.baseline_account_circle_24,
     route = Screen.UpdateProfileScreen.route
 ),

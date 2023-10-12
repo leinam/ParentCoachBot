@@ -11,7 +11,6 @@ class PopulateDb(
     private val application: Application
 ) {
 
-
     operator fun invoke() {
         println("Attempting to pre-populate database")
 

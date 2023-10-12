@@ -54,4 +54,5 @@
     <string name="create_profile_onboarding_header">Crie perfis para todos</string>
     <string name="menu_label">Menu</string>
     <string name="toast_warning_name">O nome não pode ter mais de 10 caracteres</string>
+    <string name="edit_profile_label">Editar Perfil</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_screen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -62,8 +64,12 @@ import com.example.parentcoachbot.ui.theme.LightGreen
 import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import com.example.parentcoachbot.ui.theme.drawerItemsList
+import io.realm.kotlin.types.RealmInstant
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.Instant
 
 // todo modularize chat screen composable
 @Preview
@@ -432,25 +438,48 @@ fun ChatScreen(
                             modifier = Modifier.padding(bottom = 80.dp)
                         )
                         {
-                            itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionWithAnswer ->
+                            itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionSessionWithQuestionAndAnswer ->
 
-                                questionWithAnswer?.let { questionAnswerTriple ->
-                                    questionAnswerTriple.second?.let { question ->
+                                questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
+                                    val timeDifference = Duration.between(
+                                        Instant.ofEpochSecond(questionSessionAnswerTriple.first.timeAsked.epochSeconds),
+                                        Instant.ofEpochSecond(RealmInstant.now().epochSeconds)
+                                    ).seconds
+
+                                    questionSessionAnswerTriple.second?.let { question ->
                                         QuestionBox(question = question)
                                     }
 
-                                    Column() {
-                                        questionAnswerTriple.third?.forEach { answer ->
+
+                                    questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
+                                        // todo check how long ago questions session was loaded
+                                        if (index == questionSessionWithQuestionAndAnswersList.lastIndex) {
+                                            var isVisible by remember {
+                                                mutableStateOf(false)
+                                            }
+
+                                            LaunchedEffect(key1 = isVisible) {
+                                                delay((answerIndex + 1) * 3500L)
+                                                isVisible = true
+                                            }
+
+                                            AnimatedVisibility(visible = isVisible) {
+                                                AnswerBox(questionAnswer = answer)
+                                            }
+                                        } else {
                                             AnswerBox(questionAnswer = answer)
                                         }
+
+
                                     }
+
                                 }
 
                             }
                             if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
                                 scope.launch {
-                                    scrollState.scrollToItem(
-                                        questionSessionWithQuestionAndAnswersList.lastIndex
+                                    scrollState.animateScrollToItem(
+                                        questionSessionWithQuestionAndAnswersList.lastIndex,
                                     )
                                 }
                             }

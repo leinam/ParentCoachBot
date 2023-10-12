@@ -98,7 +98,10 @@ fun Navigation() {
         composable(route = Screen.AddProfileScreen.route) {
             AddProfileScreen(navController = navHostController,
                 profileState = profileViewModel.profileViewModelState,
-                onEvent = { profileEvent -> profileViewModel.onEvent(profileEvent) })
+                onEvent = { profileEvent ->
+                    profileViewModel.onEvent(profileEvent)
+                    chatListViewModel.onEvent(chatListEvent = ChatListEvent.SelectProfile)
+                })
         }
         composable(route = Screen.SettingsHomeScreen.route) {
             SettingsHomeScreen(navController = navHostController)

@@ -98,7 +98,7 @@ class ChatListViewModel @Inject constructor(
         getChildProfileChatSessionsJob = viewModelScope.launch {
 
             _currentChildProfile.onEach { childProfile ->
-
+                println(childProfile?.name)
                 childProfile?.let {
                     chatSessionUseCases.getProfileChatSessions(it._id).onEach { chatSessionList ->
                         // on each emission we set the state again
