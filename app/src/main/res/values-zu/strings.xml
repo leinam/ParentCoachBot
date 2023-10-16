@@ -55,4 +55,5 @@
     <string name="menu_label">Imenyu</string>
     <string name="toast_warning_name">Igama alikwazi ukuba ngaphezu kwezinhlamvu eziyi-10</string>
     <string name="edit_profile_label">Hlela iphrofayela</string>
+    <string name="current_profile">iphrofayela</string>
 </resources>

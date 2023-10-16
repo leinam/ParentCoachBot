@@ -51,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
+import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
@@ -58,6 +59,7 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_screen.componen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionInputSection
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TypingAnimation
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.LightGreen
@@ -88,7 +90,7 @@ fun ChatScreen(
     val subtopicList: List<Subtopic> by chatStateWrapper.subtopicsListState.collectAsStateWithLifecycle()
     val subtopicQuestionsList: List<Question> by chatStateWrapper.subtopicQuestionsListState.collectAsStateWithLifecycle()
     val searchResultQuestionsList: List<Question> by chatStateWrapper.searchResultsQuestionsListState.collectAsStateWithLifecycle()
-    val searchQueryText: String by chatStateWrapper.searchQueryText.collectAsStateWithLifecycle()
+    val currentChildProfile: ChildProfile? by chatStateWrapper.currentChildProfile.collectAsStateWithLifecycle()
     var isAnswerVisible by remember { mutableStateOf(false) }
 
 
@@ -98,6 +100,9 @@ fun ChatScreen(
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scrollState = rememberLazyListState()
+    var isAnimationActive = remember {
+        mutableStateOf(false)
+    }
 
 
     val bottomSheetContentState: MutableStateFlow<BottomSheetContent> =
@@ -121,7 +126,15 @@ fun ChatScreen(
             {
                 drawerItemsList.forEachIndexed { index, navBarItem ->
                     NavigationDrawerItem(
-                        label = { navBarItem.title?.let { Text(text = stringResource(id = it)) } },
+                        label = {
+                            if (index == 0) navBarItem.title?.let {
+                                Text(
+                                    text = stringResource(
+                                        id = it
+                                    ) + ": ${currentChildProfile?.name}"
+                                )
+                            } else navBarItem.title?.let { Text(text = stringResource(id = it)) }
+                        },
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index
@@ -218,7 +231,9 @@ fun ChatScreen(
                                                             scope.launch {
                                                                 bottomSheetScaffoldState.bottomSheetState.partialExpand()
                                                             }
+
                                                             isAnswerVisible = true
+                                                            isAnimationActive.value = true
                                                         }) {
 
                                                     question.questionTextEn?.let {
@@ -394,6 +409,7 @@ fun ChatScreen(
                                                                     bottomSheetScaffoldState.bottomSheetState.partialExpand()
                                                                 }
                                                                 isAnswerVisible = true
+                                                                isAnimationActive.value = true
                                                             }) {
 
                                                         question.questionTextEn?.let {
@@ -432,58 +448,98 @@ fun ChatScreen(
                         sheetPeekHeight = 80.dp,
                         sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
                     ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(PrimaryGreen.copy(alpha = 0.3f))
+                                    .padding(15.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(modifier = Modifier)
 
-                        LazyColumn(
-                            state = scrollState,
-                            modifier = Modifier.padding(bottom = 80.dp)
-                        )
-                        {
-                            itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionSessionWithQuestionAndAnswer ->
+                                TypingAnimation(isAnimationActive = isAnimationActive)
 
-                                questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
-                                    val timeDifference = Duration.between(
-                                        Instant.ofEpochSecond(questionSessionAnswerTriple.first.timeAsked.epochSeconds),
-                                        Instant.ofEpochSecond(RealmInstant.now().epochSeconds)
-                                    ).seconds
+                            }
 
-                                    questionSessionAnswerTriple.second?.let { question ->
-                                        QuestionBox(question = question)
-                                    }
+                            LazyColumn(
+                                state = scrollState,
+                                modifier = Modifier.padding(bottom = 80.dp)
+                            )
+                            {
 
 
-                                    questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
-                                        // todo check how long ago questions session was loaded
-                                        if (index == questionSessionWithQuestionAndAnswersList.lastIndex) {
-                                            var isVisible by remember {
-                                                mutableStateOf(false)
-                                            }
+                                itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionSessionWithQuestionAndAnswer ->
 
-                                            LaunchedEffect(key1 = isVisible) {
-                                                delay((answerIndex + 1) * 3500L)
-                                                isVisible = true
-                                            }
+                                    questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
+                                        val timeDifference = Duration.between(
+                                            Instant.ofEpochSecond(questionSessionAnswerTriple.first.timeAsked.epochSeconds),
+                                            Instant.ofEpochSecond(RealmInstant.now().epochSeconds)
+                                        ).seconds
 
-                                            AnimatedVisibility(visible = isVisible) {
-                                                AnswerBox(questionAnswer = answer)
-                                            }
-                                        } else {
-                                            AnswerBox(questionAnswer = answer)
+                                        questionSessionAnswerTriple.second?.let { question ->
+                                            QuestionBox(question = question)
                                         }
 
+                                        questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
+                                            // todo check how long ago questions session was loaded
+                                            if ((index == questionSessionWithQuestionAndAnswersList.lastIndex) and (timeDifference < 25) and (answerIndex != 0)) {
+                                                var isVisible by remember {
+                                                    mutableStateOf(false)
+                                                }
+
+                                                // different behavior for first answer
+                                                LaunchedEffect(key1 = isVisible) {
+                                                    isAnimationActive.value = true
+                                                    delay((answerIndex + 1) * 3500L)
+                                                    isVisible = true
+
+                                                    if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
+                                                        scope.launch {
+                                                            scrollState.animateScrollToItem(
+                                                                questionSessionWithQuestionAndAnswersList.lastIndex + 1,
+                                                                scrollOffset = 360
+                                                            )
+                                                        }
+                                                    }
+
+                                                    isAnimationActive.value = false
+
+
+                                                }
+
+                                                AnimatedVisibility(visible = isVisible) {
+                                                    AnswerBox(questionAnswer = answer)
+                                                }
+                                            } else {
+                                                AnswerBox(questionAnswer = answer)
+                                            }
+
+
+                                        }
 
                                     }
 
                                 }
 
-                            }
-                            if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
-                                scope.launch {
-                                    scrollState.animateScrollToItem(
-                                        questionSessionWithQuestionAndAnswersList.lastIndex,
-                                    )
+
+                                item {
+                                    Box(modifier = Modifier.height(57.dp)) {
+
+                                    }
+                                }
+
+                                if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
+                                    scope.launch {
+                                        scrollState.animateScrollToItem(
+                                            questionSessionWithQuestionAndAnswersList.lastIndex + 1,
+                                        )
+                                    }
                                 }
                             }
                         }
+
                     }
                 }
             }

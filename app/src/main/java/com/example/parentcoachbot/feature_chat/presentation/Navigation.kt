@@ -18,7 +18,7 @@ import com.example.parentcoachbot.feature_chat.presentation.profile_screen.Creat
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileViewModel
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
-import com.example.parentcoachbot.feature_chat.presentation.settings_screen.EmergencyInfoScreen
+import com.example.parentcoachbot.feature_chat.presentation.emergency_screen.EmergencyInfoScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SelectLanguageScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SettingsHomeScreen
 import com.example.parentcoachbot.ui.theme.OnboardingPageItem

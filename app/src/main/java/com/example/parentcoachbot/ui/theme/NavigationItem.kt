@@ -13,7 +13,7 @@ data class NavigationItem(
 
 val drawerItemsList = listOf(
     NavigationItem(
-        R.string.switch_profile_drawer_label,
+        R.string.current_profile,
         R.drawable.profile_icon,
         route = Screen.SelectProfileScreen.route
     ),

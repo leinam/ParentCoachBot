@@ -77,12 +77,10 @@ class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases) : Q
     override fun populateIndex(questionsList: List<Question>) {
         val indexWriter: IndexWriter = createIndexWriter()
 
-        println(questionsList)
         questionsList.forEach { question ->
 
 
             question.questionTextEn?.let {
-                println(question.answerThread)
 
                 val questionDocument = Document().apply {
                     add(
@@ -108,7 +106,7 @@ class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases) : Q
 
         indexWriter.commit()
 
-        println("writer has ${indexWriter.numDocs()}")
+        // println("writer has ${indexWriter.numDocs()}")
         if (indexWriter.numDocs() > 0) {
             indexSearcher = createIndexSearcher()
         }

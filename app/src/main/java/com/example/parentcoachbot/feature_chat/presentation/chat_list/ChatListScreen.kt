@@ -49,6 +49,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
+import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
@@ -77,6 +78,7 @@ fun ChatListScreen(
 
     val chatSessionList: List<ChatSession> by chatListStateWrapper.chatSessionListState.collectAsStateWithLifecycle()
     val newChatSession: ChatSession? by chatListStateWrapper.newChatState.collectAsStateWithLifecycle()
+    val currentChildProfile: ChildProfile? by chatListStateWrapper.currentChildProfile.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
     var drawerSelectedItemIndex by rememberSaveable { mutableIntStateOf(1) }
@@ -90,7 +92,15 @@ fun ChatListScreen(
             {
                 drawerItemsList.forEachIndexed { index, navBarItem ->
                     NavigationDrawerItem(
-                        label = { navBarItem.title?.let { Text(text = stringResource(id = it)) } },
+                        label= {
+                            if (index == 0) navBarItem.title?.let {
+                                Text(
+                                    text = stringResource(
+                                        id = it
+                                    ) + ": ${currentChildProfile?.name}"
+                                )
+                            } else navBarItem.title?.let { Text(text = stringResource(id = it)) }
+                        },
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index

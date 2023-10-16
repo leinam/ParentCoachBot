@@ -59,7 +59,6 @@ class ContentImporter(
                         this.subtopic = questionSubtopic
                     })
 
-                    println("$questionTextEn")
                 }
 
             }
@@ -96,7 +95,7 @@ class ContentImporter(
             val answerThreadTitle = row.getCell(2)?.toString()?.trim()
             val answerThreadSubtopic = row.getCell(1)?.toString()?.trim()
 
-            println("$answerThreadCode: $answerThreadTitle: $answerThreadSubtopic")
+            // println("$answerThreadCode: $answerThreadTitle: $answerThreadSubtopic")
 
             answerThreadCode?.let {
                 if (answerThreadCode.isNotBlank()) {
@@ -155,7 +154,7 @@ class ContentImporter(
                     answerTextsEn.forEachIndexed() { index, answerTextEn ->
                         answerTextEn?.let {
                             if (it.isNotBlank()) {
-                                println("Part $index: $answerTextEn: ${answerTextsPt[index]}: ${answerTextsZu[index]}")
+                                // println("Part $index: $answerTextEn: ${answerTextsPt[index]}: ${answerTextsZu[index]}")
 
                                 realm.copyToRealm(Answer().apply {
                                     this.answerThread = answerThread.code

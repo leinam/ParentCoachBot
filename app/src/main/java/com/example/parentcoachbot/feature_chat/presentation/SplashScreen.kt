@@ -49,8 +49,9 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
             Box(modifier = Modifier) {
                 Icon(
                     tint = Beige, painter =
-                    painterResource(id = R.drawable.logo_sleepy),
-                    contentDescription = "Aurora Logo"
+                    painterResource(id = R.drawable.pclogo),
+                    contentDescription = "Aurora Logo",
+                    modifier = Modifier.size(175.dp)
                 )
 
             }
@@ -164,8 +165,8 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
             Box(modifier = Modifier) {
                 Icon(
                     tint = Beige, painter =
-                    painterResource(id = R.drawable.parentcoach_vetorial_logo),
-                    contentDescription = "Aurora Logo"
+                    painterResource(id = R.drawable.pclogo2),
+                    contentDescription = "Aurora Logo", modifier = Modifier.size(225.dp)
                 )
 
             }

@@ -17,7 +17,7 @@ data class ChatStateWrapper(
             List<Answer>>?>> = MutableStateFlow(mutableListOf()),
     val topicsListState: StateFlow<List<Topic>> = MutableStateFlow(emptyList()),
     val subtopicsListState: StateFlow<List<Subtopic>> = MutableStateFlow(emptyList()),
-    val childProfilesListState: StateFlow<List<ChildProfile>> = MutableStateFlow(emptyList()),
+    val currentChildProfile: StateFlow<ChildProfile?> = MutableStateFlow(null),
     val chatSessionId: ObjectId? = null,
     val questionSessionsWithQuestionAndAnswersState: StateFlow<List<Triple<QuestionSession,
             Question?, List<Answer>?>?>> = MutableStateFlow(

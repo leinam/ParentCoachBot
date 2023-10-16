@@ -60,6 +60,7 @@ class ChatViewModel @Inject constructor(
     private val _currentSubtopic: MutableStateFlow<Subtopic?> = MutableStateFlow(null)
     private val _typedQueryText = MutableStateFlow("")
     private val _newChatSession = globalState._newChatState
+    private val _currentChildProfile = globalState._currentChildProfileState
     private val _searchResultsQuestionsListState = MutableStateFlow<List<Question>>(emptyList())
     private val _allQuestionsListState = MutableStateFlow<List<Question>>(emptyList())
 
@@ -70,7 +71,7 @@ class ChatViewModel @Inject constructor(
             questionsWithAnswersState = _questionsWithAnswersListState,
             questionSessionListState = _questionSessionListState,
             subtopicsListState = _subtopicsListState,
-            childProfilesListState = _childProfilesListState,
+            currentChildProfile = _currentChildProfile,
             questionSessionsWithQuestionAndAnswersState = _questionSessionsWithQuestionAndAnswersListState,
             searchResultsQuestionsListState = _searchResultsQuestionsListState,
             currentTopicState = _currentTopic
@@ -102,7 +103,7 @@ class ChatViewModel @Inject constructor(
     private fun listenForNewChat() {
         viewModelScope.launch {
             _newChatSession.onEach {
-                println("new ${_newChatSession.value?._id}")
+                // println("new ${_newChatSession.value?._id}")
                 _currentChatState.value = it
                 getQuestionSessionWithQuestionAndAnswers()
             }.collect()
@@ -127,22 +128,24 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun searchQuestions(queryText: String) {
-        val searchResult = questionSearcher.search(queryText = queryText)
-        println("Search result for query: $queryText is $searchResult")
-        viewModelScope.launch {
-            _searchResultsQuestionsListState.value =
-                questionUseCases.getQuestionsFromIdList(searchResult)
+        if (queryText.trim().length > 4){
+            val searchResult = questionSearcher.search(queryText = queryText.trim())
+            // println("Search result for query: $queryText is $searchResult")
+            viewModelScope.launch {
+                _searchResultsQuestionsListState.value =
+                    questionUseCases.getQuestionsFromIdList(searchResult)
+            }
         }
 
 
+        // keep state for last search query and then when question selected
+
     }
 
-    // todo new chat doesn't always open
     fun onEvent(event: ChatEvent) {
         when (event) {
             is ChatEvent.SaveQuestionSession -> {
                 viewModelScope.launch {
-
 
                 }
             }
@@ -188,7 +191,7 @@ class ChatViewModel @Inject constructor(
                 _newChatSession.value = null
 
                 _currentChatState.value = event.chatSession
-                println("current chat is ${_currentChatState.value?._id} new chat state is ${globalState._newChatState.value?._id}")
+                //println("current chat is ${_currentChatState.value?._id} new chat state is ${globalState._newChatState.value?._id}")
                 getQuestionSessionWithQuestionAndAnswers()
 
                 //todo why do i need to call this each time
@@ -211,7 +214,7 @@ class ChatViewModel @Inject constructor(
 
             is ChatEvent.UpdateSearchQueryText -> {
                 _typedQueryText.value = event.searchQueryText
-                println(_typedQueryText.value)
+                // println(_typedQueryText.value)
             }
 
         }
@@ -240,7 +243,7 @@ class ChatViewModel @Inject constructor(
         getAllQuestionsJob = viewModelScope.launch {
             questionUseCases.getAllQuestions().onEach {
                 _allQuestionsListState.value = it
-                println(_allQuestionsListState.value)
+                // println(_allQuestionsListState.value)
             }.collect()
         }
     }
@@ -251,12 +254,12 @@ class ChatViewModel @Inject constructor(
         getChatQuestionSessionsJob = viewModelScope.launch {
             // on each happens but what if it happens before
             _currentChatState.collect {
-                println("the current chat is ${_currentChatState.value?._id}")
+                // println("the current chat is ${_currentChatState.value?._id}")
                 it?.let { chatSession ->
                     questionSessionUseCases.getChatQuestionSessions(chatSession._id)
                         .onEach { questionSessionList ->
                             _questionSessionListState.value = questionSessionList
-                            println("c${_currentChatState.value?._id}: ${_questionSessionListState.value}")
+                            // println("c${_currentChatState.value?._id}: ${_questionSessionListState.value}")
                         }.collect()
                 }
             }
@@ -300,7 +303,7 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
 
             _currentChatState.onEach {
-                println("the current chat is ${_currentChatState.value?._id}")
+                // println("the current chat is ${_currentChatState.value?._id}")
                 it?.let {
                     questionSessionUseCases.getChatQuestionSessions(chatSessionId = it._id)
                         .onEach { questionSessionList ->
@@ -335,7 +338,7 @@ class ChatViewModel @Inject constructor(
             topicUseCases.getAllTopics().onEach { topicsList ->
                 // _state.value = state.value.copy(topicsList = topicsList)
                 _topicsListState.value = topicsList
-                println(topicsList)
+                // println(topicsList)
                 if(topicsList.isNotEmpty()){
                     _currentTopic.value = topicsList[0]
                     getSubtopics()

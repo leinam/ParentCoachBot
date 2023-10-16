@@ -11,6 +11,18 @@ import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 
 class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRepository {
+    override suspend fun getAllQuestionSessions(): Flow<List<QuestionSession>> = withContext(Dispatchers.IO) {
+        realm.query<QuestionSession>().find().asFlow().map {
+            it.list
+        }
+    }
+
+    override suspend fun getAllSavedQuestionSessions(): Flow<List<QuestionSession>>  = withContext(Dispatchers.IO) {
+        realm.query<QuestionSession>("isSaved == $0", true).find().asFlow().map {
+            it.list
+        }
+    }
+
     override suspend fun newQuestionSession(questionSession: QuestionSession) {
         realm.write {
             this.copyToRealm(questionSession)
