@@ -13,12 +13,12 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListSc
 import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListViewModel
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatScreen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatViewModel
+import com.example.parentcoachbot.feature_chat.presentation.emergency_screen.EmergencyInfoScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.AddProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.CreateProfileSplashScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileViewModel
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
-import com.example.parentcoachbot.feature_chat.presentation.emergency_screen.EmergencyInfoScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SelectLanguageScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SettingsHomeScreen
 import com.example.parentcoachbot.ui.theme.OnboardingPageItem
@@ -36,7 +36,9 @@ fun Navigation() {
         startDestination = Screen.FirstTimeSplashScreen.route
     ) {
         composable(route = Screen.FirstTimeSplashScreen.route) {
-            FirstTimeSplashScreen(navController = navHostController)
+            FirstTimeSplashScreen(navController = navHostController,
+                chatViewModelState = chatViewModel.chatViewModelState,
+                onEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) })
         }
 
         composable(route = Screen.SelectProfileScreen.route) {
@@ -82,7 +84,7 @@ fun Navigation() {
 
         composable(route = Screen.ChatScreen.route) {
 
-            ChatScreen(ChatViewModelState = chatViewModel.chatViewModelState,
+            ChatScreen(chatViewModelState = chatViewModel.chatViewModelState,
                 navController = navHostController,
                 onEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) })
         }
