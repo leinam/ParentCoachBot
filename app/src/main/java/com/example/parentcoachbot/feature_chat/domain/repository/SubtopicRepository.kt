@@ -10,6 +10,7 @@ interface SubtopicRepository {
     suspend fun getSubtopicsByTopic(topicId: ObjectId): Flow<List<Subtopic>>
 
     suspend fun getSubtopicsById(id: ObjectId): Subtopic?
+    suspend fun getSubtopicsByCode(code: String): Subtopic?
 
     suspend fun addSubtopic(subtopic: Subtopic)
 }

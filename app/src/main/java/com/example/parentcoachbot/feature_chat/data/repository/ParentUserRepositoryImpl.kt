@@ -19,8 +19,8 @@ class ParentUserRepositoryImpl(private val realm: Realm) : ParentUserRepository 
     override suspend fun deleteParentUser(id: ObjectId) {
         realm.write {
             val parent = realm.query<ParentUser>(query = "_id == $0", id).find().firstOrNull()
-            parent?.let {
-                delete(parent)
+            parent?.let {user ->
+                findLatest(user)?.also { delete(it) }
             }
 
         }

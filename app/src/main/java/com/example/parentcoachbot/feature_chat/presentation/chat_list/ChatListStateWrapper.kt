@@ -10,7 +10,7 @@ data class ChatListStateWrapper(
     val chatSessionListState: StateFlow<List<ChatSession>> = MutableStateFlow(emptyList()),
     val topicsListState: StateFlow<List<Topic>> = MutableStateFlow(emptyList()),
     val currentChildProfile: StateFlow<ChildProfile?> = MutableStateFlow(null),
-
+    val currentLanguageCode: StateFlow<String?> = MutableStateFlow(null),
     val childProfileListState: StateFlow<List<ChildProfile>> = MutableStateFlow(
         emptyList()
     ),

@@ -8,11 +8,13 @@ import org.mongodb.kbson.ObjectId
 class NewQuestionSession (private val questionSessionRepository: QuestionSessionRepository){
 
     suspend operator fun invoke(chatSessionId: ObjectId,
-                                question: Question){
+                                question: Question,
+                                childProfile: ObjectId?){
 
             val questionSession = QuestionSession().apply {
                 this.question = question._id
                 this.chatSession = chatSessionId
+                this.childProfile = childProfile
             }
 
             questionSessionRepository.newQuestionSession(questionSession = questionSession)

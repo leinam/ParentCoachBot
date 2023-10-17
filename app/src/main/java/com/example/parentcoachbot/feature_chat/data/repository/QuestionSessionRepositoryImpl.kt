@@ -12,13 +12,13 @@ import org.mongodb.kbson.ObjectId
 
 class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRepository {
     override suspend fun getAllQuestionSessions(): Flow<List<QuestionSession>> = withContext(Dispatchers.IO) {
-        realm.query<QuestionSession>().find().asFlow().map {
+        realm.query<QuestionSession>().asFlow().map {
             it.list
         }
     }
 
-    override suspend fun getAllSavedQuestionSessions(): Flow<List<QuestionSession>>  = withContext(Dispatchers.IO) {
-        realm.query<QuestionSession>("isSaved == $0", true).find().asFlow().map {
+    override suspend fun getAllSavedQuestionSessionsByProfile(): Flow<List<QuestionSession>>  = withContext(Dispatchers.IO) {
+        realm.query<QuestionSession>("isSaved == $0", true).asFlow().map {
             it.list
         }
     }
@@ -35,7 +35,7 @@ class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRe
 
     override suspend fun getQuestionSessionsByChatSession(chatSessionId: ObjectId): Flow<List<QuestionSession>> = withContext(
         Dispatchers.IO){
-        realm.query<QuestionSession>(query = "chatSession == $0", chatSessionId).find().asFlow()
+        realm.query<QuestionSession>(query = "chatSession == $0", chatSessionId).asFlow()
             .map { it.list }
     }
 
@@ -58,9 +58,11 @@ class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRe
 
     override suspend fun deleteQuestionSession(id: ObjectId) {
         realm.write {
-            val questionSession = realm.query<QuestionSession>(query = "id == $id").find().firstOrNull()
+            val questionSession =
+                realm.query<QuestionSession>(query = "_id == $0", id).find()
+                    .firstOrNull()
             questionSession?.let {
-                delete(questionSession)
+                findLatest(questionSession)?.also { delete(it) }
             }
 
         }

@@ -46,15 +46,21 @@ val drawerItemsList = listOf(
         R.string.settings_label,
         R.drawable.settings_icon,
         route = Screen.SettingsHomeScreen.route
+    ),
+
+    NavigationItem(
+        R.string.language_label,
+        R.drawable.baseline_language_24,
+        route = Screen.SelectLanguageScreen.route
     )
 )
 
 val settingsItemList = listOf(
     NavigationItem(
-    R.string.edit_profile_label,
-    R.drawable.baseline_account_circle_24,
-    route = Screen.UpdateProfileScreen.route
-),
+        R.string.edit_profile_label,
+        R.drawable.baseline_account_circle_24,
+        route = Screen.UpdateProfileScreen.route
+    ),
 
     NavigationItem(
         R.string.language_label,

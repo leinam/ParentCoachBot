@@ -77,7 +77,7 @@ class ContentImporter(
 
             realm.copyToRealm(
                 Subtopic().apply {
-                    this.title = subtopicTitle
+                    this.titleEn = subtopicTitle
                     this.code = subtopicCode
                     this.description = subtopicDescription
                     this.topic = topicId

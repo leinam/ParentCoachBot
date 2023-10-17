@@ -29,16 +29,23 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 
 @Preview
 @Composable
-fun AnswerBox(modifier: Modifier = Modifier,
-              questionAnswer: Answer = Answer(),
-              cornerRadius: Dp = 20.dp) {
+fun AnswerBox(
+    modifier: Modifier = Modifier,
+    questionAnswer: Answer = Answer(),
+    cornerRadius: Dp = 20.dp,
+    currentLanguageCode: String = "en"
+) {
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(
-            top = 10.dp,
-            bottom = 10.dp
-        )
+    val questionAnswerText =
+        if (currentLanguageCode == "pt") questionAnswer.answerTextPt else if (currentLanguageCode == "zu") questionAnswer.answerTextZu else questionAnswer.answerTextEn
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = 10.dp,
+                bottom = 10.dp
+            )
     )
     {
         Box(
@@ -57,11 +64,13 @@ fun AnswerBox(modifier: Modifier = Modifier,
                 .align(Alignment.Center)
 
         ) {
-            Text(text = questionAnswer.answerTextEn ?: "",
+            Text(
+                text = questionAnswerText ?: "",
                 textAlign = TextAlign.Start,
                 fontFamily = PlexSans,
                 fontWeight = FontWeight.Normal,
-                fontSize = 16.sp)
+                fontSize = 16.sp
+            )
         }
 
         Icon(

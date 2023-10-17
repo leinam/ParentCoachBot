@@ -1,9 +1,12 @@
 package com.example.parentcoachbot.feature_chat.data.repository
 
+import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
+import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.repository.ChatSessionRepository
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.ext.realmDictionaryOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -34,11 +37,12 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
         realm.write {
             val chatSession = realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
             chatSession?.let {
-                delete(chatSession)
+                findLatest(chatSession)?.also { delete(it) }
             }
 
         }
     }
+
 
     override suspend fun getChatSessionById(id: ObjectId): ChatSession? {
         return realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
@@ -67,12 +71,29 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
             .asFlow()
     }
 
-    override suspend fun updateLastAnswerText(answerText: String, chatSessionId: ObjectId) {
+    override suspend fun updateLastAnswerText(answer: Answer, chatSessionId: ObjectId) {
         realm.write {
             val chatSession: ChatSession? =
                 this.query<ChatSession>("_id == $0", chatSessionId).first().find()
 
-            chatSession?.lastAnswerText = answerText
+            chatSession?.lastAnswerText = realmDictionaryOf(
+                Pair("en", answer.answerTextEn),
+                Pair("pt", answer.answerTextPt),
+                Pair("zu", answer.answerTextZu),
+            )
+        }
+    }
+
+    override suspend fun updateChatTitle(subtopic: Subtopic, chatSessionId: ObjectId) {
+        realm.write {
+            val chatSession: ChatSession? =
+                this.query<ChatSession>("_id == $0", chatSessionId).first().find()
+
+            chatSession?.chatTitle = realmDictionaryOf(
+                Pair("en", subtopic.titleEn),
+                Pair("pt", subtopic.titlePt),
+                Pair("zu", subtopic.titleZu)
+            )
         }
     }
 }

@@ -56,4 +56,7 @@
     <string name="toast_warning_name">O nome não pode ter mais de 10 caracteres</string>
     <string name="edit_profile_label">Editar Perfil</string>
     <string name="current_profile">Perfil</string>
+    <string name="zulu_lang">Zulu</string>
+    <string name="english_lang">Inglês</string>
+    <string name="portuguese_lang">Português</string>
 </resources>

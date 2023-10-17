@@ -20,7 +20,11 @@ class SubtopicRepositoryImpl(private val realm: Realm): SubtopicRepository {
     }
 
     override suspend fun getSubtopicsById(id: ObjectId): Subtopic? = withContext(Dispatchers.IO){
-        realm.query<Subtopic>().find().firstOrNull()
+        realm.query<Subtopic>(query = "_id == $0", id).find().firstOrNull()
+    }
+
+    override suspend fun getSubtopicsByCode(code: String): Subtopic? = withContext(Dispatchers.IO){
+        realm.query<Subtopic>(query = "code == $0", code).find().firstOrNull()
     }
 
     override suspend fun addSubtopic(subtopic: Subtopic) {

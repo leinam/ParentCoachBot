@@ -2,6 +2,7 @@ package com.example.parentcoachbot.feature_chat.presentation.chat_screen
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -64,6 +65,7 @@ class ChatViewModel @Inject constructor(
     private val _typedQueryText = MutableStateFlow("")
     private val _newChatSession = globalState._newChatState
     private val _currentChildProfile = globalState._currentChildProfileState
+    private val _currentLanguageCode = globalState._currentLanguageCode
     private val _searchResultsQuestionsListState = MutableStateFlow<List<Question>>(emptyList())
     private val _allQuestionsListState = MutableStateFlow<List<Question>>(emptyList())
 
@@ -78,13 +80,14 @@ class ChatViewModel @Inject constructor(
             questionSessionsWithQuestionAndAnswersState = _questionSessionsWithQuestionAndAnswersListState,
             searchResultsQuestionsListState = _searchResultsQuestionsListState,
             currentTopicState = _currentTopic,
-            application = MutableStateFlow(application)
+            application = MutableStateFlow(application),
+            currentLanguageCode = _currentLanguageCode
         )
     )
 
     val chatViewModelState: State<ChatStateWrapper> = _chatViewModelState
 
-    private var lastDeletedQuestion: Question? = null
+    private var lastDeletedQuestion: QuestionSession? = null
     private var getSubtopicQuestionsJob: Job? = null // track job coroutine observing db
     private var getTopicsJob: Job? = null // track job coroutine observing db
     private var getSubtopicsJob: Job? = null // track job coroutine observing db
@@ -92,6 +95,10 @@ class ChatViewModel @Inject constructor(
     private var getChatQuestionSessionsJob: Job? = null
     private var getChildProfilesJob: Job? = null
     private var getAllQuestionsJob: Job? = null
+    private val appPreferences: SharedPreferences = application.applicationContext.getSharedPreferences(
+        "MyAppPreferences",
+        Context.MODE_PRIVATE
+    )
 
     init {
         getChatQuestionSessions()
@@ -102,6 +109,7 @@ class ChatViewModel @Inject constructor(
         populateQuestionIndex()
         listenForNewChat()
         listenForChatQuery()
+        getCurrentLanguage()
 
     }
 
@@ -115,14 +123,19 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun getLanguage(): String {
-        return "pt"
-    }
 
     private fun listenForChatQuery() {
         viewModelScope.launch {
             _typedQueryText.debounce(1000).onEach {
                 searchQuestions(it.trim())
+            }.collect()
+        }
+    }
+
+    private fun getCurrentLanguage() {
+        viewModelScope.launch {
+            _currentLanguageCode.onEach {
+                appPreferences.edit().putString("default_language", it).apply()
             }.collect()
         }
     }
@@ -160,15 +173,15 @@ class ChatViewModel @Inject constructor(
 
             is ChatEvent.DeleteQuestionSession -> {
                 viewModelScope.launch {
-                    lastDeletedQuestion = event.question
-                    questionUseCases.deleteQuestion(event.question)
+                    lastDeletedQuestion = event.questionSession
+                    questionSessionUseCases.deleteQuestionSession(event.questionSession._id)
 
                 }
             }
 
             is ChatEvent.RestoreQuestion -> {
                 viewModelScope.launch {
-                    questionUseCases.addQuestion(question = lastDeletedQuestion ?: return@launch)
+                    // TODO()
                     lastDeletedQuestion = null
                 }
             }
@@ -177,13 +190,23 @@ class ChatViewModel @Inject constructor(
                 viewModelScope.launch {
                     _currentChatState.value?.let { chatSession ->
                         questionSessionUseCases.newQuestionSession(
-                            chatSessionId = chatSession._id, question = event.question
+                            chatSessionId = chatSession._id,
+                            question = event.question,
+                            childProfile = _currentChildProfile.value?._id
                         ).also {
+                            event.question.subtopic?.let {
+                                subtopicUseCases.getSubtopicByCode(it)?.let { subtopic ->
+                                    chatSessionUseCases.updateChatTitle(
+                                        subtopic = subtopic,
+                                        chatSessionId = chatSession._id
+                                    )
+                                }
+                            }
                             event.question.answerThread?.let { answerThreadCode ->
                                 answerUseCases.getAnswerThreadLastAnswer(answerThreadCode = answerThreadCode)
-                                    ?.let { answerText ->
+                                    ?.let { answer ->
                                         chatSessionUseCases.updateChatLastAnswerText(
-                                            answerText, chatSessionId = chatSession._id
+                                            answer = answer, chatSessionId = chatSession._id
                                         )
                                     }
                             }
@@ -226,14 +249,8 @@ class ChatViewModel @Inject constructor(
             }
 
             is ChatEvent.ChangeLanguage -> {
-                val appPreferences = application.applicationContext.getSharedPreferences(
-                    "MyAppPreferences",
-                    Context.MODE_PRIVATE
-                )
-
-                appPreferences.edit().putString("default_language", event.language).apply()
-
-
+                _currentLanguageCode.value = event.language
+                getCurrentLanguage()
             }
         }
     }

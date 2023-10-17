@@ -42,6 +42,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCas
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.NewChatSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.TogglePinChatSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatLastAnswerText
+import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatTitle
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileById
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileTest
@@ -63,6 +64,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsFromIdList
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsWithAnswers
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicByCode
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicById
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicsByTopic
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
@@ -233,7 +235,8 @@ object AppModule {
             NewChatSession(chatSessionRepository),
             TogglePinChatSession(chatSessionRepository),
             DeleteChatSession(chatSessionRepository),
-            UpdateChatLastAnswerText(chatSessionRepository)
+            UpdateChatLastAnswerText(chatSessionRepository),
+            UpdateChatTitle(chatSessionRepository)
         )
     }
 
@@ -257,7 +260,8 @@ object AppModule {
     fun provideSubtopicUseCases(subtopicRepository: SubtopicRepository): SubtopicUseCases {
         return SubtopicUseCases(
             getSubtopicsByTopic = GetSubtopicsByTopic(subtopicRepository),
-            getSubtopicById = GetSubtopicById(subtopicRepository)
+            getSubtopicById = GetSubtopicById(subtopicRepository),
+            getSubtopicByCode = GetSubtopicByCode(subtopicRepository)
         )
     }
 
@@ -282,11 +286,13 @@ object AppModule {
     @Singleton
     fun provideGlobalState(
         parentUserUseCases: ParentUserUseCases,
-        childProfileUseCases: ChildProfileUseCases
+        childProfileUseCases: ChildProfileUseCases,
+        application: Application
     ): GlobalState {
         return GlobalState(
             parentUserUseCases = parentUserUseCases,
-            childProfileUseCases = childProfileUseCases
+            childProfileUseCases = childProfileUseCases,
+            application = application
         )
     }
 

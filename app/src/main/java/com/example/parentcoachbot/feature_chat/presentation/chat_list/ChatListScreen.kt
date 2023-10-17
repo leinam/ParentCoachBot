@@ -1,9 +1,9 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_list
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
@@ -36,6 +38,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
@@ -75,14 +80,21 @@ fun ChatListScreen(
 ) {
 
     val chatListStateWrapper = chatListViewModelState.value
+    val appPreferences: SharedPreferences = LocalContext.current.getSharedPreferences(
+        "MyAppPreferences",
+        Context.MODE_PRIVATE
+    )
+
+    val currentLanguageCode = appPreferences.getString("default_language", "en") ?: "en"
 
     val chatSessionList: List<ChatSession> by chatListStateWrapper.chatSessionListState.collectAsStateWithLifecycle()
-    val newChatSession: ChatSession? by chatListStateWrapper.newChatState.collectAsStateWithLifecycle()
     val currentChildProfile: ChildProfile? by chatListStateWrapper.currentChildProfile.collectAsStateWithLifecycle()
+
 
     val scope = rememberCoroutineScope()
     var drawerSelectedItemIndex by rememberSaveable { mutableIntStateOf(1) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
 
 
     ModalNavigationDrawer(
@@ -92,7 +104,7 @@ fun ChatListScreen(
             {
                 drawerItemsList.forEachIndexed { index, navBarItem ->
                     NavigationDrawerItem(
-                        label= {
+                        label = {
                             if (index == 0) navBarItem.title?.let {
                                 Text(
                                     text = stringResource(
@@ -186,82 +198,125 @@ fun ChatListScreen(
                     if (chatSessionList.isNotEmpty()) {
                         LazyColumn {
                             items(chatSessionList) { chatSession ->
-                                Box(modifier = Modifier
-                                    .padding(10.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(color = ChatListGreen)
-                                    .fillMaxWidth()
-                                    .height(90.dp)
-                                    .padding(15.dp)
+                                var isContextMenuVisible by rememberSaveable {
+                                    mutableStateOf(false)
+                                }
 
-                                    .clickable {
-                                        onChatEvent(ChatEvent.SelectChat(chatSession))
-                                        navController.navigate(route = Screen.ChatScreen.route)
-                                    }
-                                )
-                                {
+                                Box(modifier = Modifier.onSizeChanged {  }){
+                                    Box(modifier = Modifier
+                                        .padding(10.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(color = ChatListGreen)
+                                        .fillMaxWidth()
+                                        .height(90.dp)
+                                        .padding(15.dp)
+                                        .pointerInput(true) {
+                                            detectTapGestures(onLongPress = {
+                                                isContextMenuVisible = true
+                                            }, onTap = {
+                                                onChatEvent(ChatEvent.SelectChat(chatSession))
+                                                navController.navigate(route = Screen.ChatScreen.route)
+                                            })
+                                        }
 
-
-                                    Text(
-                                        text = chatSession.chatTitle
-                                            ?: stringResource(id = R.string.new_chat_label),
-                                        fontSize = 16.sp,
-                                        color = TextGrey,
-                                        fontFamily = PlexSans,
-                                        fontWeight = SemiBold,
-                                        modifier = Modifier.align(
-                                            Alignment.TopStart
-                                        )
                                     )
+                                    {
 
-                                    var lastUpdated = ""
+                                        println("chat $ ${currentLanguageCode}")
 
-                                    chatSession.timeLastUpdated?.let {
-                                        lastUpdated = LocalDateTime.ofEpochSecond(
-                                            it.epochSeconds, it.nanosecondsOfSecond, ZoneOffset.UTC
-                                        ).format(DateTimeFormatter.ofPattern("E H:mm"))
-                                    }
-
-                                    Text(
-                                        text = lastUpdated,
-                                        fontSize = 10.sp,
-                                        fontFamily = PlexSans,
-                                        fontWeight = SemiBold,
-                                        modifier = Modifier.align(
-                                            Alignment.TopEnd
+                                        Text(
+                                            text = chatSession.chatTitle[currentLanguageCode]
+                                                ?: stringResource(id = R.string.new_chat_label),
+                                            fontSize = 16.sp,
+                                            color = TextGrey,
+                                            fontFamily = PlexSans,
+                                            fontWeight = SemiBold,
+                                            modifier = Modifier.align(
+                                                Alignment.TopStart
+                                            )
                                         )
-                                    )
 
-                                    Row(
-                                        modifier = Modifier
-                                            .align(Alignment.BottomStart)
-                                            .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween
-                                    ) {
-                                        chatSession.lastAnswerText?.let {
+                                        var lastUpdated = ""
 
-                                            Text(
-                                                text = "ParentCoach: ${
-                                                    it.substring(
-                                                        startIndex = 0,
-                                                        endIndex = if (it.length < 34) it.length - 1 else 33
-                                                    )
-                                                }",
-                                                fontSize = 12.sp,
-                                                fontFamily = PlexSans,
-                                                fontWeight = Normal
+                                        chatSession.timeLastUpdated?.let {
+                                            lastUpdated = LocalDateTime.ofEpochSecond(
+                                                it.epochSeconds,
+                                                it.nanosecondsOfSecond,
+                                                ZoneOffset.UTC
+                                            ).format(DateTimeFormatter.ofPattern("E H:mm"))
+                                        }
+
+                                        Text(
+                                            text = lastUpdated,
+                                            fontSize = 10.sp,
+                                            fontFamily = PlexSans,
+                                            fontWeight = SemiBold,
+                                            modifier = Modifier.align(
+                                                Alignment.TopEnd
                                             )
+                                        )
 
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                                                contentDescription = null, tint = TextGrey
-                                            )
+                                        Row(
+                                            modifier = Modifier
+                                                .align(Alignment.BottomStart)
+                                                .fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            chatSession.lastAnswerText[currentLanguageCode]?.let {
+
+                                                Text(
+                                                    text = "ParentCoach: ${
+                                                        it.substring(
+                                                            startIndex = 0,
+                                                            endIndex = if (it.length < 34) it.length - 1 else 33
+                                                        )
+                                                    }",
+                                                    fontSize = 12.sp,
+                                                    fontFamily = PlexSans,
+                                                    fontWeight = Normal
+                                                )
+
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                                                    contentDescription = null, tint = TextGrey
+                                                )
+                                            }
+
+
                                         }
 
 
                                     }
+                                    DropdownMenu(
+                                        expanded = isContextMenuVisible,
+                                        onDismissRequest = { isContextMenuVisible = false },
+                                        modifier = Modifier.padding(10.dp)
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text(text = stringResource(id = R.string.delete_chat_label)) },
+                                            onClick = {
+                                                onChatListEvent(
+                                                    ChatListEvent.DeleteChat(
+                                                        chatSession
+                                                    )
+                                                )
 
+                                                isContextMenuVisible = false
+                                            })
 
+                                        DropdownMenuItem(
+                                            text = { Text(text = stringResource(id = R.string.pin_chat_label)) },
+                                            onClick = {
+                                                onChatListEvent(
+                                                    ChatListEvent.PinChat(
+                                                        chatSession
+                                                    )
+                                                )
+
+                                                isContextMenuVisible = false
+                                            })
+
+                                    }
                                 }
                             }
                         }
@@ -290,16 +345,6 @@ fun ChatListScreen(
 }
 
 
-data class ChatListDropdownItem(@StringRes val itemTitle: Int, @DrawableRes val itemIcon: Int)
 
-val chatListDropdownItemList = listOf(
-    ChatListDropdownItem(
-        R.string.delete_chat_label,
-        itemIcon = R.drawable.baseline_delete_24
-    ),
-    ChatListDropdownItem(
-        R.string.pin_chat_label,
-        itemIcon = R.drawable.baseline_push_pin_24
-    )
-)
+
 

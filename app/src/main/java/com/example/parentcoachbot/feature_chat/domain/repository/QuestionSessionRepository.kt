@@ -7,7 +7,7 @@ import org.mongodb.kbson.ObjectId
 interface QuestionSessionRepository {
 
     suspend fun getAllQuestionSessions(): Flow<List<QuestionSession>>
-    suspend fun getAllSavedQuestionSessions(): Flow<List<QuestionSession>>
+    suspend fun getAllSavedQuestionSessionsByProfile(): Flow<List<QuestionSession>>
     suspend fun newQuestionSession(questionSession: QuestionSession)
 
     suspend fun getQuestionSessionById(id: ObjectId): QuestionSession?

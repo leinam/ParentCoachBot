@@ -21,8 +21,8 @@ class AnswerThreadRepositoryImpl(private val realm: Realm): AnswerThreadReposito
         realm.write {
             val answerThread = realm.query<AnswerThread>(query = "_id == $0", id).find().firstOrNull()
 
-            answerThread?.let {
-                delete(it)
+            answerThread?.let { thread ->
+                findLatest(thread)?.also { delete(it) }
             }
         }
     }

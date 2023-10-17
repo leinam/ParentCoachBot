@@ -362,6 +362,12 @@ fun AddProfileScreen(
                                             }
                                         }
                                     }
+                                } else {
+                                    Toast.makeText(
+                                        mContext,
+                                        R.string.toast_warning_name,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
 
                             }

@@ -32,6 +32,7 @@ class ChatListViewModel @Inject constructor(
     private val childProfileListState = globalState._childProfilesListState
     private val _currentChildProfile = globalState._currentChildProfileState
     private val parentUserState = globalState.parentUserState
+    private val _currentLanguageCode = globalState._currentLanguageCode
 
     private var getChildProfileChatSessionsJob: Job? = null
 
@@ -41,14 +42,22 @@ class ChatListViewModel @Inject constructor(
             topicsListState = _topicsListState,
             childProfileListState = childProfileListState,
             newChatState = _newChatState,
-            currentChildProfile = globalState._currentChildProfileState
+            currentChildProfile = globalState._currentChildProfileState,
+            currentLanguageCode = _currentLanguageCode
         )
     )
 
-    val chatListViewModelState: State<ChatListStateWrapper> = _chatListStateWrapper
+
+    var chatListViewModelState: State<ChatListStateWrapper> = _chatListStateWrapper
+    private fun getCurrentLanguage() {
+        viewModelScope.launch{
+
+        }
+    }
 
     init {
         getProfileChatSessions()
+        getCurrentLanguage()
     }
 
     fun onEvent(chatListEvent: ChatListEvent) {

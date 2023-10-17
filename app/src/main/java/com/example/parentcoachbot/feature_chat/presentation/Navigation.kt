@@ -109,7 +109,9 @@ fun Navigation() {
             SettingsHomeScreen(navController = navHostController)
         }
         composable(route = Screen.SelectLanguageScreen.route) {
-            SelectLanguageScreen(navController = navHostController)
+            SelectLanguageScreen(navController = navHostController,
+                chatViewModelState = chatViewModel.chatViewModelState,
+                onEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) })
         }
         composable(route = Screen.SavedQuestionsScreen.route) {
             SavedQuestionsScreen(navController = navHostController)

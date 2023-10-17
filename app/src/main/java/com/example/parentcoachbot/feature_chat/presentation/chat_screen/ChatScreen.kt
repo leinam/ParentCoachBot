@@ -84,8 +84,6 @@ fun ChatScreen(
 ) {
 
     val chatStateWrapper = chatViewModelState.value
-    val application by chatStateWrapper.application.collectAsStateWithLifecycle()
-    val context = application?.applicationContext
 
     val topicsList: List<Topic> by chatStateWrapper.topicsListState.collectAsStateWithLifecycle()
     val questionSessionWithQuestionAndAnswersList by chatStateWrapper.questionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
@@ -93,6 +91,7 @@ fun ChatScreen(
     val subtopicQuestionsList: List<Question> by chatStateWrapper.subtopicQuestionsListState.collectAsStateWithLifecycle()
     val searchResultQuestionsList: List<Question> by chatStateWrapper.searchResultsQuestionsListState.collectAsStateWithLifecycle()
     val currentChildProfile: ChildProfile? by chatStateWrapper.currentChildProfile.collectAsStateWithLifecycle()
+    val currentLanguageCode: String? by chatStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
     var isAnswerVisible by remember { mutableStateOf(false) }
 
 
@@ -210,7 +209,7 @@ fun ChatScreen(
                                             )
 
                                             Text(
-                                                text = "${currentSubtopic?.title?.uppercase()}",
+                                                text = "${currentSubtopic?.titleEn?.uppercase()}",
                                                 color = LightBeige,
                                                 modifier = Modifier.align(Alignment.Center)
                                             )
@@ -293,18 +292,19 @@ fun ChatScreen(
                                                             bottomSheetContentState.value =
                                                                 BottomSheetContent.Questions
                                                         }) {
+                                                    val subtopicTitle = if (currentLanguageCode == "pt") subtopic.titlePt else if (currentLanguageCode == "zu") subtopic.titleZu else subtopic.titleEn
 
-                                                    subtopic.title?.let {
+
                                                         Text(
-                                                            text = it,
+                                                            text = subtopicTitle ?: subtopic.titleEn ?: "",
                                                             color = Color.White
                                                         )
-                                                    }
+
 
                                                     subtopic.icon?.let {
                                                         Icon(
                                                             painter = painterResource(id = subtopic.icon!!),
-                                                            contentDescription = subtopic.title,
+                                                            contentDescription = subtopic.titleEn,
                                                             tint = Color.White
                                                         )
                                                     }
@@ -414,12 +414,16 @@ fun ChatScreen(
                                                                 isAnimationActive.value = true
                                                             }) {
 
-                                                        question.questionTextEn?.let {
-                                                            Text(
-                                                                text = it,
+                                                        val questionText =
+                                                            if (currentLanguageCode == "pt") question.questionTextPt else if (currentLanguageCode == "zu") question.questionTextZu else question.questionTextEn
+
+
+
+                                                        Text(
+                                                                text = questionText ?: question.questionTextEn ?: "",
                                                                 color = Color.White
                                                             )
-                                                        }
+
 
                                                     }
 
@@ -481,7 +485,11 @@ fun ChatScreen(
                                         ).seconds
 
                                         questionSessionAnswerTriple.second?.let { question ->
-                                            QuestionBox(question = question)
+                                            QuestionBox(
+                                                question = question,
+                                                questionSession = questionSessionAnswerTriple.first,
+                                                onEvent = onEvent
+                                            )
                                         }
 
                                         questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
@@ -512,10 +520,18 @@ fun ChatScreen(
                                                 }
 
                                                 AnimatedVisibility(visible = isVisible) {
-                                                    AnswerBox(questionAnswer = answer)
+                                                    AnswerBox(
+                                                        questionAnswer = answer,
+                                                        currentLanguageCode = currentLanguageCode
+                                                            ?: "en"
+                                                    )
                                                 }
                                             } else {
-                                                AnswerBox(questionAnswer = answer)
+                                                AnswerBox(
+                                                    questionAnswer = answer,
+                                                    currentLanguageCode = currentLanguageCode
+                                                        ?: "en"
+                                                )
                                             }
 
 

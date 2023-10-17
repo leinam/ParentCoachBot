@@ -56,4 +56,7 @@
     <string name="toast_warning_name">Igama alikwazi ukuba ngaphezu kwezinhlamvu eziyi-10</string>
     <string name="edit_profile_label">Hlela iphrofayela</string>
     <string name="current_profile">iphrofayela</string>
+    <string name="zulu_lang">isiZulu</string>
+    <string name="english_lang">IsiNgisi</string>
+    <string name="portuguese_lang">IsiPutukezi</string>
 </resources>

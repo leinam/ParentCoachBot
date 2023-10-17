@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -112,6 +113,24 @@ fun SelectProfileScreen(navController: NavController = rememberNavController(),
                     }
                 }
 
+            }
+
+            Spacer(modifier = Modifier.size(50.dp))
+
+            Row {
+                // Text(text = stringResource(id = R.string.language_label), color = LightBeige, fontSize = 18.sp)
+
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_language_24),
+                    contentDescription = null,
+                    tint = LightBeige,
+                    modifier = Modifier
+                        .size(28.dp)
+                        .align(Alignment.Bottom)
+                        .clickable {
+                            navController.navigate(Screen.SelectLanguageScreen.route)
+                        }
+                )
             }
         }
     }

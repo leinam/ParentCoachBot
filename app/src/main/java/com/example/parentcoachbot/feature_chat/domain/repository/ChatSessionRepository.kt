@@ -1,6 +1,8 @@
 package com.example.parentcoachbot.feature_chat.domain.repository
 
+import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
+import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import kotlinx.coroutines.flow.Flow
 import org.mongodb.kbson.ObjectId
 
@@ -17,7 +19,8 @@ interface ChatSessionRepository {
 
     suspend fun getChatSessionsByChildProfileAsynch(childProfileId: ObjectId): Flow<ChatSession>
 
-    suspend fun updateLastAnswerText(answerText: String, chatSessionId: ObjectId)
+    suspend fun updateLastAnswerText(answer: Answer, chatSessionId: ObjectId)
+    suspend fun updateChatTitle(subtopic: Subtopic, chatSessionId: ObjectId)
 
 
 }

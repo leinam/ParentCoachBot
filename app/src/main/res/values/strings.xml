@@ -52,11 +52,16 @@
     <string name="create_profile_onboarding_description">Create an account for each parent and different profiles for your babies.</string>
     <string name="create_profile_onboarding_header">Create Profiles for Everyone</string>
     <string name="menu_label">Menu</string>
-    <string name="toast_warning_name">The name cannot be more than 10 Characters</string>
+    <string name="toast_warning_name">Enter a valid name: must use only a-Z and less than 10 Characters long</string>
     <string name="edit_profile_label">Edit Profile</string>
     <string name="current_profile">Profile</string>
     <string name="disclaimer_text" translatable="false">If you consider that something is out of normal with your child, contact your family doctor or paediatrician, or call the emergency services lines.</string>
     <string name="medical_emergency_label" translatable="false">Medical Emergency</string>
     <string name="main_emergency_contact" translatable="false">Contact: 112</string>
     <string name="contacts_header" translatable="false">Helpful Contacts</string>
+    <string name="save_question_label" translatable="false">Save Question</string>
+    <string name="delete_question_label" translatable="false">Delete Question</string>
+    <string name="zulu_lang">isiZulu</string>
+    <string name="english_lang">English</string>
+    <string name="portuguese_lang">Portuguese</string>
 </resources>

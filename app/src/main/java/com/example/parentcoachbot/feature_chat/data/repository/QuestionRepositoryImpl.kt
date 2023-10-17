@@ -35,9 +35,8 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
         realm.write {
             val question = this.query<Question>("_id == $id").find().firstOrNull()
 
-            question?.let {
-                delete(it)
-            }
+            question?.let {question ->
+                findLatest(question)?.also { delete(it) }            }
 
         }
     }

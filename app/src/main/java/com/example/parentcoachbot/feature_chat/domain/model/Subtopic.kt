@@ -8,7 +8,9 @@ import org.mongodb.kbson.ObjectId
 class Subtopic: RealmObject {
     @PrimaryKey
     var _id:ObjectId = ObjectId.invoke()
-    var title: String? = null
+    var titleEn: String? = null
+    var titlePt: String? = null
+    var titleZu: String? = null
     var code: String? = null
     var topic:ObjectId? = null
     @DrawableRes var icon:Int? = null

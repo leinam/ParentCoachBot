@@ -124,19 +124,15 @@ fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
                         items(settingsItemList) { item ->
                             Box(modifier = Modifier
                                 .padding(10.dp)
-                                .clickable {
-                                    item.route?.let {
-                                        navController.navigate(it)
-                                    }
-                                }
                                 .clip(RoundedCornerShape(10.dp))
-
                                 .background(color = ThinGreen)
                                 .fillMaxWidth()
                                 .height(70.dp)
                                 .padding(10.dp)
                                 .clickable {
-
+                                    item.route?.let {
+                                        navController.navigate(it)
+                                    }
                                 }
                             )
                             {

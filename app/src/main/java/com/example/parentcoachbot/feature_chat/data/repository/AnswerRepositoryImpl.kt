@@ -29,8 +29,8 @@ class AnswerRepositoryImpl(private val realm: Realm) : AnswerRepository {
     override suspend fun deleteAnswer(id: ObjectId) {
         realm.write {
             val answer = realm.query<Answer>(query = "_id == $id").find().firstOrNull()
-            answer?.let {
-                delete(answer)
+            answer?.let {answer: Answer ->
+                findLatest(answer)?.also { delete(it) }
             }
 
         }
