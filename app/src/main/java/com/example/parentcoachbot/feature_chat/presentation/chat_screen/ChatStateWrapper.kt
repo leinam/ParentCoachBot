@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_screen
 
+import android.app.Application
 import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.Question
@@ -18,6 +19,7 @@ data class ChatStateWrapper(
     val topicsListState: StateFlow<List<Topic>> = MutableStateFlow(emptyList()),
     val subtopicsListState: StateFlow<List<Subtopic>> = MutableStateFlow(emptyList()),
     val currentChildProfile: StateFlow<ChildProfile?> = MutableStateFlow(null),
+    val application: StateFlow<Application?> = MutableStateFlow(null),
     val chatSessionId: ObjectId? = null,
     val questionSessionsWithQuestionAndAnswersState: StateFlow<List<Triple<QuestionSession,
             Question?, List<Answer>?>?>> = MutableStateFlow(

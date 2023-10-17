@@ -70,8 +70,9 @@ fun CreateProfileSplashScreen(navController: NavController = rememberNavControll
             Box(modifier = Modifier) {
                 Icon(
                     tint = Beige, painter =
-                    painterResource(id = R.drawable.logo_sleepy),
-                    contentDescription = "ParentCoach Logo"
+                    painterResource(id = R.drawable.pclogo),
+                    contentDescription = "ParentCoach Logo",
+                    modifier = Modifier.size(180.dp)
                 )
 
             }

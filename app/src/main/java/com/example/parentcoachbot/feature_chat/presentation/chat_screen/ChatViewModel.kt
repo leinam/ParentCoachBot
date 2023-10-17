@@ -1,5 +1,7 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_screen
 
+import android.app.Application
+import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -35,6 +37,7 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class ChatViewModel @Inject constructor(
+    private val application: Application,
     private val questionUseCases: QuestionUseCases,
     private val questionSessionUseCases: QuestionSessionUseCases,
     private val topicUseCases: TopicUseCases,
@@ -74,7 +77,8 @@ class ChatViewModel @Inject constructor(
             currentChildProfile = _currentChildProfile,
             questionSessionsWithQuestionAndAnswersState = _questionSessionsWithQuestionAndAnswersListState,
             searchResultsQuestionsListState = _searchResultsQuestionsListState,
-            currentTopicState = _currentTopic
+            currentTopicState = _currentTopic,
+            application = MutableStateFlow(application)
         )
     )
 
@@ -98,6 +102,7 @@ class ChatViewModel @Inject constructor(
         populateQuestionIndex()
         listenForNewChat()
         listenForChatQuery()
+
     }
 
     private fun listenForNewChat() {
@@ -110,11 +115,15 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    fun getLanguage(): String {
+        return "pt"
+    }
+
     private fun listenForChatQuery() {
         viewModelScope.launch {
             _typedQueryText.debounce(1000).onEach {
-                        searchQuestions(it)
-                }.collect()
+                searchQuestions(it.trim())
+            }.collect()
         }
     }
 
@@ -128,13 +137,12 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun searchQuestions(queryText: String) {
-        if (queryText.trim().length > 4){
-            val searchResult = questionSearcher.search(queryText = queryText.trim())
-            // println("Search result for query: $queryText is $searchResult")
-            viewModelScope.launch {
-                _searchResultsQuestionsListState.value =
-                    questionUseCases.getQuestionsFromIdList(searchResult)
-            }
+
+        val searchResult = questionSearcher.search(queryText = queryText.trim())
+        // println("Search result for query: $queryText is $searchResult")
+        viewModelScope.launch {
+            _searchResultsQuestionsListState.value =
+                questionUseCases.getQuestionsFromIdList(searchResult)
         }
 
 
@@ -217,6 +225,16 @@ class ChatViewModel @Inject constructor(
                 // println(_typedQueryText.value)
             }
 
+            is ChatEvent.ChangeLanguage -> {
+                val appPreferences = application.applicationContext.getSharedPreferences(
+                    "MyAppPreferences",
+                    Context.MODE_PRIVATE
+                )
+
+                appPreferences.edit().putString("default_language", event.language).apply()
+
+
+            }
         }
     }
 
@@ -339,7 +357,7 @@ class ChatViewModel @Inject constructor(
                 // _state.value = state.value.copy(topicsList = topicsList)
                 _topicsListState.value = topicsList
                 // println(topicsList)
-                if(topicsList.isNotEmpty()){
+                if (topicsList.isNotEmpty()) {
                     _currentTopic.value = topicsList[0]
                     getSubtopics()
                 }

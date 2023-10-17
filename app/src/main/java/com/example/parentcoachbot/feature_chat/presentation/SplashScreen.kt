@@ -1,10 +1,12 @@
 package com.example.parentcoachbot.feature_chat.presentation
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,6 +16,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,9 +29,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.parentcoachbot.MainActivity
 import com.example.parentcoachbot.R
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatStateWrapper
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.PlexSans
@@ -34,7 +43,17 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 
 @Preview
 @Composable
-fun FirstTimeSplashScreen(navController: NavController = rememberNavController()) {
+fun FirstTimeSplashScreen(
+    chatViewModelState: State<ChatStateWrapper> = mutableStateOf(ChatStateWrapper()),
+    navController: NavController = rememberNavController(),
+    onEvent: (chatEvent: ChatEvent) -> Unit = {}
+) {
+
+    val chatStateWrapper = chatViewModelState.value
+
+    val application by chatStateWrapper.application.collectAsStateWithLifecycle()
+    val context = application?.applicationContext
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +70,9 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
                     tint = Beige, painter =
                     painterResource(id = R.drawable.pclogo),
                     contentDescription = "Aurora Logo",
-                    modifier = Modifier.size(175.dp)
+                    modifier = Modifier
+                        .size(175.dp)
+                        .align(Alignment.Center)
                 )
 
             }
@@ -67,7 +88,7 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
                 color = Beige
             )
 
-            Spacer(modifier = Modifier.size(30.dp))
+            Spacer(modifier = Modifier.size(25.dp))
 
             Box(
                 modifier = Modifier
@@ -93,7 +114,54 @@ fun FirstTimeSplashScreen(navController: NavController = rememberNavController()
                 )
             }
 
-            Spacer(modifier = Modifier.size(30.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Text(
+                    text = "PT",
+                    color = Beige,
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .padding(15.dp)
+                        .clickable {
+                            onEvent(ChatEvent.ChangeLanguage("pt")).also {
+                                val intent = Intent(context, MainActivity::class.java)
+                                intent.flags =
+                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                context?.startActivity(intent)
+                            }
+                        }
+                )
+                Text(
+                    text = "EN",
+                    color = Beige,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(15.dp).clickable {
+                        onEvent(ChatEvent.ChangeLanguage("en")).also {
+                            val intent = Intent(context, MainActivity::class.java)
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            context?.startActivity(intent)
+                        }
+                    }
+                )
+                Text(
+                    text = "ZU",
+                    color = Beige,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(15.dp).clickable {
+                        onEvent(ChatEvent.ChangeLanguage("zu")).also {
+                            val intent = Intent(context, MainActivity::class.java)
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            context?.startActivity(intent)
+                        }
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.size(10.dp))
 
             Box(
                 modifier = Modifier

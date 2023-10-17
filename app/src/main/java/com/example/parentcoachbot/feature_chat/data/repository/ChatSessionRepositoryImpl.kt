@@ -50,8 +50,8 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
                 .find()
                 .asFlow()
                 .map {
-                    it.list.sortedByDescending {
-                        it.timeStarted
+                    it.list.sortedByDescending { chatSession ->
+                        chatSession.timeLastUpdated
                     }
                 }
 

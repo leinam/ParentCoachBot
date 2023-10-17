@@ -14,6 +14,7 @@ sealed class ChatEvent{
     data class SelectTopic(val topic: Topic): ChatEvent()
     data class SelectSubtopic(val subtopic: Subtopic): ChatEvent()
     data class SelectProfile(val childProfile: ChildProfile): ChatEvent()
+    data class ChangeLanguage(val language: String): ChatEvent()
     data class UpdateSearchQueryText(val searchQueryText: String): ChatEvent()
     object RestoreQuestion: ChatEvent()
 

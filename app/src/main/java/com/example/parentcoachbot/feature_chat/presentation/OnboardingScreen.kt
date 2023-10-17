@@ -56,7 +56,8 @@ fun OnboardingScreen(onboardingPageItem: OnboardingPageItem = OnboardingPageItem
 
             Box(modifier = Modifier){
                 Icon(tint = PrimaryGreen, painter =
-                painterResource(id = R.drawable.logo_sleepy),
+                painterResource(id = R.drawable.pclogo),
+                    modifier = Modifier.size(180.dp),
                     contentDescription ="Aurora Logo")
             }
 

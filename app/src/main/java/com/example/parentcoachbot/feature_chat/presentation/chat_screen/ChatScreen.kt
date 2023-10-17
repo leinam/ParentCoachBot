@@ -78,12 +78,14 @@ import java.time.Instant
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
-    ChatViewModelState: State<ChatStateWrapper> = mutableStateOf(ChatStateWrapper()),
+    chatViewModelState: State<ChatStateWrapper> = mutableStateOf(ChatStateWrapper()),
     navController: NavController = rememberNavController(),
     onEvent: (chatEvent: ChatEvent) -> Unit = {}
 ) {
 
-    val chatStateWrapper = ChatViewModelState.value
+    val chatStateWrapper = chatViewModelState.value
+    val application by chatStateWrapper.application.collectAsStateWithLifecycle()
+    val context = application?.applicationContext
 
     val topicsList: List<Topic> by chatStateWrapper.topicsListState.collectAsStateWithLifecycle()
     val questionSessionWithQuestionAndAnswersList by chatStateWrapper.questionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
