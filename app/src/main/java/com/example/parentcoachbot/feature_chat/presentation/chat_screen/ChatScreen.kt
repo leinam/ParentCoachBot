@@ -1,6 +1,8 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_screen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.InfiniteTransition
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -93,6 +95,7 @@ fun ChatScreen(
     val currentChildProfile: ChildProfile? by chatStateWrapper.currentChildProfile.collectAsStateWithLifecycle()
     val currentLanguageCode: String? by chatStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
     var isAnswerVisible by remember { mutableStateOf(false) }
+    val typingTransition: InfiniteTransition = rememberInfiniteTransition()
 
 
     val scope = rememberCoroutineScope()
@@ -292,13 +295,15 @@ fun ChatScreen(
                                                             bottomSheetContentState.value =
                                                                 BottomSheetContent.Questions
                                                         }) {
-                                                    val subtopicTitle = if (currentLanguageCode == "pt") subtopic.titlePt else if (currentLanguageCode == "zu") subtopic.titleZu else subtopic.titleEn
+                                                    val subtopicTitle =
+                                                        if (currentLanguageCode == "pt") subtopic.titlePt else if (currentLanguageCode == "zu") subtopic.titleZu else subtopic.titleEn
 
 
-                                                        Text(
-                                                            text = subtopicTitle ?: subtopic.titleEn ?: "",
-                                                            color = Color.White
-                                                        )
+                                                    Text(
+                                                        text = subtopicTitle ?: subtopic.titleEn
+                                                        ?: "",
+                                                        color = Color.White
+                                                    )
 
 
                                                     subtopic.icon?.let {
@@ -420,9 +425,10 @@ fun ChatScreen(
 
 
                                                         Text(
-                                                                text = questionText ?: question.questionTextEn ?: "",
-                                                                color = Color.White
-                                                            )
+                                                            text = questionText
+                                                                ?: question.questionTextEn ?: "",
+                                                            color = Color.White
+                                                        )
 
 
                                                     }
@@ -465,7 +471,10 @@ fun ChatScreen(
                             ) {
                                 Box(modifier = Modifier)
 
-                                TypingAnimation(isAnimationActive = isAnimationActive)
+                                TypingAnimation(
+                                    isAnimationActive = isAnimationActive,
+                                    transition = typingTransition
+                                )
 
                             }
 

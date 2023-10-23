@@ -1,6 +1,7 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_screen.components
 
 import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.InfiniteTransition
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
@@ -14,8 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,14 +34,14 @@ fun TypingAnimation(
     circleColor: Color = PrimaryGreen,
     circleSpacing: Dp = 10.dp,
     travelDistance: Dp = 20.dp,
+    transition: InfiniteTransition = rememberInfiniteTransition(),
     isAnimationActive: MutableState<Boolean> = mutableStateOf(false)
 ) {
+
 
     val animationActive by remember {
         isAnimationActive
     }
-
-    val transition = rememberInfiniteTransition()
 
     if (animationActive){
         Row(modifier = modifier) {

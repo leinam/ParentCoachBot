@@ -1,6 +1,7 @@
 package com.example.parentcoachbot.di
 
 import android.app.Application
+import com.example.parentcoachbot.common.EventLogger
 import com.example.parentcoachbot.common.GlobalState
 import com.example.parentcoachbot.feature_chat.data.repository.AnswerRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.AnswerThreadRepositoryImpl
@@ -71,8 +72,11 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.GetAllTopics
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.PopulateDb
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -109,6 +113,18 @@ object AppModule {
             .build()
 
         return Realm.open(config)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAnalytics(): FirebaseAnalytics {
+        return Firebase.analytics
+    }
+
+    @Provides
+    @Singleton
+    fun provideEventLogger(firebaseAnalytics: FirebaseAnalytics): EventLogger {
+        return EventLogger(firebaseAnalytics)
     }
 
     @Provides

@@ -2,8 +2,11 @@ package com.example.parentcoachbot.feature_chat.presentation
 
 import ResourcesHomeScreen
 import SavedQuestionsScreen
+import android.os.Bundle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +25,7 @@ import com.example.parentcoachbot.feature_chat.presentation.profile_screen.Updat
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SelectLanguageScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SettingsHomeScreen
 import com.example.parentcoachbot.ui.theme.OnboardingPageItem
+import com.google.firebase.analytics.FirebaseAnalytics
 
 @Composable
 fun Navigation() {
@@ -30,6 +34,24 @@ fun Navigation() {
     val chatViewModel = hiltViewModel<ChatViewModel>()
     val profileViewModel: ProfileViewModel = hiltViewModel()
 
+    val firebaseAnalytics: FirebaseAnalytics = chatViewModel.firebaseAnalytics
+
+    DisposableEffect(Unit) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            val params = Bundle()
+            val route = destination.route
+
+            params.putString(FirebaseAnalytics.Param.SCREEN_NAME, route)
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
+        }
+
+        navHostController.addOnDestinationChangedListener(listener)
+
+        // Dispose of the listener when the composable is no longer in the composition
+        onDispose {
+            navHostController.removeOnDestinationChangedListener(listener)
+        }
+    }
 
     NavHost(
         navController = navHostController,

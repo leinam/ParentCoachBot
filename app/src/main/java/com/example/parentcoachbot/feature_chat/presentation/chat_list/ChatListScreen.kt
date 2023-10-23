@@ -263,23 +263,27 @@ fun ChatListScreen(
                                             horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
                                             chatSession.lastAnswerText[currentLanguageCode]?.let {
+                                                if (it.isNotBlank()){
+                                                    Text(
+                                                        text = "ParentCoach: ${
+                                                            it.substring(
+                                                                startIndex = 0,
+                                                                endIndex = if (it.length < 34) it.length - 1 else 33
+                                                            )
+                                                        }",
+                                                        fontSize = 12.sp,
+                                                        fontFamily = PlexSans,
+                                                        fontWeight = Normal
+                                                    )
 
-                                                Text(
-                                                    text = "ParentCoach: ${
-                                                        it.substring(
-                                                            startIndex = 0,
-                                                            endIndex = if (it.length < 34) it.length - 1 else 33
-                                                        )
-                                                    }",
-                                                    fontSize = 12.sp,
-                                                    fontFamily = PlexSans,
-                                                    fontWeight = Normal
-                                                )
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                                                        contentDescription = null, tint = TextGrey
+                                                    )
 
-                                                Icon(
-                                                    painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                                                    contentDescription = null, tint = TextGrey
-                                                )
+                                                }
+
+
                                             }
 
 

@@ -7,6 +7,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.parentcoachbot.common.EventLogger
 import com.example.parentcoachbot.common.GlobalState
 import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
@@ -24,6 +25,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUs
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -39,6 +41,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val application: Application,
+    val firebaseAnalytics: FirebaseAnalytics,
+    private val eventLogger: EventLogger,
     private val questionUseCases: QuestionUseCases,
     private val questionSessionUseCases: QuestionSessionUseCases,
     private val topicUseCases: TopicUseCases,
@@ -172,6 +176,7 @@ class ChatViewModel @Inject constructor(
             }
 
             is ChatEvent.DeleteQuestionSession -> {
+                eventLogger.logComposableLoad("")
                 viewModelScope.launch {
                     lastDeletedQuestion = event.questionSession
                     questionSessionUseCases.deleteQuestionSession(event.questionSession._id)
