@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.domain.util.MyContextWrapper
 import com.example.parentcoachbot.feature_chat.presentation.Navigation
 import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
@@ -26,7 +27,7 @@ class MainActivity() : ComponentActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         val appPreferences = newBase.getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
-        val language = appPreferences.getString("default_language", "en") ?: "en"
+        val language = appPreferences.getString("default_language", Language.English.isoCode) ?: Language.English.isoCode
 
         val context = MyContextWrapper.wrap(newBase,
             language = language)

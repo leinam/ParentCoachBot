@@ -25,6 +25,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUs
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -110,11 +111,9 @@ class ChatViewModel @Inject constructor(
         getAllQuestions()
         getQuestionsWithAnswers()
         getChildProfiles()
-        populateQuestionIndex()
         listenForNewChat()
         listenForChatQuery()
         getCurrentLanguage()
-
     }
 
     private fun listenForNewChat() {
@@ -140,22 +139,25 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             _currentLanguageCode.onEach {
                 appPreferences.edit().putString("default_language", it).apply()
+                populateQuestionIndex(currentLanguage = it)
             }.collect()
         }
     }
 
-    private fun populateQuestionIndex() {
+
+
+    private fun populateQuestionIndex(currentLanguage: String = Language.English.isoCode) {
         println("Populating Question Index")
         viewModelScope.launch {
             _allQuestionsListState.onEach {
-                questionSearcher.populateIndex(it)
+                questionSearcher.populateIndex(it, currentLanguage)
             }.collect()
         }
     }
 
-    private fun searchQuestions(queryText: String) {
+    private fun searchQuestions(queryText: String, currentLanguage: String = Language.English.isoCode) {
 
-        val searchResult = questionSearcher.search(queryText = queryText.trim())
+        val searchResult = questionSearcher.search(queryText = queryText.trim(), currentLanguage)
         // println("Search result for query: $queryText is $searchResult")
         viewModelScope.launch {
             _searchResultsQuestionsListState.value =

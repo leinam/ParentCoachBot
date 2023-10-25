@@ -8,6 +8,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -25,7 +26,7 @@ class GlobalState(val parentUserUseCases: ParentUserUseCases,
         Context.MODE_PRIVATE
     )
 
-    val _currentLanguageCode = MutableStateFlow<String>("en")
+    val _currentLanguageCode = MutableStateFlow<String>(Language.English.isoCode)
     var getChildProfilesJob: Job? = null
 
     init {

@@ -107,7 +107,7 @@ object AppModule {
                 println("Attempting to pre-populate database")
                 PopulateDb(this, application)()
             }
-            .name("PCdb9")
+            .name("PCdb10")
             .schemaVersion(0)
             .compactOnLaunch()
             .build()

@@ -19,12 +19,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.ui.theme.DeepBlue
 import com.example.parentcoachbot.ui.theme.LightBlue
 import com.example.parentcoachbot.ui.theme.PlexSans
 
 @Composable
 fun KnowMoreBox(relatedTopics: List<Topic>,
+                currentLanguage: String = Language.English.isoCode
 ) {
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -73,7 +75,7 @@ fun KnowMoreBox(relatedTopics: List<Topic>,
 
 
                             Text(
-                                text = relatedTopic.title ?: "",
+                                text = relatedTopic.title[currentLanguage] ?: "",
                                 textAlign = TextAlign.Center,
                                 fontFamily = PlexSans,
                                 fontWeight = FontWeight.SemiBold,

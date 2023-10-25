@@ -43,8 +43,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +59,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.AnswerBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionInputSection
@@ -77,7 +80,7 @@ import java.time.Instant
 
 // todo modularize chat screen composable
 @Preview
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun ChatScreen(
     chatViewModelState: State<ChatStateWrapper> = mutableStateOf(ChatStateWrapper()),
@@ -86,6 +89,7 @@ fun ChatScreen(
 ) {
 
     val chatStateWrapper = chatViewModelState.value
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val topicsList: List<Topic> by chatStateWrapper.topicsListState.collectAsStateWithLifecycle()
     val questionSessionWithQuestionAndAnswersList by chatStateWrapper.questionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
@@ -210,9 +214,11 @@ fun ChatScreen(
                                                     .align(Alignment.CenterStart)
                                                     .padding(horizontal = 10.dp)
                                             )
+                                            val currentSubtopicTitle =
+                                                currentSubtopic?.title?.get(currentLanguageCode)
 
                                             Text(
-                                                text = "${currentSubtopic?.titleEn?.uppercase()}",
+                                                text = currentSubtopicTitle?.uppercase() ?: "",
                                                 color = LightBeige,
                                                 modifier = Modifier.align(Alignment.Center)
                                             )
@@ -239,8 +245,10 @@ fun ChatScreen(
                                                             isAnswerVisible = true
                                                             isAnimationActive.value = true
                                                         }) {
+                                                    val questionText =
+                                                        question.questionText[currentLanguageCode]
 
-                                                    question.questionTextEn?.let {
+                                                    questionText?.let {
                                                         Text(
                                                             text = it,
                                                             color = Color.White
@@ -270,8 +278,8 @@ fun ChatScreen(
                                                     .padding(horizontal = 10.dp))
 
                                             Text(
-                                                text = "${currentTopic?.title?.uppercase()} " + stringResource(
-                                                    id = R.string.topics_label
+                                                text = stringResource(
+                                                    id = R.string.subtopics_label
                                                 ).uppercase(),
                                                 color = LightBeige, modifier =
                                                 Modifier.align(Alignment.Center)
@@ -295,13 +303,13 @@ fun ChatScreen(
                                                             bottomSheetContentState.value =
                                                                 BottomSheetContent.Questions
                                                         }) {
-                                                    val subtopicTitle =
-                                                        if (currentLanguageCode == "pt") subtopic.titlePt else if (currentLanguageCode == "zu") subtopic.titleZu else subtopic.titleEn
 
+                                                    val subtopicTitle =
+                                                        subtopic.title[currentLanguageCode] ?: subtopic.title[Language.English.isoCode]
 
                                                     Text(
-                                                        text = subtopicTitle ?: subtopic.titleEn
-                                                        ?: "",
+                                                        text = subtopicTitle
+                                                            ?: "",
                                                         color = Color.White
                                                     )
 
@@ -309,7 +317,7 @@ fun ChatScreen(
                                                     subtopic.icon?.let {
                                                         Icon(
                                                             painter = painterResource(id = subtopic.icon!!),
-                                                            contentDescription = subtopic.titleEn,
+                                                            contentDescription = subtopicTitle,
                                                             tint = Color.White
                                                         )
                                                     }
@@ -338,6 +346,8 @@ fun ChatScreen(
 
                                         LazyColumn {
                                             items(topicsList) { topic ->
+                                                val topicTitle = topic.title[currentLanguageCode]
+
                                                 Row(horizontalArrangement = Arrangement.SpaceBetween,
                                                     modifier = Modifier
                                                         .padding(16.dp)
@@ -348,7 +358,7 @@ fun ChatScreen(
                                                                 BottomSheetContent.SubTopics
                                                         }
                                                 ) {
-                                                    topic.title?.let {
+                                                    topicTitle?.let {
                                                         Text(
                                                             text = it,
                                                             color = Color.White
@@ -358,7 +368,7 @@ fun ChatScreen(
                                                     topic.icon?.let {
                                                         Icon(
                                                             painter = painterResource(id = it),
-                                                            contentDescription = topic.title,
+                                                            contentDescription = topic.title[currentLanguageCode],
                                                             tint = Color.White
                                                         )
                                                     }
@@ -417,16 +427,16 @@ fun ChatScreen(
                                                                 }
                                                                 isAnswerVisible = true
                                                                 isAnimationActive.value = true
+
+                                                                keyboardController?.hide()
                                                             }) {
 
                                                         val questionText =
-                                                            if (currentLanguageCode == "pt") question.questionTextPt else if (currentLanguageCode == "zu") question.questionTextZu else question.questionTextEn
-
+                                                            question.questionText[currentLanguageCode]
 
 
                                                         Text(
-                                                            text = questionText
-                                                                ?: question.questionTextEn ?: "",
+                                                            text = questionText ?: "",
                                                             color = Color.White
                                                         )
 
@@ -459,6 +469,7 @@ fun ChatScreen(
                         },
                         sheetPeekHeight = 80.dp,
                         sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
+
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Row(
@@ -497,7 +508,9 @@ fun ChatScreen(
                                             QuestionBox(
                                                 question = question,
                                                 questionSession = questionSessionAnswerTriple.first,
-                                                onEvent = onEvent
+                                                onEvent = onEvent,
+                                                currentLanguageCode = currentLanguageCode
+                                                    ?: Language.English.isoCode
                                             )
                                         }
 
@@ -532,14 +545,14 @@ fun ChatScreen(
                                                     AnswerBox(
                                                         questionAnswer = answer,
                                                         currentLanguageCode = currentLanguageCode
-                                                            ?: "en"
+                                                            ?: Language.English.isoCode
                                                     )
                                                 }
                                             } else {
                                                 AnswerBox(
                                                     questionAnswer = answer,
                                                     currentLanguageCode = currentLanguageCode
-                                                        ?: "en"
+                                                        ?: Language.English.isoCode
                                                 )
                                             }
 

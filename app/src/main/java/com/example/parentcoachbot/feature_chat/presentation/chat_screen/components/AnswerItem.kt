@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Answer
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.PlexSans
@@ -33,11 +34,11 @@ fun AnswerBox(
     modifier: Modifier = Modifier,
     questionAnswer: Answer = Answer(),
     cornerRadius: Dp = 20.dp,
-    currentLanguageCode: String = "en"
+    currentLanguageCode: String = Language.English.isoCode
 ) {
 
-    val questionAnswerText =
-        if (currentLanguageCode == "pt") questionAnswer.answerTextPt else if (currentLanguageCode == "zu") questionAnswer.answerTextZu else questionAnswer.answerTextEn
+    val questionAnswerText = questionAnswer.answerText.get(currentLanguageCode)
+    println(questionAnswerText)
 
     Box(
         modifier = Modifier

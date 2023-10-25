@@ -55,6 +55,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
@@ -85,7 +86,7 @@ fun ChatListScreen(
         Context.MODE_PRIVATE
     )
 
-    val currentLanguageCode = appPreferences.getString("default_language", "en") ?: "en"
+    val currentLanguageCode = appPreferences.getString("default_language", Language.English.isoCode) ?: Language.English.isoCode
 
     val chatSessionList: List<ChatSession> by chatListStateWrapper.chatSessionListState.collectAsStateWithLifecycle()
     val currentChildProfile: ChildProfile? by chatListStateWrapper.currentChildProfile.collectAsStateWithLifecycle()

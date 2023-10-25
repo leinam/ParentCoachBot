@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.LighterOrange
@@ -41,18 +42,16 @@ import com.example.parentcoachbot.ui.theme.TextGrey
 @Composable
 fun QuestionBox(
     question: Question =
-        Question().apply { this.questionTextEn = "Do I have enough milk?" },
+        Question().apply { this.questionText["en"] = "Do I have enough milk?" },
     questionSession: QuestionSession? = null,
     onEvent: (chatEvent: ChatEvent) -> Unit = {},
-    currentLanguageCode: String = "en"
+    currentLanguageCode: String = Language.English.isoCode
 ) {
     var isContextMenuVisible by rememberSaveable {
         mutableStateOf(false)
     }
 
-    val questionText =
-        if (currentLanguageCode == "pt") question.questionTextPt else if (currentLanguageCode == "zu") question.questionTextZu else question.questionTextEn
-
+    val questionText = question.questionText[currentLanguageCode]
 
     Box(
         modifier = Modifier

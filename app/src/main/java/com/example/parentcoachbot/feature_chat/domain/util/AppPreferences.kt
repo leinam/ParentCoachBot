@@ -12,7 +12,7 @@ class AppPreferences(context: Context) {
     }
 
     fun getDefaultLanguage(): String {
-        return sharedPrefs.getString(DEFAULT_LANGUAGE_KEY, "en") ?: "en"
+        return sharedPrefs.getString(DEFAULT_LANGUAGE_KEY, Language.English.isoCode) ?: Language.English.isoCode
     }
 
     fun setDefaultLanguage(language: String) {

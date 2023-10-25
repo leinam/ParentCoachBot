@@ -34,6 +34,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.MainActivity
 import com.example.parentcoachbot.R
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatStateWrapper
 import com.example.parentcoachbot.ui.theme.Beige
@@ -125,7 +126,7 @@ fun FirstTimeSplashScreen(
                     modifier = Modifier
                         .padding(15.dp)
                         .clickable {
-                            onEvent(ChatEvent.ChangeLanguage("pt")).also {
+                            onEvent(ChatEvent.ChangeLanguage(Language.Portuguese.isoCode)).also {
                                 val intent = Intent(context, MainActivity::class.java)
                                 intent.flags =
                                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -138,7 +139,7 @@ fun FirstTimeSplashScreen(
                     color = Beige,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(15.dp).clickable {
-                        onEvent(ChatEvent.ChangeLanguage("en")).also {
+                        onEvent(ChatEvent.ChangeLanguage(Language.English.isoCode)).also {
                             val intent = Intent(context, MainActivity::class.java)
                             intent.flags =
                                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -151,7 +152,7 @@ fun FirstTimeSplashScreen(
                     color = Beige,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(15.dp).clickable {
-                        onEvent(ChatEvent.ChangeLanguage("zu")).also {
+                        onEvent(ChatEvent.ChangeLanguage(Language.Zulu.isoCode)).also {
                             val intent = Intent(context, MainActivity::class.java)
                             intent.flags =
                                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

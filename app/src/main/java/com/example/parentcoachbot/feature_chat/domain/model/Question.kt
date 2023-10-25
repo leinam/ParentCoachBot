@@ -1,6 +1,8 @@
 package com.example.parentcoachbot.feature_chat.domain.model
 
+import io.realm.kotlin.ext.realmDictionaryOf
 import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.types.RealmDictionary
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
@@ -10,10 +12,7 @@ import org.mongodb.kbson.ObjectId
 class Question: RealmObject{
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
-    var questionTextEn:String? = null
-    var questionTextPt:String? = null
-    var questionTextZu:String? = null
-    var questionTextAfr:String? = null
+    var questionText:RealmDictionary<String?> = realmDictionaryOf()
     var answerThread: String? = null
     var searchKeywords: RealmList<String> = realmListOf()
     var subtopics: RealmList<ObjectId> = realmListOf()

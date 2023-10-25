@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 fun ResourcesHomeScreen(navController: NavController = rememberNavController()) {
 
     val topicsList = listOf<Topic>(Topic().apply {
-        this.title = "Breastfeeding"
+        this.titleEn = "Breastfeeding"
         this.icon = R.drawable.breastfeeding_icon
     })
     val scope = rememberCoroutineScope()
@@ -154,7 +154,7 @@ fun ResourcesHomeScreen(navController: NavController = rememberNavController()) 
                                         }
 
                                         Text(
-                                            text = topic.title ?: "",
+                                            text = topic.titleEn ?: "",
                                             fontSize = 18.sp,
                                             fontFamily = PlexSans,
                                             fontWeight = FontWeight.SemiBold,

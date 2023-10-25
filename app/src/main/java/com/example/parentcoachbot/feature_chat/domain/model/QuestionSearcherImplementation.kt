@@ -1,6 +1,10 @@
 package com.example.parentcoachbot.feature_chat.domain.model
 
+import com.example.parentcoachbot.common.portugueseStopWordsCharArraySet
+import com.example.parentcoachbot.common.zuluStopWordsCharArraySet
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
+import com.example.parentcoachbot.feature_chat.domain.util.Language
+import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
@@ -18,19 +22,28 @@ import org.apache.lucene.store.Directory
 import org.apache.lucene.store.RAMDirectory
 import org.mongodb.kbson.ObjectId
 
-class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases) : QuestionSearcher {
+class QuestionSearcherImplementation(
+    val questionUseCases: QuestionUseCases,
+) : QuestionSearcher {
     private val indexDir: Directory
     private var indexSearcher: IndexSearcher? = null
     private val questionTextFieldName = "questionText"
     private val questionIdFieldName = "questionId"
 
+    private val analyzers: Map<String, Analyzer> =
+        mapOf(
+            Pair(Language.English.isoCode, StandardAnalyzer()),
+            Pair(Language.Portuguese.isoCode, StandardAnalyzer(portugueseStopWordsCharArraySet)),
+            Pair(Language.Zulu.isoCode, StandardAnalyzer(zuluStopWordsCharArraySet))
+        )
+
+
     init {
         indexDir = RAMDirectory()
     }
 
-
-    private fun createIndexWriter(): IndexWriter {
-        val writerConfig = IndexWriterConfig(StandardAnalyzer())
+    private fun createEnglishIndexWriter(currentLanguage: String): IndexWriter {
+        val writerConfig = IndexWriterConfig(analyzers[currentLanguage])
         return IndexWriter(indexDir, writerConfig)
     }
 
@@ -42,15 +55,18 @@ class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases) : Q
         return searcher
     }
 
-    override fun search(queryText: String): List<ObjectId> {
+    override fun search(queryText: String, currentLanguage: String): List<ObjectId> {
         //val query = FuzzyQuery(Term("content", queryText), 2)
         var searchResults = emptyList<ObjectId>()
 
         if (queryText.isNotEmpty()) {
             indexSearcher?.let {
-                val queryParser = QueryParser(questionTextFieldName, StandardAnalyzer())
+                val queryParser = QueryParser(
+                    questionTextFieldName,
+                    analyzers[currentLanguage]
+                )
                 val query = queryParser.parse(queryText)
-                val topDocs: TopDocs = it.search(query, 3)
+                val topDocs: TopDocs = it.search(query, 5)
 
                 searchResults = topDocs.scoreDocs.mapNotNull { scoreDoc: ScoreDoc ->
                     val docId: Int = scoreDoc.doc
@@ -66,27 +82,26 @@ class QuestionSearcherImplementation(val questionUseCases: QuestionUseCases) : Q
                         ObjectId(id)
                     }
                 }
-
             }
         }
-
         return searchResults
     }
 
-
-    override fun populateIndex(questionsList: List<Question>) {
-        val indexWriter: IndexWriter = createIndexWriter()
+    override fun populateIndex(
+        questionsList: List<Question>,
+        currentLanguage: String
+    ) {
+        val indexWriter: IndexWriter = createEnglishIndexWriter(currentLanguage = currentLanguage)
 
         questionsList.forEach { question ->
 
-
-            question.questionTextEn?.let {
-
+            question.questionText[currentLanguage]?.let {
+                println(it)
                 val questionDocument = Document().apply {
                     add(
                         TextField(
                             questionTextFieldName,
-                            question.questionTextEn,
+                            it,
                             Field.Store.YES
                         )
                     )

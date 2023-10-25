@@ -35,20 +35,52 @@ fun Navigation() {
     val profileViewModel: ProfileViewModel = hiltViewModel()
 
     val firebaseAnalytics: FirebaseAnalytics = chatViewModel.firebaseAnalytics
+    firebaseAnalytics.setUserId("Leina")
 
     DisposableEffect(Unit) {
-        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            val params = Bundle()
-            val route = destination.route
+        var screenEntryTime: Long = 0L
 
-            params.putString(FirebaseAnalytics.Param.SCREEN_NAME, route)
-            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
+        val listener = NavController.OnDestinationChangedListener { controller, destination, _ ->
+            val entryParams = Bundle()
+            val destinationRoute = destination.route
+            val previousScreenRoute = controller.previousBackStackEntry?.destination?.route
+            val destinationChangeTime = System.currentTimeMillis()
+
+            previousScreenRoute?.let {
+                val exitParams = Bundle()
+                val exitTime: Long = destinationChangeTime
+
+                val timeSpentOnScreen =
+                    if (screenEntryTime != 0L) screenEntryTime - exitTime else 0L
+                exitParams.putString("SCREEN_NAME", previousScreenRoute)
+                exitParams.putLong("TIME_ON_SCREEN", timeSpentOnScreen)
+
+                firebaseAnalytics.logEvent("SCREEN_EXIT", exitParams)
+            }
+
+
+            destinationRoute?.let {
+                screenEntryTime = System.currentTimeMillis()
+                entryParams.putString(FirebaseAnalytics.Param.SCREEN_NAME, destinationRoute)
+                entryParams.putString("PREVIOUS_SCREEN", previousScreenRoute ?: "null")
+
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, entryParams)
+            }
+
         }
 
         navHostController.addOnDestinationChangedListener(listener)
 
         // Dispose of the listener when the composable is no longer in the composition
         onDispose {
+
+            firebaseAnalytics.logEvent("EXITED_FROM", Bundle().apply {
+                this.putString(
+                    "EXITED_FROM",
+                    navHostController.currentBackStackEntry?.destination?.route
+                )
+            })
+
             navHostController.removeOnDestinationChangedListener(listener)
         }
     }
