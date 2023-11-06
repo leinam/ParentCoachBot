@@ -11,6 +11,7 @@ import org.mongodb.kbson.ObjectId
 class Answer: RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
+    var _partition: String? = null
     var supportingImagePath: String? = null
     var answerText: RealmDictionary<String?> = realmDictionaryOf()
     @Index

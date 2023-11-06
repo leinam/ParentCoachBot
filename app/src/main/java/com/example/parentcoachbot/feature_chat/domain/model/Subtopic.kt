@@ -10,6 +10,7 @@ import org.mongodb.kbson.ObjectId
 class Subtopic: RealmObject {
     @PrimaryKey
     var _id:ObjectId = ObjectId.invoke()
+    var _partition: String? = null
     var title: RealmDictionary<String?> = realmDictionaryOf()
     var code: String? = null
     var topic:ObjectId? = null

@@ -56,7 +56,7 @@ class QuestionSearcherImplementation(
     }
 
     override fun search(queryText: String, currentLanguage: String): List<ObjectId> {
-        //val query = FuzzyQuery(Term("content", queryText), 2)
+        // val query = FuzzyQuery(Term("content", queryText), 2)
         var searchResults = emptyList<ObjectId>()
 
         if (queryText.isNotEmpty()) {

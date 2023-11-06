@@ -9,6 +9,7 @@ import org.mongodb.kbson.ObjectId
 class AnswerThread: RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
+    var _partition: String? = null
     var code: String? = null
     var title: String? = null
     var subtopic: String? = null

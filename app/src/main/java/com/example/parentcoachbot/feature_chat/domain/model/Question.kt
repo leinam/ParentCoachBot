@@ -13,6 +13,7 @@ class Question: RealmObject{
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
     var questionText:RealmDictionary<String?> = realmDictionaryOf()
+    var _partition: String? = null
     var answerThread: String? = null
     var searchKeywords: RealmList<String> = realmListOf()
     var subtopics: RealmList<ObjectId> = realmListOf()

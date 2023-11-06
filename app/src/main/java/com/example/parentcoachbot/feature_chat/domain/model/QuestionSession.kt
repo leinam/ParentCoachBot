@@ -9,6 +9,7 @@ class QuestionSession: RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
     var chatSession: ObjectId? = null
+    var _partition: String? = null
     var childProfile: ObjectId? = null
     var question:ObjectId? = null
     var timeAsked: RealmInstant = RealmInstant.now()

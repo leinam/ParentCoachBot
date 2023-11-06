@@ -6,7 +6,6 @@ plugins {
     id 'io.realm.kotlin'
     id 'com.google.gms.google-services'
     id "com.google.firebase.crashlytics"
-
 }
 
 apply plugin: 'com.android.application'
@@ -119,8 +118,6 @@ dependencies {
 
     // implementation "org.apache.poi:ooxml-schemas:1.4"
     // implementation 'org.apache.logging.log4j:log4j-core:2.6.2'
-
-
 
 
 }

@@ -11,6 +11,7 @@ import org.mongodb.kbson.ObjectId
 class ChatSession: RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
+    var _partition: String? = null
     var chatTitle: RealmDictionary<String?> = realmDictionaryOf()
     var childProfile: ObjectId? = null
     var timeStarted: RealmInstant = RealmInstant.now()

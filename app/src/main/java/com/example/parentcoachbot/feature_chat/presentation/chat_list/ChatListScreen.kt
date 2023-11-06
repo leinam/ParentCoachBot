@@ -223,7 +223,7 @@ fun ChatListScreen(
                                     )
                                     {
 
-                                        println("chat $ ${currentLanguageCode}")
+                                        println("chat $ $currentLanguageCode")
 
                                         Text(
                                             text = chatSession.chatTitle[currentLanguageCode]

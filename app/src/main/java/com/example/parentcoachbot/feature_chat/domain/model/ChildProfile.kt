@@ -7,6 +7,7 @@ import org.mongodb.kbson.ObjectId
 class ChildProfile: RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
+    var _partition: String? = null
     var parentUser: ObjectId? = null
     var name:String? = null
     var gender: String = Sex.NotSpecified.name

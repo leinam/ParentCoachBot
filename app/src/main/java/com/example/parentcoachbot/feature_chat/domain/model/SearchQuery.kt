@@ -11,6 +11,7 @@ class SearchQuery: RealmObject {
     var _id: ObjectId = ObjectId.invoke()
     var chatSession: ObjectId? = null
     var questionSelected: ObjectId? = null
+    var _partition: String? = null
     @Index
     var queryText: String? = null
     var timeQueried: RealmInstant = RealmInstant.now()
