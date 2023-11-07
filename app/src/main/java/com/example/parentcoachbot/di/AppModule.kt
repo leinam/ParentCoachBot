@@ -12,17 +12,8 @@ import com.example.parentcoachbot.feature_chat.data.repository.QuestionRepositor
 import com.example.parentcoachbot.feature_chat.data.repository.QuestionSessionRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.SubtopicRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.TopicRepositoryImpl
-import com.example.parentcoachbot.feature_chat.domain.model.Answer
-import com.example.parentcoachbot.feature_chat.domain.model.AnswerThread
-import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
-import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
-import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
-import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSearcher
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSearcherImplementation
-import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
-import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
-import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerThreadRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.ChatSessionRepository
@@ -71,7 +62,6 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.GetAllTopics
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
-import com.example.parentcoachbot.feature_chat.domain.util.PopulateDb
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.database.DatabaseReference
@@ -82,7 +72,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
 import javax.inject.Singleton
 
 
@@ -90,36 +79,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Provides
-    @Singleton
-    fun provideRealmDatabase(application: Application): Realm {
-        val config = RealmConfiguration.Builder(
-            schema =
-            setOf(
-                Answer::class,
-                Question::class, Topic::class,
-                ChatSession::class, Subtopic::class,
-                QuestionSession::class, ParentUser::class,
-                ChildProfile::class, AnswerThread::class
-            )
-        )
-            .initialData {
-                println("Attempting to pre-populate database")
-                PopulateDb(this, application)()
-            }
-            .name("PCdb10")
-            .schemaVersion(0)
-            .compactOnLaunch()
-            .build()
-
-        return Realm.open(config)
-    }
 
     @Provides
     @Singleton
     fun provideFirebaseAnalytics(): FirebaseAnalytics {
         return Firebase.analytics
     }
+
 
     @Provides
     @Singleton

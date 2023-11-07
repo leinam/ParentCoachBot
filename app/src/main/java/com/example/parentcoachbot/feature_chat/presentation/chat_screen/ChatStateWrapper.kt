@@ -9,7 +9,6 @@ import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.mongodb.kbson.ObjectId
 
 data class ChatStateWrapper(
     val subtopicQuestionsListState: StateFlow<List<Question>> = MutableStateFlow(emptyList()),
@@ -20,7 +19,7 @@ data class ChatStateWrapper(
     val subtopicsListState: StateFlow<List<Subtopic>> = MutableStateFlow(emptyList()),
     val currentChildProfile: StateFlow<ChildProfile?> = MutableStateFlow(null),
     val application: StateFlow<Application?> = MutableStateFlow(null),
-    val chatSessionId: ObjectId? = null,
+    val chatSessionId: String? = null,
     val questionSessionsWithQuestionAndAnswersState: StateFlow<List<Triple<QuestionSession,
             Question?, List<Answer>?>?>> = MutableStateFlow(
         emptyList()
@@ -29,5 +28,5 @@ data class ChatStateWrapper(
     val searchResultsQuestionsListState: StateFlow<List<Question>> = MutableStateFlow(emptyList()),
     val currentTopicState: StateFlow<Topic?> = MutableStateFlow(null),
     val currentSubtopic: StateFlow<Subtopic?> = MutableStateFlow(null),
-    val currentLanguageCode : StateFlow<String?> = MutableStateFlow(null)
+    val currentLanguageCode: StateFlow<String?> = MutableStateFlow(null)
 )

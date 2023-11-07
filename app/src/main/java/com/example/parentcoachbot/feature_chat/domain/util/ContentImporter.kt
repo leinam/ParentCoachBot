@@ -8,12 +8,11 @@ import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import io.realm.kotlin.MutableRealm
 import io.realm.kotlin.ext.realmDictionaryOf
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.mongodb.kbson.ObjectId
 
 class ContentImporter(
     private val context: Context,
     private val realm: MutableRealm,
-    private val topicId: ObjectId
+    private val topicId: String
 ) {
     fun importContent() {
         val start = System.currentTimeMillis()

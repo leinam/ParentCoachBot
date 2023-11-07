@@ -2,13 +2,13 @@ package com.example.parentcoachbot.feature_chat.domain.model
 
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
+import java.util.UUID
 
 class ChildProfile: RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId.invoke()
+    var _id: String = UUID.randomUUID().toString()
     var _partition: String? = null
-    var parentUser: ObjectId? = null
+    var parentUser: String? = null
     var name:String? = null
     var gender: String = Sex.NotSpecified.name
     var yearOfBirth: Int? = null

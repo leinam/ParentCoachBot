@@ -20,7 +20,6 @@ import org.apache.lucene.search.TopDocs
 import org.apache.lucene.search.similarities.BM25Similarity
 import org.apache.lucene.store.Directory
 import org.apache.lucene.store.RAMDirectory
-import org.mongodb.kbson.ObjectId
 
 class QuestionSearcherImplementation(
     val questionUseCases: QuestionUseCases,
@@ -55,9 +54,9 @@ class QuestionSearcherImplementation(
         return searcher
     }
 
-    override fun search(queryText: String, currentLanguage: String): List<ObjectId> {
+    override fun search(queryText: String, currentLanguage: String): List<String> {
         // val query = FuzzyQuery(Term("content", queryText), 2)
-        var searchResults = emptyList<ObjectId>()
+        var searchResults = emptyList<String>()
 
         if (queryText.isNotEmpty()) {
             indexSearcher?.let {
@@ -70,16 +69,16 @@ class QuestionSearcherImplementation(
 
                 searchResults = topDocs.scoreDocs.mapNotNull { scoreDoc: ScoreDoc ->
                     val docId: Int = scoreDoc.doc
-                    var questionId: ByteArray? = null
+                    var questionId: String? = null
                     val document: Document? = it.doc(docId)
 
                     document?.let { doc ->
                         doc.get(questionTextFieldName)
-                        questionId = doc.getField(questionIdFieldName).binaryValue().bytes
+                        questionId = doc.getField(questionIdFieldName).toString()
                     }
 
                     questionId?.let { id ->
-                        ObjectId(id)
+                        id
                     }
                 }
             }
@@ -108,7 +107,7 @@ class QuestionSearcherImplementation(
                     add(
                         StoredField(
                             questionIdFieldName,
-                            question._id.toByteArray()
+                            question._id
                         )
                     )
                 }

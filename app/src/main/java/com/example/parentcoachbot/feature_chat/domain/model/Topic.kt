@@ -5,11 +5,11 @@ import io.realm.kotlin.ext.realmDictionaryOf
 import io.realm.kotlin.types.RealmDictionary
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
+import java.util.UUID
 
-class Topic: RealmObject{
+class Topic: RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId.invoke()
+    var _id: String = UUID.randomUUID().toString()
     var _partition: String? = null
     var titleEn: String? = null
     var title: RealmDictionary<String?> = realmDictionaryOf()

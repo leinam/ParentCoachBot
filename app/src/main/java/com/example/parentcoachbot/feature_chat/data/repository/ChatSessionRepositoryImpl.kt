@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import org.mongodb.kbson.ObjectId
 
 class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepository {
     override suspend fun newChatSession(chatSession: ChatSession) {
@@ -22,7 +21,7 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
         }
     }
 
-    override suspend fun togglePinChatSession(id: ObjectId): Unit = withContext(Dispatchers.IO) {
+    override suspend fun togglePinChatSession(id: String): Unit = withContext(Dispatchers.IO) {
         realm.write {
             val chatSession = realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
 
@@ -34,7 +33,7 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
 
     }
 
-    override suspend fun deleteChatSession(id: ObjectId) {
+    override suspend fun deleteChatSession(id: String) {
         realm.write {
             val chatSession = realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
             chatSession?.let {
@@ -45,11 +44,11 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
     }
 
 
-    override suspend fun getChatSessionById(id: ObjectId): ChatSession? {
+    override suspend fun getChatSessionById(id: String): ChatSession? {
         return realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
     }
 
-    override suspend fun getChatSessionsByChildProfile(childProfileId: ObjectId): Flow<List<ChatSession>> =
+    override suspend fun getChatSessionsByChildProfile(childProfileId: String): Flow<List<ChatSession>> =
         withContext(Dispatchers.IO) {
             realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
                 .find()
@@ -63,7 +62,7 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
         }
 
     override suspend fun getChatSessionsByChildProfileAsynch(
-        childProfileId: ObjectId
+        childProfileId: String
     ): Flow<ChatSession> = withContext(Dispatchers.IO)
     {
         realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
@@ -72,7 +71,7 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
             .asFlow()
     }
 
-    override suspend fun updateLastAnswerText(answer: Answer, chatSessionId: ObjectId) {
+    override suspend fun updateLastAnswerText(answer: Answer, chatSessionId: String) {
         realm.write {
             val chatSession: ChatSession? =
                 this.query<ChatSession>("_id == $0", chatSessionId).first().find()
@@ -85,7 +84,7 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
         }
     }
 
-    override suspend fun updateChatTitle(subtopic: Subtopic, chatSessionId: ObjectId) {
+    override suspend fun updateChatTitle(subtopic: Subtopic, chatSessionId: String) {
         realm.write {
             val chatSession: ChatSession? =
                 this.query<ChatSession>("_id == $0", chatSessionId).first().find()

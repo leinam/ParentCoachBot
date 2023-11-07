@@ -6,7 +6,6 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.mongodb.kbson.ObjectId
 
 // TODO Inject Dispatchers
 class ParentUserRepositoryImpl(private val realm: Realm) : ParentUserRepository {
@@ -16,7 +15,7 @@ class ParentUserRepositoryImpl(private val realm: Realm) : ParentUserRepository 
         }
     }
 
-    override suspend fun deleteParentUser(id: ObjectId) {
+    override suspend fun deleteParentUser(id: String) {
         realm.write {
             val parent = realm.query<ParentUser>(query = "_id == $0", id).find().firstOrNull()
             parent?.let {user ->
@@ -26,7 +25,7 @@ class ParentUserRepositoryImpl(private val realm: Realm) : ParentUserRepository 
         }
     }
 
-    override suspend fun getParentUserById(id: ObjectId): ParentUser? =
+    override suspend fun getParentUserById(id: String): ParentUser? =
         withContext(Dispatchers.IO) {
             realm.query<ParentUser>(query = "id == $0", id).find().firstOrNull()
         }

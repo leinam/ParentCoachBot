@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import org.mongodb.kbson.ObjectId
 
 class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRepository {
     override suspend fun getAllQuestionSessions(): Flow<List<QuestionSession>> = withContext(Dispatchers.IO) {
@@ -29,21 +28,21 @@ class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRe
         }
     }
 
-    override suspend fun getQuestionSessionById(id: ObjectId): QuestionSession? = withContext(Dispatchers.IO){
+    override suspend fun getQuestionSessionById(id: String): QuestionSession? = withContext(Dispatchers.IO){
         realm.query<QuestionSession>(query = "_id == $0", id).find().firstOrNull()
     }
 
-    override suspend fun getQuestionSessionsByChatSession(chatSessionId: ObjectId): Flow<List<QuestionSession>> = withContext(
+    override suspend fun getQuestionSessionsByChatSession(chatSessionId: String): Flow<List<QuestionSession>> = withContext(
         Dispatchers.IO){
         realm.query<QuestionSession>(query = "chatSession == $0", chatSessionId).asFlow()
             .map { it.list }
     }
 
-    override suspend fun getLatestQuestionSessionByChatSession(chatSessionId: ObjectId): QuestionSession = withContext(Dispatchers.IO){
+    override suspend fun getLatestQuestionSessionByChatSession(chatSessionId: String): QuestionSession = withContext(Dispatchers.IO){
         realm.query<QuestionSession>(query = "chatSession == $0", chatSessionId).find().last()
     }
 
-    override suspend fun toggleSaveQuestionSession(id: ObjectId) = withContext(Dispatchers.IO) {
+    override suspend fun toggleSaveQuestionSession(id: String) = withContext(Dispatchers.IO) {
         realm.write {
             val questionSession =
                 realm.query<QuestionSession>(query = "_id == $0", id).find()
@@ -56,7 +55,7 @@ class QuestionSessionRepositoryImpl(private val realm: Realm): QuestionSessionRe
 
     }
 
-    override suspend fun deleteQuestionSession(id: ObjectId) {
+    override suspend fun deleteQuestionSession(id: String) {
         realm.write {
             val questionSession =
                 realm.query<QuestionSession>(query = "_id == $0", id).find()

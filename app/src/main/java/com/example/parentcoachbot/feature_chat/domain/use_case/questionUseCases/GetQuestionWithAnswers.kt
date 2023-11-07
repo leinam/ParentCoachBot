@@ -5,7 +5,6 @@ import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerThreadRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.QuestionRepository
-import org.mongodb.kbson.ObjectId
 
 class GetQuestionWithAnswers(
     private val questionRepository: QuestionRepository,
@@ -13,7 +12,7 @@ class GetQuestionWithAnswers(
     private val answerThreadRepository: AnswerThreadRepository
 ) {
 
-    suspend operator fun invoke(questionId: ObjectId): Pair<Question, List<Answer>>? {
+    suspend operator fun invoke(questionId: String): Pair<Question, List<Answer>>? {
         var questionAnswerPair: Pair<Question, List<Answer>>? = null
 
         questionRepository.getQuestionById(questionId)?.let { question ->

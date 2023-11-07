@@ -7,16 +7,16 @@ import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
+import java.util.UUID
 
-class Question: RealmObject{
+class Question: RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId.invoke()
-    var questionText:RealmDictionary<String?> = realmDictionaryOf()
+    var _id: String = UUID.randomUUID().toString()
+    var questionText: RealmDictionary<String?> = realmDictionaryOf()
     var _partition: String? = null
     var answerThread: String? = null
     var searchKeywords: RealmList<String> = realmListOf()
-    var subtopics: RealmList<ObjectId> = realmListOf()
+    var subtopics: RealmList<String> = realmListOf()
     var subtopic: String? = null
     var tags: RealmList<String> = realmListOf()
     var timeCreated: RealmInstant = RealmInstant.now()

@@ -3,13 +3,15 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
-    id 'io.realm.kotlin'
+    id ("io.realm.kotlin") version "1.8.0"
     id 'com.google.gms.google-services'
     id "com.google.firebase.crashlytics"
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.dagger.hilt.android'
+apply plugin: "realm-android"
+
 
 android {
     namespace 'com.example.parentcoachbot'
@@ -22,10 +24,15 @@ android {
         versionCode 1
         versionName "1.0"
 
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
+    }
+
+    realm {
+        syncEnabled = true
     }
 
     buildTypes {
@@ -42,8 +49,9 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
+
     buildFeatures {
         compose true
     }
@@ -73,8 +81,12 @@ dependencies {
     implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
 
 
-    implementation 'io.realm.kotlin:library-base:1.10.0' // Add to use local realm (no sync)
+    // implementation 'io.realm.kotlin:library-base:1.10.0' // Add to use local realm (no sync)
     // implementation 'io.realm.kotlin:library-sync:1.10.0'// Add to use Device Sync
+    //implementation("io.realm.kotlin:library-sync:1.10.0")
+    implementation("io.realm.kotlin:library-sync:1.8.0") // DON'T FORGET TO UPDATE VERSION IN PROJECT GRADLE
+
+
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1' // Add to use coroutines with the SDK
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.6.1" // Replace '2.x.x' with the appropriate version
 

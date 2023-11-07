@@ -6,14 +6,14 @@ import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.Index
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
+import java.util.UUID
 
 class ChatSession: RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId.invoke()
+    var _id: String = UUID.randomUUID().toString()
     var _partition: String? = null
     var chatTitle: RealmDictionary<String?> = realmDictionaryOf()
-    var childProfile: ObjectId? = null
+    var childProfile: String? = null
     var timeStarted: RealmInstant = RealmInstant.now()
     var timeLastUpdated: RealmInstant? = timeStarted
     @Index

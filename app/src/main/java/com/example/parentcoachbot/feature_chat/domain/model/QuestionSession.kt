@@ -3,15 +3,15 @@ package com.example.parentcoachbot.feature_chat.domain.model
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
+import java.util.UUID
 
 class QuestionSession: RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId.invoke()
-    var chatSession: ObjectId? = null
+    var _id: String = UUID.randomUUID().toString()
+    var chatSession: String? = null
     var _partition: String? = null
-    var childProfile: ObjectId? = null
-    var question:ObjectId? = null
+    var childProfile: String? = null
+    var question: String? = null
     var timeAsked: RealmInstant = RealmInstant.now()
     var isSaved: Boolean = false
 }

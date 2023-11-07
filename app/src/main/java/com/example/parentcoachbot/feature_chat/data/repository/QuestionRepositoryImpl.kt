@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import org.mongodb.kbson.ObjectId
 
 class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
     override suspend fun getAllQuestions(): Flow<List<Question>> = withContext(Dispatchers.IO) {
@@ -17,11 +16,11 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
         }
     }
 
-    override suspend fun getQuestionById(id: ObjectId): Question? = withContext(Dispatchers.IO) {
+    override suspend fun getQuestionById(id: String): Question? = withContext(Dispatchers.IO) {
         realm.query<Question>(query = "_id == $0", id).find().firstOrNull()
     }
 
-    override suspend fun getQuestionsFromIdList(idList: List<ObjectId>): List<Question> = withContext(Dispatchers.IO){
+    override suspend fun getQuestionsFromIdList(idList: List<String>): List<Question> = withContext(Dispatchers.IO){
         realm.query<Question>(query = "_id IN $0", idList).find()
     }
 
@@ -31,7 +30,7 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
         }
     }
 
-    override suspend fun deleteQuestion(id: ObjectId) {
+    override suspend fun deleteQuestion(id: String) {
         realm.write {
             val question = this.query<Question>("_id == $id").find().firstOrNull()
 
@@ -47,7 +46,7 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
         }
     }
 
-    override suspend fun getQuestionsBySubtopicList(subtopicId: ObjectId): Flow<List<Question>> =
+    override suspend fun getQuestionsBySubtopicList(subtopicId: String): Flow<List<Question>> =
         withContext(Dispatchers.IO) {
             realm.query<Question>().asFlow().map {
                 it.list.filter { question ->

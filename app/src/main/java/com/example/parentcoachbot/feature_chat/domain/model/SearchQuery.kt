@@ -4,13 +4,13 @@ import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.Index
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
+import java.util.UUID
 
 class SearchQuery: RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId.invoke()
-    var chatSession: ObjectId? = null
-    var questionSelected: ObjectId? = null
+    var _id: String = UUID.randomUUID().toString()
+    var chatSession: String? = null
+    var questionSelected: String? = null
     var _partition: String? = null
     @Index
     var queryText: String? = null

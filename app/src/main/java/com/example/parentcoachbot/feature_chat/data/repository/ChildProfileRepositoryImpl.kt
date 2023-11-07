@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import org.mongodb.kbson.ObjectId
 
 class ChildProfileRepositoryImpl(private val realm: Realm) : ChildProfileRepository {
     override suspend fun newChildProfile(childProfile: ChildProfile) {
@@ -17,7 +16,7 @@ class ChildProfileRepositoryImpl(private val realm: Realm) : ChildProfileReposit
         }
     }
 
-    override suspend fun getChildProfileByParent(parentId: ObjectId): Flow<List<ChildProfile>> =
+    override suspend fun getChildProfileByParent(parentId: String): Flow<List<ChildProfile>> =
         withContext(
             Dispatchers.IO
         ) {
@@ -25,19 +24,19 @@ class ChildProfileRepositoryImpl(private val realm: Realm) : ChildProfileReposit
                 .map { it.list }
         }
 
-    override suspend fun getChildProfileByParentTest(parentId: ObjectId): ChildProfile? =
+    override suspend fun getChildProfileByParentTest(parentId: String): ChildProfile? =
         withContext(
             Dispatchers.IO
         ) {
             realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().firstOrNull()
         }
 
-    override suspend fun getChildProfileById(id: ObjectId): ChildProfile? =
+    override suspend fun getChildProfileById(id: String): ChildProfile? =
         withContext(Dispatchers.IO) {
             realm.query<ChildProfile>(query = "_id == $0", id).find().firstOrNull()
         }
 
-    override suspend fun deleteChildProfile(id: ObjectId) {
+    override suspend fun deleteChildProfile(id: String) {
         realm.write {
             val childProfile =
                 realm.query<ChildProfile>(query = "_id == $0", id).find().firstOrNull()

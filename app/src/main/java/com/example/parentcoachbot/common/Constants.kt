@@ -3,8 +3,7 @@ package com.example.parentcoachbot.common
 import org.apache.lucene.analysis.CharArraySet
 
 object Constants {
-    const val APP_ID = "parentcoachbot-suoba"
-    const val CLIENT_ID = "971269654362-0u9tnk06s57vsso4tjrg65ic1jtcgdbu.apps.googleusercontent.com"
+    const val APP_ID = "pctest-epzwl"
 }
 
 val portugueseStopWordsSet: Set<String> = setOf(

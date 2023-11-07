@@ -4,11 +4,11 @@ import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
+import java.util.UUID
 
 class AnswerThread: RealmObject {
     @PrimaryKey
-    var _id: ObjectId = ObjectId.invoke()
+    var _id: String = UUID.randomUUID().toString()
     var _partition: String? = null
     var code: String? = null
     var title: String? = null

@@ -2,10 +2,9 @@ package com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCa
 
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.repository.ChatSessionRepository
-import org.mongodb.kbson.ObjectId
 
 class UpdateChatTitle(private val chatSessionRepository: ChatSessionRepository){
-    suspend operator fun invoke(subtopic: Subtopic, chatSessionId: ObjectId){
+    suspend operator fun invoke(subtopic: Subtopic, chatSessionId: String){
         chatSessionRepository.updateChatTitle(subtopic, chatSessionId)
     }
 }

@@ -6,10 +6,9 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.mongodb.kbson.ObjectId
 
 class AnswerThreadRepositoryImpl(private val realm: Realm): AnswerThreadRepository{
-    override suspend fun getAnswerThreadById(id: ObjectId): AnswerThread? = withContext(Dispatchers.IO){
+    override suspend fun getAnswerThreadById(id: String): AnswerThread? = withContext(Dispatchers.IO){
         realm.query<AnswerThread>(query = "_id == $0", id).find().firstOrNull()
     }
 
@@ -17,7 +16,7 @@ class AnswerThreadRepositoryImpl(private val realm: Realm): AnswerThreadReposito
         realm.query<AnswerThread>(query = "code == $0", answerCode).find().firstOrNull()
     }
 
-    override suspend fun deleteAnswerThread(id: ObjectId): Unit = withContext(Dispatchers.IO) {
+    override suspend fun deleteAnswerThread(id: String): Unit = withContext(Dispatchers.IO) {
         realm.write {
             val answerThread = realm.query<AnswerThread>(query = "_id == $0", id).find().firstOrNull()
 

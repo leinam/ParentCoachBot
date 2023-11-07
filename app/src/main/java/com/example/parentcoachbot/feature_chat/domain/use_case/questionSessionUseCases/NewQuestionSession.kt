@@ -3,13 +3,14 @@ package com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionU
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
 import com.example.parentcoachbot.feature_chat.domain.repository.QuestionSessionRepository
-import org.mongodb.kbson.ObjectId
 
 class NewQuestionSession (private val questionSessionRepository: QuestionSessionRepository){
 
-    suspend operator fun invoke(chatSessionId: ObjectId,
-                                question: Question,
-                                childProfile: ObjectId?){
+    suspend operator fun invoke(
+        chatSessionId: String,
+        question: Question,
+        childProfile: String?
+    ){
 
             val questionSession = QuestionSession().apply {
                 this.question = question._id
