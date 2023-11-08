@@ -40,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
+import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.BackgroundBeige
 import com.example.parentcoachbot.ui.theme.PlexSans
@@ -47,6 +48,7 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import com.example.parentcoachbot.ui.theme.TextGrey
 import com.example.parentcoachbot.ui.theme.ThinGreen
 import com.example.parentcoachbot.ui.theme.drawerItemsList
+import io.realm.kotlin.ext.realmDictionaryOf
 import kotlinx.coroutines.launch
 
 @Preview
@@ -54,7 +56,11 @@ import kotlinx.coroutines.launch
 fun ResourcesHomeScreen(navController: NavController = rememberNavController()) {
 
     val topicsList = listOf<Topic>(Topic().apply {
-        this.titleEn = "Breastfeeding"
+        title = realmDictionaryOf(
+            Pair(Language.English.isoCode, "Breastfeeding" ),
+            Pair(Language.Portuguese.isoCode, "Amamentação"),
+            Pair(Language.Zulu.isoCode, "Ukuncelisa")
+        )
         this.icon = R.drawable.breastfeeding_icon
     })
     val scope = rememberCoroutineScope()
@@ -154,7 +160,7 @@ fun ResourcesHomeScreen(navController: NavController = rememberNavController()) 
                                         }
 
                                         Text(
-                                            text = topic.titleEn ?: "",
+                                            text = topic.title["en"] ?: "",
                                             fontSize = 18.sp,
                                             fontFamily = PlexSans,
                                             fontWeight = FontWeight.SemiBold,

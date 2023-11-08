@@ -10,7 +10,7 @@ plugins {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.dagger.hilt.android'
-apply plugin: "realm-android"
+// apply plugin: "realm-android"
 
 
 android {
@@ -31,9 +31,7 @@ android {
         }
     }
 
-    realm {
-        syncEnabled = true
-    }
+
 
     buildTypes {
         release {

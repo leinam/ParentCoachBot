@@ -24,6 +24,14 @@ class ChildProfileRepositoryImpl(private val realm: Realm) : ChildProfileReposit
                 .map { it.list }
         }
 
+    override suspend fun getAllChildProfiles(): Flow<List<ChildProfile>> =
+    withContext(
+    Dispatchers.IO
+    ) {
+        realm.query<ChildProfile>().find().asFlow()
+            .map { it.list }
+    }
+
     override suspend fun getChildProfileByParentTest(parentId: String): ChildProfile? =
         withContext(
             Dispatchers.IO

@@ -12,12 +12,12 @@ class ChatSession: RealmObject {
     @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
     var _partition: String? = null
-    var chatTitle: RealmDictionary<String?> = realmDictionaryOf()
+    var chatTitle: RealmDictionary<String> = realmDictionaryOf()
     var childProfile: String? = null
     var timeStarted: RealmInstant = RealmInstant.now()
     var timeLastUpdated: RealmInstant? = timeStarted
     @Index
     var isPinned: Boolean = false
-    var lastAnswerText: RealmDictionary<String?> = realmDictionaryOf()
+    var lastAnswerText: RealmDictionary<String> = realmDictionaryOf()
 
 }

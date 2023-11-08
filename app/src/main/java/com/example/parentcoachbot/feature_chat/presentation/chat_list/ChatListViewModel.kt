@@ -10,6 +10,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
+import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,8 @@ class ChatListViewModel @Inject constructor(
     private val application: Application,
     private val chatSessionUseCases: ChatSessionUseCases,
     private val topicUseCases: TopicUseCases,
-    private val globalState: GlobalState
+    private val globalState: GlobalState,
+    private val authManager: AuthManager
 ) : ViewModel() {
 
     private val _chatSessionsListState = MutableStateFlow<List<ChatSession>>(emptyList())
@@ -74,6 +76,7 @@ class ChatListViewModel @Inject constructor(
 
                         ChatSession().apply {
                             this.childProfile = currentChildProfile._id
+                            this._partition = authManager.realmUser.value?.id
                         }.let {
                             _newChatState.value = it
 

@@ -13,7 +13,7 @@ class Answer: RealmObject {
     var _id: String = UUID.randomUUID().toString()
     var _partition: String? = null
     var supportingImagePath: String? = null
-    var answerText: RealmDictionary<String?> = realmDictionaryOf()
+    var answerText: RealmDictionary<String> = realmDictionaryOf()
     @Index
     var answerType: String? = AnswerType.Info.code
     var answerThread: String? = null

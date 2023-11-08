@@ -10,23 +10,25 @@ import io.realm.kotlin.types.RealmDictionary
 
 class PopulateDb(
     private val realm: MutableRealm,
-    private val application: Application
+    private val application: Application,
+    private val userId: String
 ) {
 
     operator fun invoke() {
         println("Attempting to pre-populate database")
 
         val defaultParentUser = ParentUser()
-        val titleDict: RealmDictionary<String?> = realmDictionaryOf(
-            Pair(Language.English.isoCode, "Breastfeeding"),
+        val titleDict: RealmDictionary<String> = realmDictionaryOf(
+            Pair(Language.English.isoCode, "Breastfeeding" ),
             Pair(Language.Portuguese.isoCode, "Amamentação"),
             Pair(Language.Zulu.isoCode, "Ukuncelisa")
         )
 
         val breastfeedingTopic: Topic = Topic().apply {
-            this.titleEn = "Breastfeeding"
             this.title = titleDict
             this.icon = R.drawable.breastfeeding_icon
+            this._partition = userId
+
         }
 
         realm.copyToRealm(breastfeedingTopic)
@@ -35,7 +37,8 @@ class PopulateDb(
         ContentImporter(
             application.applicationContext,
             realm = realm,
-            topicId = breastfeedingTopic._id
+            topicId = breastfeedingTopic._id,
+            userId = userId
         ).importContent()
 
 

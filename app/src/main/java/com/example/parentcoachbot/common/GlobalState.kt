@@ -9,6 +9,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.Language
+import io.realm.kotlin.mongodb.User
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -38,6 +39,7 @@ class GlobalState(val parentUserUseCases: ParentUserUseCases,
         parentUserState.value = parentUserUseCases.getParentUser()
         println("The global parent state is ${parentUserState.value}")
     }
+
 
 
 

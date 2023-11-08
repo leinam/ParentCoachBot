@@ -1,9 +1,11 @@
 package com.example.parentcoachbot.feature_chat.domain.model
 
+import io.realm.kotlin.types.annotations.PrimaryKey
 import io.realm.kotlin.types.RealmObject
 import java.util.UUID
 
-class ParentUser: RealmObject {
+open class ParentUser: RealmObject {
+    @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
     var _partition: String? = null
     var name: String = "User"

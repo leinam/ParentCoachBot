@@ -3,4 +3,5 @@ package com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseC
 data class ChildProfileUseCases(val getChildProfileById: GetChildProfileById,
                                 val getChildProfilesByParentUser: GetChildProfilesByParentUser,
                                 val getChildProfileTest: GetChildProfileTest,
-                                val newChildProfile: NewChildProfile)
+                                val newChildProfile: NewChildProfile,
+                                val getAllChildProfiles: GetAllChildProfiles)

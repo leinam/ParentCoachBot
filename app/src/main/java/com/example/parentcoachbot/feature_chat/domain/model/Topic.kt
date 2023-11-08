@@ -11,8 +11,7 @@ class Topic: RealmObject {
     @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
     var _partition: String? = null
-    var titleEn: String? = null
-    var title: RealmDictionary<String?> = realmDictionaryOf()
+    var title: RealmDictionary<String> = realmDictionaryOf()
     @DrawableRes var icon: Int? = null
     var description: String? = null
     var topicAlias: String? = null

@@ -7,12 +7,14 @@ import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import io.realm.kotlin.MutableRealm
 import io.realm.kotlin.ext.realmDictionaryOf
+import io.realm.kotlin.types.RealmDictionary
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 class ContentImporter(
     private val context: Context,
     private val realm: MutableRealm,
-    private val topicId: String
+    private val topicId: String,
+    private val userId: String
 ) {
     fun importContent() {
         val start = System.currentTimeMillis()
@@ -56,9 +58,9 @@ class ContentImporter(
 
             questionTextEn?.let {
                 val questionTextDict = realmDictionaryOf(
-                    Pair(Language.English.isoCode, questionTextEn),
-                    Pair(Language.Portuguese.isoCode, questionTextPt),
-                    Pair(Language.Zulu.isoCode, questionTextZu)
+                    Pair(Language.English.isoCode, questionTextEn ?: ""),
+                    Pair(Language.Portuguese.isoCode, questionTextPt ?: ""),
+                    Pair(Language.Zulu.isoCode, questionTextZu?: "")
                 )
 
                 if (it.isNotBlank()) {
@@ -66,6 +68,7 @@ class ContentImporter(
                         this.questionText = questionTextDict
                         this.answerThread = questionAnswerThread
                         this.subtopic = questionSubtopic
+                        this._partition = userId
                     })
 
                 }
@@ -93,15 +96,15 @@ class ContentImporter(
             subtopicCode?.let {
                 // println("$subtopicCode : $subtopicTitleEn: $subtopicTitlePt: $subtopicTitleZu")
                 val subtopicTitleDict = realmDictionaryOf(
-                    Pair(Language.English.isoCode, subtopicTitleEn),
-                    Pair(Language.Portuguese.isoCode, subtopicTitlePt),
-                    Pair(Language.Zulu.isoCode, subtopicTitleZu)
+                    Pair(Language.English.isoCode, subtopicTitleEn ?: ""),
+                    Pair(Language.Portuguese.isoCode, subtopicTitlePt ?: ""),
+                    Pair(Language.Zulu.isoCode, subtopicTitleZu  ?: "")
                 )
 
                 val subtopicDescriptionDict = realmDictionaryOf(
-                    Pair(Language.English.isoCode, subtopicDescriptionEn),
-                    Pair(Language.Portuguese.isoCode, subtopicDescriptionPt),
-                    Pair(Language.Zulu.isoCode, subtopicDescriptionZu)
+                    Pair(Language.English.isoCode, subtopicDescriptionEn  ?: ""),
+                    Pair(Language.Portuguese.isoCode, subtopicDescriptionPt  ?: ""),
+                    Pair(Language.Zulu.isoCode, subtopicDescriptionZu  ?: "")
                 )
 
                 realm.copyToRealm(
@@ -110,6 +113,7 @@ class ContentImporter(
                         this.code = subtopicCode
                         this.description = subtopicDescriptionDict
                         this.topic = topicId
+                        this._partition = userId
                     })
             }
 
@@ -135,6 +139,7 @@ class ContentImporter(
                         this.title = answerThreadTitle
                         this.code = answerThreadCode
                         this.subtopic = answerThreadSubtopic
+                        this._partition = userId
                     }
 
                     realm.copyToRealm(answerThread)
@@ -188,16 +193,17 @@ class ContentImporter(
                             if (it.isNotBlank()) {
                                 println("Part $index: $answerTextEn: ${answerTextsPt[index]}: ${answerTextsZu[index]}")
 
-                                val answerTextDict = realmDictionaryOf(
-                                    Pair(Language.English.isoCode, answerTextEn),
-                                    Pair(Language.Portuguese.isoCode, answerTextsPt[index]),
-                                    Pair(Language.Zulu.isoCode, answerTextsZu[index])
+                                val answerTextDict: RealmDictionary<String> = realmDictionaryOf(
+                                    Pair(Language.English.isoCode, answerTextEn ?: ""),
+                                    Pair(Language.Portuguese.isoCode, answerTextsPt[index] ?: ""),
+                                    Pair(Language.Zulu.isoCode, answerTextsZu[index] ?: "")
                                 )
 
                                 realm.copyToRealm(Answer().apply {
                                     this.answerThread = answerThread.code
                                     this.answerThreadPosition = index
                                     this.answerText = answerTextDict
+                                    this._partition = userId
                                 })
                             }
                         }

@@ -36,6 +36,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCas
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatLastAnswerText
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatTitle
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetAllChildProfiles
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileById
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileTest
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfilesByParentUser
@@ -254,7 +255,8 @@ object AppModule {
             getChildProfileById = GetChildProfileById(childProfileRepository),
             getChildProfilesByParentUser = GetChildProfilesByParentUser(childProfileRepository),
             getChildProfileTest = GetChildProfileTest(childProfileRepository),
-            newChildProfile = NewChildProfile(childProfileRepository)
+            newChildProfile = NewChildProfile(childProfileRepository),
+            getAllChildProfiles = GetAllChildProfiles(childProfileRepository)
         )
     }
 

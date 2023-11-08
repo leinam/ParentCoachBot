@@ -14,7 +14,7 @@ class AnswerThread: RealmObject {
     var title: String? = null
     var subtopic: String? = null
     var description: String? = null
-    var relatedAnswerThreads: RealmList<String?> = realmListOf()
+    var relatedAnswerThreads: RealmList<String> = realmListOf()
     var externalWebsiteLink: String? = null
 
 }

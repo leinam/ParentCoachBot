@@ -25,6 +25,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUs
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
+import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,6 +54,7 @@ class ChatViewModel @Inject constructor(
     private val answerUseCases: AnswerUseCases,
     private val chatSessionUseCases: ChatSessionUseCases,
     private val globalState: GlobalState,
+    private val authManager: AuthManager,
     private val questionSearcher: QuestionSearcher
 ) : ViewModel() {
     private val _topicsListState = MutableStateFlow<List<Topic>>(emptyList())
@@ -198,7 +200,7 @@ class ChatViewModel @Inject constructor(
                     _currentChatState.value?.let { chatSession ->
                         questionSessionUseCases.newQuestionSession(
                             chatSessionId = chatSession._id,
-                            question = event.question,
+                            question = event.question.apply { this._partition = authManager.realmUser.value?.id },
                             childProfile = _currentChildProfile.value?._id
                         ).also {
                             event.question.subtopic?.let {

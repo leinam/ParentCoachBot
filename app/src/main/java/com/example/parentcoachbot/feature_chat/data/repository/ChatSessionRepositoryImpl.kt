@@ -77,9 +77,9 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
                 this.query<ChatSession>("_id == $0", chatSessionId).first().find()
 
             chatSession?.lastAnswerText = realmDictionaryOf(
-                Pair(Language.English.isoCode, answer.answerText[Language.English.isoCode]),
-                Pair(Language.Portuguese.isoCode, answer.answerText[Language.Portuguese.isoCode]),
-                Pair(Language.Zulu.isoCode, answer.answerText[Language.Zulu.isoCode])
+                Pair(Language.English.isoCode, answer.answerText[Language.English.isoCode] ?: ""),
+                Pair(Language.Portuguese.isoCode, answer.answerText[Language.Portuguese.isoCode] ?: ""),
+                Pair(Language.Zulu.isoCode, answer.answerText[Language.Zulu.isoCode] ?: "")
             )
         }
     }
@@ -90,9 +90,9 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
                 this.query<ChatSession>("_id == $0", chatSessionId).first().find()
 
             chatSession?.chatTitle = realmDictionaryOf(
-                Pair(Language.English.isoCode, subtopic.title[Language.English.isoCode]),
-                Pair(Language.Portuguese.isoCode, subtopic.title[Language.Portuguese.isoCode]),
-                Pair(Language.Zulu.isoCode, subtopic.title[Language.Zulu.isoCode])
+                Pair(Language.English.isoCode, subtopic.title[Language.English.isoCode] ?: ""),
+                Pair(Language.Portuguese.isoCode, subtopic.title[Language.Portuguese.isoCode] ?: ""),
+                Pair(Language.Zulu.isoCode, subtopic.title[Language.Zulu.isoCode] ?: "")
             )
         }
     }

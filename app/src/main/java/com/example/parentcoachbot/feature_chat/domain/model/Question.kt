@@ -12,7 +12,7 @@ import java.util.UUID
 class Question: RealmObject {
     @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
-    var questionText: RealmDictionary<String?> = realmDictionaryOf()
+    var questionText: RealmDictionary<String> = realmDictionaryOf()
     var _partition: String? = null
     var answerThread: String? = null
     var searchKeywords: RealmList<String> = realmListOf()
