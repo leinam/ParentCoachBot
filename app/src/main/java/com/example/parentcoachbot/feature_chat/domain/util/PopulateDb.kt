@@ -17,7 +17,7 @@ class PopulateDb(
     operator fun invoke() {
         println("Attempting to pre-populate database")
 
-        val defaultParentUser = ParentUser()
+        val defaultParentUser = ParentUser().apply { this._partition = userId }
         val titleDict: RealmDictionary<String> = realmDictionaryOf(
             Pair(Language.English.isoCode, "Breastfeeding" ),
             Pair(Language.Portuguese.isoCode, "Amamentação"),
@@ -28,7 +28,6 @@ class PopulateDb(
             this.title = titleDict
             this.icon = R.drawable.breastfeeding_icon
             this._partition = userId
-
         }
 
         realm.copyToRealm(breastfeedingTopic)

@@ -9,13 +9,15 @@ class NewQuestionSession (private val questionSessionRepository: QuestionSession
     suspend operator fun invoke(
         chatSessionId: String,
         question: Question,
-        childProfile: String?
+        childProfile: String?,
+        userId: String?
     ){
 
             val questionSession = QuestionSession().apply {
                 this.question = question._id
                 this.chatSession = chatSessionId
                 this.childProfile = childProfile
+                this._partition = userId
             }
 
             questionSessionRepository.newQuestionSession(questionSession = questionSession)

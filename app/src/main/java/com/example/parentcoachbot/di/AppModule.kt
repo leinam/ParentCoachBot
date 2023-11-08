@@ -63,6 +63,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.GetAllTopics
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
+import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.database.DatabaseReference
@@ -264,6 +265,12 @@ object AppModule {
     @Singleton
     fun provideParentUserUseCases(parentUserRepository: ParentUserRepository): ParentUserUseCases {
         return ParentUserUseCases(getParentUser = GetParentUser(parentUserRepository))
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppPreferences(application: Application): AppPreferences {
+        return AppPreferences(application.applicationContext)
     }
 
     @Provides

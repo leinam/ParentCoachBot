@@ -2,6 +2,7 @@ package com.example.parentcoachbot.di
 
 import android.app.Application
 import com.example.parentcoachbot.common.Constants
+import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import com.example.parentcoachbot.feature_chat.domain.util.RealmSyncRepository
 import dagger.Module
@@ -26,14 +27,15 @@ object RealmModule {
     fun provideRealmSyncRepository(
         app: App,
         application: Application,
-        authManager: AuthManager
+        authManager: AuthManager,
+        appPreferences: AppPreferences
     ): RealmSyncRepository {
-
 
         return RealmSyncRepository(
             app = app,
             application = application,
-            authManager = authManager
+            authManager = authManager,
+            appPreferences = appPreferences
         )
     }
 

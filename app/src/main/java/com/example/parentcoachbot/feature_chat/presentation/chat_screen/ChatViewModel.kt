@@ -102,10 +102,11 @@ class ChatViewModel @Inject constructor(
     private var getChatQuestionSessionsJob: Job? = null
     private var getChildProfilesJob: Job? = null
     private var getAllQuestionsJob: Job? = null
-    private val appPreferences: SharedPreferences = application.applicationContext.getSharedPreferences(
-        "MyAppPreferences",
-        Context.MODE_PRIVATE
-    )
+    private val appPreferences: SharedPreferences =
+        application.applicationContext.getSharedPreferences(
+            "MyAppPreferences",
+            Context.MODE_PRIVATE
+        )
 
     init {
         getChatQuestionSessions()
@@ -147,7 +148,6 @@ class ChatViewModel @Inject constructor(
     }
 
 
-
     private fun populateQuestionIndex(currentLanguage: String = Language.English.isoCode) {
         println("Populating Question Index")
         viewModelScope.launch {
@@ -157,13 +157,16 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun searchQuestions(queryText: String, currentLanguage: String = Language.English.isoCode) {
+    private fun searchQuestions(
+        queryText: String,
+        currentLanguage: String = Language.English.isoCode
+    ) {
 
         val searchResult = questionSearcher.search(queryText = queryText.trim(), currentLanguage)
         // println("Search result for query: $queryText is $searchResult")
         viewModelScope.launch {
             _searchResultsQuestionsListState.value =
-                questionUseCases.getQuestionsFromIdList(searchResult)
+                questionUseCases.getQuestionsFromIdList(searchResult) // fix this
         }
 
 
@@ -200,7 +203,9 @@ class ChatViewModel @Inject constructor(
                     _currentChatState.value?.let { chatSession ->
                         questionSessionUseCases.newQuestionSession(
                             chatSessionId = chatSession._id,
-                            question = event.question.apply { this._partition = authManager.realmUser.value?.id },
+                            question =
+                            event.question,
+                            userId = authManager.realmUser.value?.id,
                             childProfile = _currentChildProfile.value?._id
                         ).also {
                             event.question.subtopic?.let {

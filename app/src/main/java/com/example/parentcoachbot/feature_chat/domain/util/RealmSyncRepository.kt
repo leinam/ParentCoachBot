@@ -21,7 +21,9 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class RealmSyncRepository @Inject constructor(
-    val application: Application, val app: App, val authManager: AuthManager
+    val application: Application, val app: App,
+    val authManager: AuthManager,
+    private val appPreferences: AppPreferences
 ) {
 
     lateinit var realm: Realm
@@ -42,6 +44,8 @@ class RealmSyncRepository @Inject constructor(
             }
         }
 
+
+
     }
 
     private fun configureRealmSync(currentUser: User) {
@@ -58,22 +62,38 @@ class RealmSyncRepository @Inject constructor(
         )
             .maxNumberOfActiveVersions(10)
             .name("PCTest1")
-            .initialData {
-                PopulateDb(
-                    this, application,
-                    userId = currentUser.id
-                )
-            }
             .errorHandler { session: SyncSession,
                             error: SyncException ->
-                Log.println(Log.ERROR,"Realm", error.message + session)
+                Log.println(Log.ERROR, "Realm", error.message + session)
             }
             .build()
 
         realm = Realm.open(config)
-        Log.println(Log.INFO,"Realm","Successfully opened realm: ${realm.configuration.name}")
+        Log.println(Log.INFO, "Realm", "Successfully opened realm: ${realm.configuration.name}")
 
 
+    }
+
+    suspend fun populateDatabase() {
+        val isDbInit: Boolean = appPreferences.getIsDbInitialized()
+
+
+        if (!isDbInit) {
+            realm.write {
+                currentUser?.let {
+
+                    Log.println(Log.INFO, "DB", "Attempting to populate the database")
+                    PopulateDb(
+                        this,
+                        application,
+                        userId = it.id
+                    )()
+
+                    appPreferences.setIsDbInitialized(true)
+                }
+            }
+
+        }
     }
 
 

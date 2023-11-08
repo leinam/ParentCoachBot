@@ -8,6 +8,7 @@ import com.example.parentcoachbot.common.GlobalState
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
+import com.example.parentcoachbot.feature_chat.domain.util.RealmSyncRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -20,7 +21,8 @@ class ProfileViewModel @Inject constructor(
     private val childProfileUseCases: ChildProfileUseCases,
     private val parentUserUseCases: ParentUserUseCases,
     private val globalState: GlobalState,
-    private val authManager: AuthManager
+    private val authManager: AuthManager,
+    private val syncRepository: RealmSyncRepository
 ) : ViewModel() {
 
 
@@ -40,8 +42,12 @@ class ProfileViewModel @Inject constructor(
     val profileViewModelState: State<ProfileStateWrapper> = _profileViewModelState
 
     init {
-        // getChildProfilesList()
-        getFullChildProfilesList()
+        getChildProfilesList()
+
+        viewModelScope.launch {
+            syncRepository.populateDatabase()
+        }
+
     }
 
     private fun getChildProfilesList() {
