@@ -21,8 +21,10 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
     }
 
     override suspend fun getQuestionsFromIdList(idList: List<String>): List<Question> = withContext(Dispatchers.IO){
-        // realm.query<Question>("_id IN $0", idList).find()
-        realm.query<Question>().find()
+        realm.query<Question>().find().filter {
+            it._id in idList
+        }
+
     }
 
     override suspend fun insertQuestion(question: Question) {

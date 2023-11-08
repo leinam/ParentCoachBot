@@ -74,7 +74,7 @@ class QuestionSearcherImplementation(
 
                     document?.let { doc ->
                         doc.get(questionTextFieldName)
-                        questionId = doc.getField(questionIdFieldName).toString()
+                        questionId = doc.getField(questionIdFieldName).stringValue()
                     }
 
                     questionId?.let { id ->

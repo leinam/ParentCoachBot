@@ -163,10 +163,15 @@ class ChatViewModel @Inject constructor(
     ) {
 
         val searchResult = questionSearcher.search(queryText = queryText.trim(), currentLanguage)
-        // println("Search result for query: $queryText is $searchResult")
+
         viewModelScope.launch {
-            _searchResultsQuestionsListState.value =
-                questionUseCases.getQuestionsFromIdList(searchResult) // fix this
+            if (searchResult.isNotEmpty()) {
+                println("Search result for query: $queryText is ${searchResult}")
+                _searchResultsQuestionsListState.value =
+                    questionUseCases.getQuestionsFromIdList(searchResult) // fix this
+            } else{
+                _searchResultsQuestionsListState.value = emptyList()
+            }
         }
 
 
