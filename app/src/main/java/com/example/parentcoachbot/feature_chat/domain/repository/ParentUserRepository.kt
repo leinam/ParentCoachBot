@@ -1,6 +1,7 @@
 package com.example.parentcoachbot.feature_chat.domain.repository
 
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
+import kotlinx.coroutines.flow.Flow
 
 interface ParentUserRepository {
     suspend fun newParentUser(parent: ParentUser)
@@ -9,6 +10,6 @@ interface ParentUserRepository {
 
     suspend fun getParentUserById(id: String): ParentUser?
 
-    fun getParentUser(): ParentUser?
+    fun getParentUser(): Flow<ParentUser?>
 
 }

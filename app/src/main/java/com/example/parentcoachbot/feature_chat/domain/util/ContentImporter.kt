@@ -191,7 +191,7 @@ class ContentImporter(
                     answerTextsEn.forEachIndexed() { index, answerTextEn ->
                         answerTextEn?.let {
                             if (it.isNotBlank()) {
-                                println("Part $index: $answerTextEn: ${answerTextsPt[index]}: ${answerTextsZu[index]}")
+                                // println("Part $index: $answerTextEn: ${answerTextsPt[index]}: ${answerTextsZu[index]}")
 
                                 val answerTextDict: RealmDictionary<String> = realmDictionaryOf(
                                     Pair(Language.English.isoCode, answerTextEn ?: ""),

@@ -38,7 +38,6 @@ fun AnswerBox(
 ) {
 
     val questionAnswerText = questionAnswer.answerText.get(currentLanguageCode)
-    println(questionAnswerText)
 
     Box(
         modifier = Modifier

@@ -13,6 +13,7 @@
     <string name="new_chat_label">New Chat</string>
     <string name="delete_chat_label">Delete Chat</string>
     <string name="pin_chat_label">Pin Chat</string>
+    <string name="unpin_chat_label" translatable="false">Unpin Chat</string>
     <string name="subtopics_label">Subtopics</string>
     <string name="topics_label">Topics</string>
     <string name="search_results_label">Search Results</string>
@@ -60,6 +61,7 @@
     <string name="main_emergency_contact" translatable="false">Contact: 112</string>
     <string name="contacts_header" translatable="false">Helpful Contacts</string>
     <string name="save_question_label" translatable="false">Save Question</string>
+    <string name="unsave_question_label" translatable="false">Unsave Question</string>
     <string name="delete_question_label" translatable="false">Delete Question</string>
     <string name="zulu_lang">isiZulu</string>
     <string name="english_lang">English</string>

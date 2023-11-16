@@ -4,5 +4,6 @@ data class QuestionSessionUseCases (val newQuestionSession: NewQuestionSession,
                                     val getChatQuestionSessions: GetQuestionSessionsByChatSession,
                                     val getLatestQuestionSessionByChat: GetLatestQuestionSessionByChat,
                                     val toggleSaveQuestionSession: ToggleSaveQuestionSession,
-                                    val deleteQuestionSession: DeleteQuestionSession
+                                    val deleteQuestionSession: DeleteQuestionSession,
+                                    val getSavedQuestionSessionsByProfile: GetSavedQuestionSessionsByProfile
 )

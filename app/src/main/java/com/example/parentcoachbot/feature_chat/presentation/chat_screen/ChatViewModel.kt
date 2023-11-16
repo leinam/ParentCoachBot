@@ -70,9 +70,9 @@ class ChatViewModel @Inject constructor(
     private val _currentTopic: MutableStateFlow<Topic?> = MutableStateFlow(null)
     private val _currentSubtopic: MutableStateFlow<Subtopic?> = MutableStateFlow(null)
     private val _typedQueryText = MutableStateFlow("")
-    private val _newChatSession = globalState._newChatState
-    private val _currentChildProfile = globalState._currentChildProfileState
-    private val _currentLanguageCode = globalState._currentLanguageCode
+    private val _newChatSession = globalState.newChatState
+    private val _currentChildProfile = globalState.currentChildProfileState
+    private val _currentLanguageCode = globalState.currentLanguageCode
     private val _searchResultsQuestionsListState = MutableStateFlow<List<Question>>(emptyList())
     private val _allQuestionsListState = MutableStateFlow<List<Question>>(emptyList())
 
@@ -166,10 +166,10 @@ class ChatViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (searchResult.isNotEmpty()) {
-                println("Search result for query: $queryText is ${searchResult}")
+                println("Search result for query: $queryText is $searchResult")
                 _searchResultsQuestionsListState.value =
                     questionUseCases.getQuestionsFromIdList(searchResult) // fix this
-            } else{
+            } else {
                 _searchResultsQuestionsListState.value = emptyList()
             }
         }
@@ -183,7 +183,7 @@ class ChatViewModel @Inject constructor(
         when (event) {
             is ChatEvent.SaveQuestionSession -> {
                 viewModelScope.launch {
-
+                    questionSessionUseCases.toggleSaveQuestionSession(event.questionSessionId)
                 }
             }
 
@@ -210,7 +210,7 @@ class ChatViewModel @Inject constructor(
                             chatSessionId = chatSession._id,
                             question =
                             event.question,
-                            userId = authManager.realmUser.value?.id,
+                            userId = authManager.authenticatedRealmUser.value?.id,
                             childProfile = _currentChildProfile.value?._id
                         ).also {
                             event.question.subtopic?.let {
@@ -229,6 +229,8 @@ class ChatViewModel @Inject constructor(
                                         )
                                     }
                             }
+
+                            chatSessionUseCases.updateChatTimeLastUpdated(chatSession._id)
 
                         }
                     }
@@ -323,16 +325,19 @@ class ChatViewModel @Inject constructor(
 
     private fun getChildProfiles() {
         viewModelScope.launch {
-            val parentUser = parentUserUseCases.getParentUser()
+
             getChildProfilesJob?.cancel()
 
             getChildProfilesJob = viewModelScope.launch {
-                parentUser?.let {
-                    childProfileUseCases.getChildProfilesByParentUser(it._id)
-                        .onEach { childProfilesList ->
-                            _childProfilesListState.value = childProfilesList
-                        }.collect()
-                }
+                globalState.parentUserState.onEach { parentUser ->
+                    parentUser?.let {
+                        childProfileUseCases.getChildProfilesByParentUser(parentUser._id)
+                            .onEach { childProfilesList ->
+                                _childProfilesListState.value = childProfilesList
+                            }.collect()
+                    }
+
+                }.collect()
             }
         }
     }

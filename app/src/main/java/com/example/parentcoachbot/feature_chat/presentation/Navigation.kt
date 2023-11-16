@@ -22,6 +22,7 @@ import com.example.parentcoachbot.feature_chat.presentation.profile_screen.Creat
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileViewModel
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
+import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsViewModel
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SelectLanguageScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SettingsHomeScreen
 import com.example.parentcoachbot.ui.theme.OnboardingPageItem
@@ -31,7 +32,9 @@ import com.google.firebase.analytics.FirebaseAnalytics
 fun Navigation() {
     val navHostController: NavHostController = rememberNavController()
     val chatListViewModel = hiltViewModel<ChatListViewModel>()
-    val chatViewModel = hiltViewModel<ChatViewModel>()
+    val chatViewModel: ChatViewModel = hiltViewModel()
+    val savedQuestionsViewModel: SavedQuestionsViewModel = hiltViewModel()
+    val splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
     val profileViewModel: ProfileViewModel = hiltViewModel()
 
     val firebaseAnalytics: FirebaseAnalytics = chatViewModel.firebaseAnalytics
@@ -91,7 +94,7 @@ fun Navigation() {
     ) {
         composable(route = Screen.FirstTimeSplashScreen.route) {
             FirstTimeSplashScreen(navController = navHostController,
-                chatViewModelState = chatViewModel.chatViewModelState,
+                splashScreenViewModelState = splashScreenViewModel.splashScreenViewModelState,
                 onEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) })
         }
 
@@ -168,7 +171,10 @@ fun Navigation() {
                 onEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) })
         }
         composable(route = Screen.SavedQuestionsScreen.route) {
-            SavedQuestionsScreen(navController = navHostController)
+            SavedQuestionsScreen(
+                navController = navHostController,
+                savedQuestionsViewModelState = savedQuestionsViewModel.savedChatViewModelState
+            )
         }
         composable(route = Screen.ResourcesHomeScreen.route) {
             ResourcesHomeScreen(navController = navHostController)

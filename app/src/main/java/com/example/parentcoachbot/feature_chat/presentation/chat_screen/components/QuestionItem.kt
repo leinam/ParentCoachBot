@@ -2,9 +2,12 @@ package com.example.parentcoachbot.feature_chat.presentation.chat_screen.compone
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
@@ -37,13 +41,16 @@ import com.example.parentcoachbot.ui.theme.LighterOrange
 import com.example.parentcoachbot.ui.theme.Orange
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.TextGrey
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @Preview
 @Composable
 fun QuestionBox(
     question: Question =
-        Question().apply { this.questionText["en"] = "Do I have enough milk?" },
-    questionSession: QuestionSession? = null,
+        Question().apply { this.questionText["en"] = "Do I have enough milk?"},
+    questionSession: QuestionSession? = QuestionSession().apply { isSaved = true },
     onEvent: (chatEvent: ChatEvent) -> Unit = {},
     currentLanguageCode: String = Language.English.isoCode
 ) {
@@ -52,6 +59,17 @@ fun QuestionBox(
     }
 
     val questionText = question.questionText[currentLanguageCode]
+
+    var timeAsked = ""
+
+
+    questionSession?.timeAsked?.let {
+        timeAsked = LocalDateTime.ofEpochSecond(
+            it.epochSeconds,
+            it.nanosecondsOfSecond,
+            ZoneOffset.UTC
+        ).format(DateTimeFormatter.ofPattern("H:mm"))
+    }
 
     Box(
         modifier = Modifier
@@ -91,6 +109,34 @@ fun QuestionBox(
                     color = TextGrey
                 )
             }
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(top = 20.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                if (questionSession?.isSaved == true){
+                    Icon(
+                        painter = painterResource(id = R.drawable.save_button_filled),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .size(12.dp),
+                        tint = TextGrey
+                    )
+                }
+
+                Text(
+                    text = timeAsked,
+                    fontSize = 7.sp, modifier = Modifier.padding(start = 5.dp, top = 10.dp),
+                    color = TextGrey
+                )
+            }
+
+
         }
 
         Icon(
@@ -117,7 +163,7 @@ fun QuestionBox(
                 })
 
             DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.save_question_label)) },
+                text = { Text(text = stringResource(id = if (questionSession?.isSaved == true) R.string.unsave_question_label else R.string.save_question_label) ) },
                 onClick = {
                     questionSession?.let { onEvent(ChatEvent.SaveQuestionSession(questionSession._id)) }
                     isContextMenuVisible = false

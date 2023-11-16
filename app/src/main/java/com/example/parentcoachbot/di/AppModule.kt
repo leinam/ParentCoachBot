@@ -34,6 +34,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCas
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.NewChatSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.TogglePinChatSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatLastAnswerText
+import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatTimeLastUpdated
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatTitle
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetAllChildProfiles
@@ -46,6 +47,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCase
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.DeleteQuestionSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.GetLatestQuestionSessionByChat
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.GetQuestionSessionsByChatSession
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.GetSavedQuestionSessionsByProfile
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.NewQuestionSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.QuestionSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.ToggleSaveQuestionSession
@@ -220,7 +222,8 @@ object AppModule {
             TogglePinChatSession(chatSessionRepository),
             DeleteChatSession(chatSessionRepository),
             UpdateChatLastAnswerText(chatSessionRepository),
-            UpdateChatTitle(chatSessionRepository)
+            UpdateChatTitle(chatSessionRepository),
+            UpdateChatTimeLastUpdated(chatSessionRepository)
         )
     }
 
@@ -234,7 +237,8 @@ object AppModule {
                 questionSessionRepository
             ),
             toggleSaveQuestionSession = ToggleSaveQuestionSession(questionSessionRepository),
-            deleteQuestionSession = DeleteQuestionSession(questionSessionRepository)
+            deleteQuestionSession = DeleteQuestionSession(questionSessionRepository),
+            getSavedQuestionSessionsByProfile = GetSavedQuestionSessionsByProfile(questionSessionRepository)
         )
     }
 

@@ -3,6 +3,7 @@ package com.example.parentcoachbot.feature_chat.data.repository
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.repository.ChildProfileRepository
 import io.realm.kotlin.Realm
+import io.realm.kotlin.ext.copyFromRealm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,7 @@ class ChildProfileRepositoryImpl(private val realm: Realm) : ChildProfileReposit
             Dispatchers.IO
         ) {
             realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().asFlow()
-                .map { it.list }
+                .map { it.list.copyFromRealm() }
         }
 
     override suspend fun getAllChildProfiles(): Flow<List<ChildProfile>> =
@@ -29,19 +30,19 @@ class ChildProfileRepositoryImpl(private val realm: Realm) : ChildProfileReposit
     Dispatchers.IO
     ) {
         realm.query<ChildProfile>().find().asFlow()
-            .map { it.list }
+            .map { it.list.copyFromRealm() }
     }
 
     override suspend fun getChildProfileByParentTest(parentId: String): ChildProfile? =
         withContext(
             Dispatchers.IO
         ) {
-            realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().firstOrNull()
+            realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().firstOrNull()?.copyFromRealm()
         }
 
     override suspend fun getChildProfileById(id: String): ChildProfile? =
         withContext(Dispatchers.IO) {
-            realm.query<ChildProfile>(query = "_id == $0", id).find().firstOrNull()
+            realm.query<ChildProfile>(query = "_id == $0", id).find().firstOrNull()?.copyFromRealm()
         }
 
     override suspend fun deleteChildProfile(id: String) {
