@@ -10,6 +10,6 @@ interface ParentUserRepository {
 
     suspend fun getParentUserById(id: String): ParentUser?
 
-    fun getParentUser(): Flow<ParentUser?>
+    fun getParentUser(): Flow<ParentUser?>?
 
 }

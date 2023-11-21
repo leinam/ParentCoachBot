@@ -35,7 +35,9 @@ import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
 import com.example.parentcoachbot.feature_chat.domain.util.Language
+import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
+import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsScreenEvent
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.LighterOrange
 import com.example.parentcoachbot.ui.theme.Orange
@@ -49,9 +51,11 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun QuestionBox(
     question: Question =
-        Question().apply { this.questionText["en"] = "Do I have enough milk?"},
+        Question().apply { this.questionText["en"] = "Do I have enough milk?" },
     questionSession: QuestionSession? = QuestionSession().apply { isSaved = true },
     onEvent: (chatEvent: ChatEvent) -> Unit = {},
+    screenName: String = Screen.ChatScreen.route,
+    onSavedScreenEvent: (savedQuestionsScreenEvent: SavedQuestionsScreenEvent) -> Unit = {},
     currentLanguageCode: String = Language.English.isoCode
 ) {
     var isContextMenuVisible by rememberSaveable {
@@ -118,7 +122,7 @@ fun QuestionBox(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                if (questionSession?.isSaved == true){
+                if (questionSession?.isSaved == true) {
                     Icon(
                         painter = painterResource(id = R.drawable.save_button_filled),
                         contentDescription = null,
@@ -158,14 +162,39 @@ fun QuestionBox(
             DropdownMenuItem(
                 text = { Text(text = stringResource(id = R.string.delete_question_label)) },
                 onClick = {
-                    questionSession?.let { onEvent(ChatEvent.DeleteQuestionSession(questionSession = it)) }
+                    questionSession?.let {
+                        if (screenName == Screen.ChatScreen.route) {
+                            onEvent(ChatEvent.DeleteQuestionSession(questionSession = it))
+                        }
+
+                        else if (screenName == Screen.SavedQuestionsScreen.route) {
+                            onSavedScreenEvent(
+                                SavedQuestionsScreenEvent.DeleteQuestionSession(
+                                    questionSession = it
+                                )
+                            )
+
+                        }
+                    }
                     isContextMenuVisible = false
                 })
 
             DropdownMenuItem(
-                text = { Text(text = stringResource(id = if (questionSession?.isSaved == true) R.string.unsave_question_label else R.string.save_question_label) ) },
+                text = { Text(text = stringResource(id = if (questionSession?.isSaved == true) R.string.unsave_question_label else R.string.save_question_label)) },
                 onClick = {
-                    questionSession?.let { onEvent(ChatEvent.SaveQuestionSession(questionSession._id)) }
+                    questionSession?.let {
+                        if (screenName == Screen.ChatScreen.route) {
+                            onEvent(ChatEvent.SaveQuestionSession(questionSession._id))
+                        }
+
+                        else if (screenName == Screen.SavedQuestionsScreen.route) {
+                            onSavedScreenEvent(
+                                SavedQuestionsScreenEvent.SaveQuestionSession(
+                                    questionSession._id
+                                )
+                            )
+                        }
+                    }
                     isContextMenuVisible = false
                 })
 

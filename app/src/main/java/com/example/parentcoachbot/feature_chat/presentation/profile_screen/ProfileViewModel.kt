@@ -54,9 +54,9 @@ class ProfileViewModel @Inject constructor(
         getChildProfilesJob = viewModelScope.launch {
             parentUserState.onEach { parentUser ->
                 parentUser?.let {
-                    childProfileUseCases.getChildProfilesByParentUser(parentUser._id).onEach {
+                    childProfileUseCases.getChildProfilesByParentUser(parentUser._id)?.onEach {
                         _childProfilesList.value = it
-                    }.collect()
+                    }?.collect()
                 }
             }.collect()
         }
@@ -67,9 +67,9 @@ class ProfileViewModel @Inject constructor(
 
         getChildProfilesJob = viewModelScope.launch {
 
-            childProfileUseCases.getAllChildProfiles().onEach {
+            childProfileUseCases.getAllChildProfiles()?.onEach {
                 _childProfilesList.value = it
-            }.collect()
+            }?.collect()
 
         }
     }

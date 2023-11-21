@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetQuestionsBySubtopic(private val questionRepository: QuestionRepository) {
 
-    suspend operator fun invoke(subtopicCode: String): Flow<List<Question>> {
+    suspend operator fun invoke(subtopicCode: String): Flow<List<Question>>? {
         return questionRepository.getQuestionsBySubtopic(subtopicCode)
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetChatSessionsByChildProfile (private val chatSessionRepository: ChatSessionRepository){
 
-    suspend operator fun invoke(childProfileId: String): Flow<List<ChatSession> >{
+    suspend operator fun invoke(childProfileId: String): Flow<List<ChatSession>>?{
         return chatSessionRepository.getChatSessionsByChildProfile(childProfileId = childProfileId)
     }
 }

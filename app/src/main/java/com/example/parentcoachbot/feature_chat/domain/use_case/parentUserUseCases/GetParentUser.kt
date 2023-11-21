@@ -5,7 +5,7 @@ import com.example.parentcoachbot.feature_chat.domain.repository.ParentUserRepos
 import kotlinx.coroutines.flow.Flow
 
 class GetParentUser(private val parentUserRepository: ParentUserRepository) {
-    operator fun invoke(): Flow<ParentUser?> {
+    operator fun invoke(): Flow<ParentUser?>? {
         return parentUserRepository.getParentUser()
     }
 }

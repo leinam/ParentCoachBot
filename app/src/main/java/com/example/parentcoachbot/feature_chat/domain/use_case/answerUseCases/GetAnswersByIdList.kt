@@ -6,7 +6,7 @@ import io.realm.kotlin.types.RealmList
 
 class GetAnswersByIdList(private val repository: AnswerRepository) {
 
-    suspend operator fun invoke(questionAnswers: RealmList<String>): List<Answer> {
+    suspend operator fun invoke(questionAnswers: RealmList<String>): List<Answer>? {
         return repository.getQuestionAnswers(idList = questionAnswers)
     }
 

@@ -28,6 +28,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,10 +40,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.util.Language
+import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.AnswerBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileEvent
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionStateWrapper
+import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsScreenEvent
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
@@ -55,7 +59,8 @@ fun SavedQuestionsScreen(
     navController: NavController = rememberNavController(),
     savedQuestionsViewModelState: State<SavedQuestionStateWrapper> = mutableStateOf(
         SavedQuestionStateWrapper()
-    )
+    ),
+    onEvent: (SavedQuestionsScreenEvent) -> Unit = {}
 ) {
 
     val savedQuestionsViewModelStateWrapper = savedQuestionsViewModelState.value
@@ -144,6 +149,7 @@ fun SavedQuestionsScreen(
                         state = scrollState,
                         modifier = Modifier.padding(bottom = 80.dp)
                     ) {
+                        println("Saved ${savedQuestionSessionsWithQuestionsAndAnswers.value}")
                         items(savedQuestionSessionsWithQuestionsAndAnswers.value) { questionSessionWithQuestionAndAnswer ->
 
                             questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
@@ -153,7 +159,8 @@ fun SavedQuestionsScreen(
                                         question = question,
                                         questionSession = questionSessionAnswerTriple.first,
                                         currentLanguageCode = currentLanguageCode.value
-                                            ?: Language.English.isoCode
+                                            ?: Language.English.isoCode, onSavedScreenEvent = onEvent,
+                                        screenName = Screen.SavedQuestionsScreen.route
                                     )
                                 }
 
@@ -174,7 +181,11 @@ fun SavedQuestionsScreen(
 
 
                         item {
-                            Box(modifier = Modifier.height(57.dp)) {
+                            Box(
+                                modifier = Modifier
+                                    .height(57.dp)
+                                    .background(color = Color.White.copy(alpha = 0F))
+                            ) {
 
                             }
                         }

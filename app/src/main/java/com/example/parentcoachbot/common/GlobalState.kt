@@ -36,10 +36,10 @@ class GlobalState(private val parentUserUseCases: ParentUserUseCases,
     }
 
     suspend fun getParentUser() {
-        parentUserUseCases.getParentUser().onEach {
+        parentUserUseCases.getParentUser()?.onEach {
             parentUserState.value = it
             println("The global parent state is ${parentUserState.value?._id}")
-        }.collect()
+        }?.collect()
     }
 
     fun updateCurrentChildProfile(childProfile: ChildProfile){

@@ -5,7 +5,7 @@ import com.example.parentcoachbot.feature_chat.domain.repository.QuestionReposit
 
 class GetQuestionsFromIdList(private val questionRepository: QuestionRepository) {
 
-    suspend operator fun invoke(questionIdList: List<String>): List<Question> {
+    suspend operator fun invoke(questionIdList: List<String>): List<Question>? {
         return questionRepository.getQuestionsFromIdList(idList = questionIdList)
     }
 }

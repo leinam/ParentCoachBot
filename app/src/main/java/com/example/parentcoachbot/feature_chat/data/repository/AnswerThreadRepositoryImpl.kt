@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.data.repository
 
+import android.util.Log
 import com.example.parentcoachbot.feature_chat.domain.model.AnswerThread
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerThreadRepository
 import io.realm.kotlin.Realm
@@ -8,18 +9,35 @@ import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class AnswerThreadRepositoryImpl(private val realm: Realm): AnswerThreadRepository{
-    override suspend fun getAnswerThreadById(id: String): AnswerThread? = withContext(Dispatchers.IO){
-        realm.query<AnswerThread>(query = "_id == $0", id).find().firstOrNull()?.copyFromRealm()
-    }
+class AnswerThreadRepositoryImpl(private val realm: Realm) : AnswerThreadRepository {
+    override suspend fun getAnswerThreadById(id: String): AnswerThread? =
+        withContext(Dispatchers.IO) {
+            try {
+                realm.query<AnswerThread>(query = "_id == $0", id).find().firstOrNull()
+                    ?.copyFromRealm()
+            } catch (e: Exception) {
+                Log.println(Log.ERROR, "DB", "An error occurred: ${e.message}}")
+                null
+            }
+        }
 
-    override suspend fun getAnswerThreadByCode(answerCode: String): AnswerThread? = withContext(Dispatchers.IO){
-        realm.query<AnswerThread>(query = "code == $0", answerCode).find().firstOrNull()?.copyFromRealm()
-    }
+    override suspend fun getAnswerThreadByCode(answerCode: String): AnswerThread? =
+        withContext(Dispatchers.IO) {
+            try{
+                realm.query<AnswerThread>(query = "code == $0", answerCode).find().firstOrNull()
+                    ?.copyFromRealm()
+            }
+            catch (e: Exception){
+                Log.println(Log.ERROR, "DB", "An error occurred: ${e.message}}")
+                null
+            }
+        }
 
     override suspend fun deleteAnswerThread(id: String): Unit = withContext(Dispatchers.IO) {
         realm.write {
-            val answerThread = realm.query<AnswerThread>(query = "_id == $0", id).find().firstOrNull()?.copyFromRealm()
+            val answerThread =
+                realm.query<AnswerThread>(query = "_id == $0", id).find().firstOrNull()
+                    ?.copyFromRealm()
 
             answerThread?.let { thread ->
                 findLatest(thread)?.also { delete(it) }
@@ -27,7 +45,7 @@ class AnswerThreadRepositoryImpl(private val realm: Realm): AnswerThreadReposito
         }
     }
 
-    override suspend fun insertAnswerThread(answerThread: AnswerThread)  {
+    override suspend fun insertAnswerThread(answerThread: AnswerThread) {
         realm.write {
             copyToRealm(answerThread)
         }

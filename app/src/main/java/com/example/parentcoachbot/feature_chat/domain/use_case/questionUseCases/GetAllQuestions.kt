@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetAllQuestions(private val repository: QuestionRepository) {
 
-    suspend operator fun invoke() : Flow<List<Question>>{
+    suspend operator fun invoke() : Flow<List<Question>>? {
         return repository.getAllQuestions()
     }
 }
