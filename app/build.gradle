@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
-    id ("io.realm.kotlin") version "1.8.0"
+    //id("io.realm.kotlin") version "1.12.0"
     id 'com.google.gms.google-services'
     id "com.google.firebase.crashlytics"
 }
@@ -128,6 +128,15 @@ dependencies {
 
     // implementation "org.apache.poi:ooxml-schemas:1.4"
     // implementation 'org.apache.logging.log4j:log4j-core:2.6.2'
+
+    //mockito
+    testImplementation 'org.mockito:mockito-core:3.12.4'
+
+    //realm
+
+    //implementation 'io.realm:realm-android:1.12.0'
+
+
 
 
 }
