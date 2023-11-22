@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,7 +87,8 @@ fun ChatListScreen(
         Context.MODE_PRIVATE
     )
 
-    val currentLanguageCode = appPreferences.getString("default_language", Language.English.isoCode) ?: Language.English.isoCode
+    val currentLanguageCode = appPreferences.getString("default_language", Language.English.isoCode)
+        ?: Language.English.isoCode
 
     val chatSessionList: List<ChatSession> by chatListStateWrapper.chatSessionListState.collectAsStateWithLifecycle()
     val currentChildProfile: ChildProfile? by chatListStateWrapper.currentChildProfile.collectAsStateWithLifecycle()
@@ -203,7 +205,7 @@ fun ChatListScreen(
                                     mutableStateOf(false)
                                 }
 
-                                Box(modifier = Modifier.onSizeChanged {  }){
+                                Box(modifier = Modifier.onSizeChanged { }) {
                                     Box(modifier = Modifier
                                         .padding(10.dp)
                                         .clip(RoundedCornerShape(10.dp))
@@ -223,11 +225,14 @@ fun ChatListScreen(
                                     )
                                     {
 
-                                        println("chat $ $currentLanguageCode")
-
+                                        val titleText: String =
+                                            chatSession.chatTitle[currentLanguageCode]
+                                                ?: stringResource(id = R.string.new_chat_label)
                                         Text(
-                                            text = chatSession.chatTitle[currentLanguageCode]
-                                                ?: stringResource(id = R.string.new_chat_label),
+                                            text = titleText.substring(
+                                                startIndex = 0,
+                                                endIndex = if (titleText.length < 30) titleText.length else 29
+                                            ),
                                             fontSize = 16.sp,
                                             color = TextGrey,
                                             fontFamily = PlexSans,
@@ -247,15 +252,32 @@ fun ChatListScreen(
                                             ).format(DateTimeFormatter.ofPattern("E H:mm"))
                                         }
 
-                                        Text(
-                                            text = lastUpdated,
-                                            fontSize = 10.sp,
-                                            fontFamily = PlexSans,
-                                            fontWeight = SemiBold,
-                                            modifier = Modifier.align(
-                                                Alignment.TopEnd
-                                            )
-                                        )
+                                        Row(
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd),
+                                            horizontalArrangement = Arrangement.Center,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+
+                                            if (chatSession.isPinned) {
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.baseline_push_pin_24),
+                                                    contentDescription = null,
+                                                    modifier = Modifier
+                                                        .size(15.dp)
+                                                        .padding(end = 5.dp),
+                                                    tint = TextGrey
+                                                )
+                                            }
+
+                                            Text(
+                                                text = lastUpdated,
+                                                fontSize = 10.sp,
+                                                fontFamily = PlexSans,
+                                                fontWeight = SemiBold,
+
+                                                )
+                                        }
 
                                         Row(
                                             modifier = Modifier
@@ -264,7 +286,7 @@ fun ChatListScreen(
                                             horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
                                             chatSession.lastAnswerText[currentLanguageCode]?.let {
-                                                if (it.isNotBlank()){
+                                                if (it.isNotBlank()) {
                                                     Text(
                                                         text = "ParentCoach: ${
                                                             it.substring(
@@ -310,7 +332,15 @@ fun ChatListScreen(
                                             })
 
                                         DropdownMenuItem(
-                                            text = { Text(text = stringResource(id = R.string.pin_chat_label)) },
+                                            text = {
+                                                Text(
+                                                    text = if (chatSession.isPinned) stringResource(
+                                                        id = R.string.unpin_chat_label
+                                                    ) else stringResource(
+                                                        id = R.string.pin_chat_label
+                                                    )
+                                                )
+                                            },
                                             onClick = {
                                                 onChatListEvent(
                                                     ChatListEvent.PinChat(

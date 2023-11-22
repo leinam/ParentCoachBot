@@ -30,12 +30,13 @@ class RealmSyncRepository @Inject constructor(
     private var currentUser: User? = null
 
 
-    init {
+    init { // TODO move to viewmodel
         runBlocking {
             currentUser = app.currentUser
             if (currentUser == null) {
-                currentUser = authManager.authenticateUser()
-            }
+               authManager.authenticateUser()
+                currentUser = app.currentUser
+            } // remove this? single auth point??
         }
 
         currentUser?.let {
@@ -44,11 +45,17 @@ class RealmSyncRepository @Inject constructor(
             }
         }
 
-
-
     }
 
     private fun configureRealmSync(currentUser: User) {
+        Log.println(Log.INFO, "Realm", "Configuring realm instance")
+        if (::realm.isInitialized) {
+            println("closing existing realm")
+            realm.close()
+        }
+
+
+
         val config = SyncConfiguration.Builder(
             user = currentUser,
             partitionValue = currentUser.id,
@@ -60,7 +67,8 @@ class RealmSyncRepository @Inject constructor(
                 ChildProfile::class, AnswerThread::class
             )
         )
-            .maxNumberOfActiveVersions(10)
+
+            .compactOnLaunch()
             .name("PCTest1")
             .errorHandler { session: SyncSession,
                             error: SyncException ->
@@ -68,8 +76,12 @@ class RealmSyncRepository @Inject constructor(
             }
             .build()
 
-        realm = Realm.open(config)
-        Log.println(Log.INFO, "Realm", "Successfully opened realm: ${realm.configuration.name}")
+        kotlin.runCatching {
+            realm = Realm.open(config)
+        }.onSuccess {
+            Log.println(Log.INFO, "Realm", "Successfully opened realm: ${realm.configuration.name}")
+
+        }
 
 
     }
@@ -94,6 +106,7 @@ class RealmSyncRepository @Inject constructor(
             }
 
         }
+
     }
 
 

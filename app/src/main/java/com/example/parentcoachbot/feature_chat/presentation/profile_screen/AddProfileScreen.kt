@@ -69,6 +69,7 @@ fun AddProfileScreen(
     val profileStateWrapper = profileState.value
 
     val parentUser: ParentUser? by profileStateWrapper.parentUserState.collectAsStateWithLifecycle()
+    val currentLanguage: String? by profileStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
 
     var name: String? by rememberSaveable {
         mutableStateOf(null)
@@ -76,16 +77,79 @@ fun AddProfileScreen(
 
     val years = (2018..2023).map { it.toString() }
 
-    val months = listOf(
-        "January", "February", "March", "April", "May", "June", "July",
-        "August", "September", "October", "November", "December"
-    )
+    val months: List<Map<String, String>> = listOf(
+        mapOf(
+            Pair("en", "January"),
+            Pair("zu", "uMasingana"),
+            Pair("pt", "Janeiro")
+        ),
+        mapOf(
+            Pair("en", "February"),
+            Pair("zu", "uNhlolanja"),
+            Pair("pt", "Fevereiro")
+        ),
+        mapOf(
+            Pair("en", "March"),
+            Pair("zu", "uNdasa"),
+            Pair("pt", "Março")
+        ),
+        mapOf(
+            Pair("en", "April"),
+            Pair("zu", "uMbasa"),
+            Pair("pt", "Abril")
+        ),
+        mapOf(
+            Pair("en", "May"),
+            Pair("zu", "uNhlaba"),
+            Pair("pt", "Maio")
+        ),
+        mapOf(
+            Pair("en", "June"),
+            Pair("zu", "uNhlangulana"),
+            Pair("pt", "Junho")
+        ),
+        mapOf(
+            Pair("en", "July"),
+            Pair("zu", "uNtulikazi"),
+            Pair("pt", "Julho")
+        ),
+        mapOf(
+            Pair("en", "August"),
+            Pair("zu", "uNcwaba"),
+            Pair("pt", "Agosto")
+        ),
+        mapOf(
+            Pair("en", "September"),
+            Pair("zu", "uMandulo"),
+            Pair("pt", "Setembro")
+        ),
+        mapOf(
+            Pair("en", "October"),
+            Pair("zu", "uMfumfu"),
+            Pair("pt", "Outubro")
+        ),
+        mapOf(
+            Pair("en", "November"),
+            Pair("zu", "uLwezi"),
+            Pair("pt", "Novembro")
+        ),
+        mapOf(
+            Pair("en", "December"),
+            Pair("zu", "uZibandlela"),
+            Pair("pt", "Dezembro")
+        ),
+
+        )
 
     var yob: String? by rememberSaveable {
         mutableStateOf(null)
     }
 
     var mob: String? by rememberSaveable {
+        mutableStateOf(null)
+    }
+
+    var mobIndex: Int? by rememberSaveable {
         mutableStateOf(null)
     }
 
@@ -210,30 +274,39 @@ fun AddProfileScreen(
                             onDismissRequest = { isGenderDropdownExpanded = false }) {
                             DropdownMenuItem(
                                 text = {
-                                    Text(text = Sex.Male.name)
+                                    Text(
+                                        text = Sex.Male.description[currentLanguage]
+                                            ?: Sex.Male.name
+                                    )
                                 },
                                 onClick = {
-                                    sex = Sex.Male.name
+                                    sex = Sex.Male.description[currentLanguage]
                                     isGenderDropdownExpanded = false
                                 }
                             )
 
                             DropdownMenuItem(
                                 text = {
-                                    Text(text = Sex.Female.description)
+                                    Text(
+                                        text = Sex.Female.description[currentLanguage]
+                                            ?: Sex.Female.name
+                                    )
                                 },
                                 onClick = {
-                                    sex = Sex.Female.name
+                                    sex = Sex.Female.description[currentLanguage]
                                     isGenderDropdownExpanded = false
                                 }
                             )
 
                             DropdownMenuItem(
                                 text = {
-                                    Text(text = Sex.NotSpecified.description)
+                                    Text(
+                                        text = Sex.NotSpecified.description[currentLanguage]
+                                            ?: Sex.NotSpecified.name
+                                    )
                                 },
                                 onClick = {
-                                    sex = Sex.NotSpecified.name
+                                    sex = Sex.NotSpecified.description[currentLanguage]
                                     isGenderDropdownExpanded = false
                                 }
                             )
@@ -272,9 +345,10 @@ fun AddProfileScreen(
                             onDismissRequest = { isMobDropdownExpanded = false }) {
                             months.forEachIndexed { index, month ->
                                 DropdownMenuItem(
-                                    text = { Text(text = month) },
+                                    text = { Text(text = month[currentLanguage] ?: "") },
                                     onClick = {
-                                        mob = month
+                                        mob = month[currentLanguage]
+                                        mobIndex = index
                                         isMobDropdownExpanded = false
                                     })
 
@@ -345,7 +419,7 @@ fun AddProfileScreen(
                                         this.gender =
                                             if (!sex.isNullOrBlank()) sex.toString() else Sex.NotSpecified.name
                                         this.monthOfBirth =
-                                            if (!mob.isNullOrBlank()) months.indexOf(mob) + 1 else null
+                                            if (!mob.isNullOrBlank()) mobIndex?.plus(1) else null
                                         this.yearOfBirth =
                                             if (!yob.isNullOrBlank()) yob?.toInt() else null
                                         this.name = name.toString()
@@ -363,11 +437,13 @@ fun AddProfileScreen(
                                         }
                                     }
                                 } else {
-                                    Toast.makeText(
-                                        mContext,
-                                        R.string.toast_warning_name,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    Toast
+                                        .makeText(
+                                            mContext,
+                                            R.string.toast_warning_name,
+                                            Toast.LENGTH_SHORT
+                                        )
+                                        .show()
                                 }
 
                             }

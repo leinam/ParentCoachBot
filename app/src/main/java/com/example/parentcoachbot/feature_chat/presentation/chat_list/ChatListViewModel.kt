@@ -30,11 +30,11 @@ class ChatListViewModel @Inject constructor(
 
     private val _chatSessionsListState = MutableStateFlow<List<ChatSession>>(emptyList())
     private val _topicsListState = MutableStateFlow<List<Topic>>(emptyList())
-    private val _newChatState = globalState._newChatState
-    private val childProfileListState = globalState._childProfilesListState
-    private val _currentChildProfile = globalState._currentChildProfileState
+    private val _newChatState = globalState.newChatState
+    private val childProfileListState = globalState.childProfilesListState
+    private val _currentChildProfile = globalState.currentChildProfileState
     private val parentUserState = globalState.parentUserState
-    private val _currentLanguageCode = globalState._currentLanguageCode
+    private val _currentLanguageCode = globalState.currentLanguageCode
 
     private var getChildProfileChatSessionsJob: Job? = null
 
@@ -44,7 +44,7 @@ class ChatListViewModel @Inject constructor(
             topicsListState = _topicsListState,
             childProfileListState = childProfileListState,
             newChatState = _newChatState,
-            currentChildProfile = globalState._currentChildProfileState,
+            currentChildProfile = globalState.currentChildProfileState,
             currentLanguageCode = _currentLanguageCode
         )
     )
@@ -52,14 +52,14 @@ class ChatListViewModel @Inject constructor(
 
     var chatListViewModelState: State<ChatListStateWrapper> = _chatListStateWrapper
     private fun getCurrentLanguage() {
-        viewModelScope.launch{
+        viewModelScope.launch {
 
         }
     }
 
     init {
         getProfileChatSessions()
-        getCurrentLanguage()
+        // getCurrentLanguage()
     }
 
     fun onEvent(chatListEvent: ChatListEvent) {
@@ -76,7 +76,7 @@ class ChatListViewModel @Inject constructor(
 
                         ChatSession().apply {
                             this.childProfile = currentChildProfile._id
-                            this._partition = authManager.realmUser.value?.id
+                            this._partition = authManager.authenticatedRealmUser.value?.id
                         }.let {
                             _newChatState.value = it
 
@@ -113,10 +113,10 @@ class ChatListViewModel @Inject constructor(
             _currentChildProfile.onEach { childProfile ->
                 // println(childProfile?.name)
                 childProfile?.let {
-                    chatSessionUseCases.getProfileChatSessions(it._id).onEach { chatSessionList ->
+                    chatSessionUseCases.getProfileChatSessions(it._id)?.onEach { chatSessionList ->
                         // on each emission we set the state again
                         _chatSessionsListState.value = chatSessionList
-                    }.collect()
+                    }?.collect()
                 }
             }.collect()
         }
@@ -125,7 +125,7 @@ class ChatListViewModel @Inject constructor(
 
     private fun getTopicsList() {
         viewModelScope.launch {
-            topicUseCases.getAllTopics().onEach {
+            topicUseCases.getAllTopics()?.onEach {
                 _topicsListState.value = it
             }
         }

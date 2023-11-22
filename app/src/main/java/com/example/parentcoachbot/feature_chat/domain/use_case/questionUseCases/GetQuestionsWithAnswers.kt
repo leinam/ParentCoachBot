@@ -15,10 +15,10 @@ class GetQuestionsWithAnswers(
 ) {
 
 
-    suspend operator fun invoke(): Flow<MutableList<Pair<Question, List<Answer>>?>> {
+    suspend operator fun invoke(): Flow<MutableList<Pair<Question, List<Answer>>?>>? {
         val questionsWithAnswersList: MutableList<Pair<Question, List<Answer>>?> = mutableListOf()
 
-        return questionRepository.getAllQuestions().map { questionsList ->
+        return questionRepository.getAllQuestions()?.map { questionsList ->
             questionsList.forEach { question: Question ->
                 question.answerThread?.let {
                     answerThreadRepository.getAnswerThreadByCode(it).let { answerThread ->

@@ -14,11 +14,14 @@ interface ChatSessionRepository {
 
     suspend fun togglePinChatSession(id: String)
 
-    suspend fun getChatSessionsByChildProfile(childProfileId: String): Flow<List<ChatSession>>
+    suspend fun getChatSessionsByChildProfile(childProfileId: String): Flow<List<ChatSession>>?
 
-    suspend fun getChatSessionsByChildProfileAsynch(childProfileId: String): Flow<ChatSession>
+    suspend fun getChatSessionsByChildProfileAsynch(childProfileId: String): Flow<ChatSession>?
 
     suspend fun updateLastAnswerText(answer: Answer, chatSessionId: String)
+
+    suspend fun updateTimeLastUpdated(chatSessionId: String)
+
     suspend fun updateChatTitle(subtopic: Subtopic, chatSessionId: String)
 
 

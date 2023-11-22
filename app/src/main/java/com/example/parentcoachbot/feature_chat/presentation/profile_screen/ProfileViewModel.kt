@@ -8,7 +8,6 @@ import com.example.parentcoachbot.common.GlobalState
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
-import com.example.parentcoachbot.feature_chat.domain.util.RealmSyncRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -22,43 +21,42 @@ class ProfileViewModel @Inject constructor(
     private val parentUserUseCases: ParentUserUseCases,
     private val globalState: GlobalState,
     private val authManager: AuthManager,
-    private val syncRepository: RealmSyncRepository
 ) : ViewModel() {
 
-
     var getChildProfilesJob: Job? = null
-    private val parentUser = globalState.parentUserState
-    private val _childProfilesList = globalState._childProfilesListState
-    private val _currentChildProfile = globalState._currentChildProfileState
+    private val parentUserState = globalState.parentUserState
+    private val _childProfilesList = globalState.childProfilesListState
+    private val _currentChildProfile = globalState.currentChildProfileState
+    private val _currentLanguageCode = globalState.currentLanguageCode
+
 
     private val _profileViewModelState = mutableStateOf(
         ProfileStateWrapper(
-            parentUserState = parentUser,
+            parentUserState = parentUserState,
             childProfilesListState = _childProfilesList,
-            currentChildProfileState = _currentChildProfile
+            currentChildProfileState = _currentChildProfile,
+            currentLanguageCode = _currentLanguageCode
         )
     )
 
     val profileViewModelState: State<ProfileStateWrapper> = _profileViewModelState
 
     init {
-        getChildProfilesList()
-
         viewModelScope.launch {
-            syncRepository.populateDatabase()
+            globalState.getParentUser()
         }
-
+        getChildProfilesList()
     }
 
     private fun getChildProfilesList() {
         getChildProfilesJob?.cancel()
 
         getChildProfilesJob = viewModelScope.launch {
-            parentUser.onEach { parentUser ->
+            parentUserState.onEach { parentUser ->
                 parentUser?.let {
-                    childProfileUseCases.getChildProfilesByParentUser(parentUser._id).onEach {
+                    childProfileUseCases.getChildProfilesByParentUser(parentUser._id)?.onEach {
                         _childProfilesList.value = it
-                    }.collect()
+                    }?.collect()
                 }
             }.collect()
         }
@@ -69,9 +67,9 @@ class ProfileViewModel @Inject constructor(
 
         getChildProfilesJob = viewModelScope.launch {
 
-            childProfileUseCases.getAllChildProfiles().onEach {
+            childProfileUseCases.getAllChildProfiles()?.onEach {
                 _childProfilesList.value = it
-            }.collect()
+            }?.collect()
 
         }
     }
@@ -84,9 +82,8 @@ class ProfileViewModel @Inject constructor(
 
             is ProfileEvent.newProfile -> {
                 viewModelScope.launch {
-
                     childProfileUseCases.newChildProfile(profileEvent.childProfile.apply {
-                        this._partition = authManager.realmUser.value?.id
+                        this._partition = authManager.authenticatedRealmUser.value?.id
                     })
                 }
 

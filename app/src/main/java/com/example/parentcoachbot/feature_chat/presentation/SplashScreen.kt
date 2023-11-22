@@ -45,14 +45,14 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 @Preview
 @Composable
 fun FirstTimeSplashScreen(
-    chatViewModelState: State<ChatStateWrapper> = mutableStateOf(ChatStateWrapper()),
+    splashScreenViewModelState: State<SplashScreenStateWrapper> = mutableStateOf(SplashScreenStateWrapper()),
     navController: NavController = rememberNavController(),
     onEvent: (chatEvent: ChatEvent) -> Unit = {}
 ) {
 
-    val chatStateWrapper = chatViewModelState.value
+    val splashScreenStateWrapper = splashScreenViewModelState.value
 
-    val application by chatStateWrapper.application.collectAsStateWithLifecycle()
+    val application by splashScreenStateWrapper.application.collectAsStateWithLifecycle()
     val context = application?.applicationContext
 
     Box(

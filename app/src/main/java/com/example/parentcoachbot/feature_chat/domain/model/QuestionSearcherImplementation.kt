@@ -77,9 +77,7 @@ class QuestionSearcherImplementation(
                         questionId = doc.getField(questionIdFieldName).stringValue()
                     }
 
-                    questionId?.let { id ->
-                        id
-                    }
+                    questionId
                 }
             }
         }
@@ -95,7 +93,7 @@ class QuestionSearcherImplementation(
         questionsList.forEach { question ->
 
             question.questionText[currentLanguage]?.let {
-                println(it)
+                // println(it)
                 val questionDocument = Document().apply {
                     add(
                         TextField(
