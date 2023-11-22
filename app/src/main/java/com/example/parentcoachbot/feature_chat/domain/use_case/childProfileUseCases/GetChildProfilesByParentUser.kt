@@ -5,7 +5,7 @@ import com.example.parentcoachbot.feature_chat.domain.repository.ChildProfileRep
 import kotlinx.coroutines.flow.Flow
 
 class GetChildProfilesByParentUser (private val childProfileRepository: ChildProfileRepository){
-    suspend operator fun invoke(parentUserId: String): Flow<List<ChildProfile>> {
+    suspend operator fun invoke(parentUserId: String): Flow<List<ChildProfile>>? {
         return childProfileRepository.getChildProfileByParent(parentUserId)
     }
 }

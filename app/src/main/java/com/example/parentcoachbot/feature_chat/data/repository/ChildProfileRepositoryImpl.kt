@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.data.repository
 
+import android.util.Log
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.repository.ChildProfileRepository
 import io.realm.kotlin.Realm
@@ -17,32 +18,50 @@ class ChildProfileRepositoryImpl(private val realm: Realm) : ChildProfileReposit
         }
     }
 
-    override suspend fun getChildProfileByParent(parentId: String): Flow<List<ChildProfile>> =
+    override suspend fun getChildProfileByParent(parentId: String): Flow<List<ChildProfile>>? =
         withContext(
             Dispatchers.IO
         ) {
-            realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().asFlow()
-                .map { it.list.copyFromRealm() }
+            try {
+                realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().asFlow()
+                    .map { it.list.copyFromRealm() }
+            } catch (e: Exception) {
+                Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
+                null
+            }
         }
 
-    override suspend fun getAllChildProfiles(): Flow<List<ChildProfile>> =
-    withContext(
-    Dispatchers.IO
-    ) {
-        realm.query<ChildProfile>().find().asFlow()
-            .map { it.list.copyFromRealm() }
-    }
+    override suspend fun getAllChildProfiles(): Flow<List<ChildProfile>>? =
+        withContext(
+            Dispatchers.IO
+        ) {
+            try {
+                realm.query<ChildProfile>().find().asFlow()
+                    .map { it.list.copyFromRealm() }
+            } catch (e: Exception) {
+                Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
+                null
+            }
+        }
 
     override suspend fun getChildProfileByParentTest(parentId: String): ChildProfile? =
         withContext(
             Dispatchers.IO
         ) {
-            realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().firstOrNull()?.copyFromRealm()
+            realm.query<ChildProfile>(query = "parentUser == $0", parentId).find().firstOrNull()
+                ?.copyFromRealm()
         }
 
     override suspend fun getChildProfileById(id: String): ChildProfile? =
         withContext(Dispatchers.IO) {
-            realm.query<ChildProfile>(query = "_id == $0", id).find().firstOrNull()?.copyFromRealm()
+            try{
+                realm.query<ChildProfile>(query = "_id == $0", id).find().firstOrNull()
+                    ?.copyFromRealm()
+            }
+            catch (e: Exception){
+                Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
+                null
+            }
         }
 
     override suspend fun deleteChildProfile(id: String) {

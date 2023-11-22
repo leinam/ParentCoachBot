@@ -18,6 +18,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUs
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,14 +54,15 @@ class SavedQuestionsViewModel @Inject constructor(
         SavedQuestionStateWrapper(
             savedQuestionsListState = _savedQuestions,
             currentLanguageCode = globalState.currentLanguageCode,
-            currentChildProfile = globalState.currentChildProfileState
+            currentChildProfile = globalState.currentChildProfileState,
+            savedQuestionSessionsWithQuestionAndAnswersState = _questionSessionsWithQuestionAndAnswersListState
         )
     )
 
 
     init {
         getSavedQuestionSessions()
-        getQuestionSessionWithQuestionAndAnswers()
+        getSavedQuestionSessionWithQuestionAndAnswers()
     }
 
     private fun getSavedQuestionSessions() {
@@ -68,15 +70,16 @@ class SavedQuestionsViewModel @Inject constructor(
             globalState.currentChildProfileState.onEach {
                 it?.let { currentChildProfile ->
                     questionSessionUseCases.getSavedQuestionSessionsByProfile(currentChildProfile._id)
-                        .onEach { questionSessionList ->
+                        ?.onEach { questionSessionList ->
                             _savedQuestions.value = questionSessionList
-                        }.collect()
+                            println(_savedQuestions.value + "saved questions")
+                        }?.collect()
                 }
             }.collect()
         }
     }
 
-    private fun getQuestionSessionWithQuestionAndAnswers() {
+    private fun getSavedQuestionSessionWithQuestionAndAnswers() {
         var questionWithAnswer: Pair<Question, List<Answer>>? = null
         var questionSessionWithQuestionAndAnswersList: List<Triple<QuestionSession, Question?, List<Answer>?>?>
 
@@ -97,13 +100,31 @@ class SavedQuestionsViewModel @Inject constructor(
                             questionWithAnswer?.second
                         )
                     }
-                // println(questionSessionWithQuestionAndAnswersList)
+                println(questionSessionWithQuestionAndAnswersList + "bundle")
                 _questionSessionsWithQuestionAndAnswersListState.value =
                     questionSessionWithQuestionAndAnswersList
+
             }.collect()
         }
 
 
+    }
+
+    fun onEvent(event: SavedQuestionsScreenEvent) {
+        when (event) {
+            is SavedQuestionsScreenEvent.SaveQuestionSession -> {
+                viewModelScope.launch {
+                    questionSessionUseCases.toggleSaveQuestionSession(event.questionSessionId)
+                }
+            }
+
+            is SavedQuestionsScreenEvent.DeleteQuestionSession -> {
+                eventLogger.logComposableLoad("")
+                viewModelScope.launch {
+                    questionSessionUseCases.deleteQuestionSession(event.questionSession._id)
+                }
+            }
+        }
     }
 }
 

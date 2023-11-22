@@ -5,7 +5,7 @@ import com.example.parentcoachbot.feature_chat.domain.repository.ChildProfileRep
 import kotlinx.coroutines.flow.Flow
 
 class GetAllChildProfiles(private val childProfileRepository: ChildProfileRepository) {
-    suspend operator fun invoke(): Flow<List<ChildProfile>> {
+    suspend operator fun invoke(): Flow<List<ChildProfile>>? {
         return childProfileRepository.getAllChildProfiles()
     }
 }

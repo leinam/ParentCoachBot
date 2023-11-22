@@ -5,7 +5,7 @@ import com.example.parentcoachbot.feature_chat.domain.repository.SubtopicReposit
 import kotlinx.coroutines.flow.Flow
 
 class GetSubtopicsByTopic (private val subtopicRepository: SubtopicRepository){
-    suspend operator fun invoke(topicId: String): Flow<List<Subtopic>> {
+    suspend operator fun invoke(topicId: String): Flow<List<Subtopic>>? {
         return subtopicRepository.getSubtopicsByTopic(topicId = topicId)
     }
 }

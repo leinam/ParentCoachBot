@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetSavedQuestionSessionsByProfile @Inject constructor(private val questionSessionRepository: QuestionSessionRepository) {
-    suspend operator fun invoke(childProfileId: String): Flow<List<QuestionSession>> {
+    suspend operator fun invoke(childProfileId: String): Flow<List<QuestionSession>>? {
         return questionSessionRepository.getAllSavedQuestionSessionsByProfile(childProfileId)
     }
 }

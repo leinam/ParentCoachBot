@@ -167,16 +167,16 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             if (searchResult.isNotEmpty()) {
                 println("Search result for query: $queryText is $searchResult")
-                _searchResultsQuestionsListState.value =
-                    questionUseCases.getQuestionsFromIdList(searchResult) // fix this
+                questionUseCases.getQuestionsFromIdList(searchResult)?.let {
+                    _searchResultsQuestionsListState.value = it
+                }
+
+                    // fix this
             } else {
                 _searchResultsQuestionsListState.value = emptyList()
             }
         }
-
-
         // keep state for last search query and then when question selected
-
     }
 
     fun onEvent(event: ChatEvent) {
@@ -284,9 +284,9 @@ class ChatViewModel @Inject constructor(
                 _currentSubtopic.value?.let {
                     it.code?.let { subtopicCode ->
                         questionUseCases.getQuestionBySubtopic(subtopicCode)
-                            .onEach { questionsList ->
+                            ?.onEach { questionsList ->
                                 _subtopicQuestionsListState.value = questionsList
-                            }.collect()
+                            }?.collect()
                     }
                 }
             }.collect()
@@ -297,10 +297,10 @@ class ChatViewModel @Inject constructor(
         getAllQuestionsJob?.cancel()
 
         getAllQuestionsJob = viewModelScope.launch {
-            questionUseCases.getAllQuestions().onEach {
+            questionUseCases.getAllQuestions()?.onEach {
                 _allQuestionsListState.value = it
                 // println(_allQuestionsListState.value)
-            }.collect()
+            }?.collect()
         }
     }
 
@@ -313,10 +313,10 @@ class ChatViewModel @Inject constructor(
                 // println("the current chat is ${_currentChatState.value?._id}")
                 it?.let { chatSession ->
                     questionSessionUseCases.getChatQuestionSessions(chatSession._id)
-                        .onEach { questionSessionList ->
+                        ?.onEach { questionSessionList ->
                             _questionSessionListState.value = questionSessionList
                             // println("c${_currentChatState.value?._id}: ${_questionSessionListState.value}")
-                        }.collect()
+                        }?.collect()
                 }
             }
         }
@@ -332,9 +332,9 @@ class ChatViewModel @Inject constructor(
                 globalState.parentUserState.onEach { parentUser ->
                     parentUser?.let {
                         childProfileUseCases.getChildProfilesByParentUser(parentUser._id)
-                            .onEach { childProfilesList ->
+                            ?.onEach { childProfilesList ->
                                 _childProfilesListState.value = childProfilesList
-                            }.collect()
+                            }?.collect()
                     }
 
                 }.collect()
@@ -346,7 +346,7 @@ class ChatViewModel @Inject constructor(
         getQuestionsWithAnswersJob?.cancel()
 
         getQuestionsWithAnswersJob = viewModelScope.launch {
-            questionUseCases.getQuestionsWithAnswers().collect { questionsWithAnswersList ->
+            questionUseCases.getQuestionsWithAnswers()?.collect { questionsWithAnswersList ->
                 // _state.value = state.value.copy(questionsWithAnswers = questionsWithAnswersList)
                 _questionsWithAnswersListState.value = questionsWithAnswersList
             }
@@ -365,7 +365,7 @@ class ChatViewModel @Inject constructor(
                 // println("the current chat is ${_currentChatState.value?._id}")
                 it?.let {
                     questionSessionUseCases.getChatQuestionSessions(chatSessionId = it._id)
-                        .onEach { questionSessionList ->
+                        ?.onEach { questionSessionList ->
                             questionSessionWithQuestionAndAnswersList =
                                 questionSessionList.map { questionSession ->
 
@@ -382,7 +382,7 @@ class ChatViewModel @Inject constructor(
                                 }
                             _questionSessionsWithQuestionAndAnswersListState.value =
                                 questionSessionWithQuestionAndAnswersList
-                        }.collect()
+                        }?.collect()
                 }
 
             }.collect()
@@ -394,7 +394,7 @@ class ChatViewModel @Inject constructor(
         getTopicsJob?.cancel()
 
         getTopicsJob = viewModelScope.launch {
-            topicUseCases.getAllTopics().onEach { topicsList ->
+            topicUseCases.getAllTopics()?.onEach { topicsList ->
                 // _state.value = state.value.copy(topicsList = topicsList)
                 _topicsListState.value = topicsList
                 // println(topicsList)
@@ -404,7 +404,7 @@ class ChatViewModel @Inject constructor(
                 }
 
 
-            }.collect()
+            }?.collect()
         }
     }
 
@@ -414,9 +414,9 @@ class ChatViewModel @Inject constructor(
         getSubtopicsJob = viewModelScope.launch {
             _currentTopic.onEach {
                 _currentTopic.value?.let {
-                    subtopicUseCases.getSubtopicsByTopic(it._id).onEach { subtopicsList ->
+                    subtopicUseCases.getSubtopicsByTopic(it._id)?.onEach { subtopicsList ->
                         _subtopicsListState.value = subtopicsList
-                    }.collect()
+                    }?.collect()
                 }
             }.collect()
 

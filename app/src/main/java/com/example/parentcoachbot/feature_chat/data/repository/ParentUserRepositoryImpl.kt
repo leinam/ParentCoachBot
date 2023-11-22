@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.data.repository
 
+import android.util.Log
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.repository.ParentUserRepository
 import io.realm.kotlin.Realm
@@ -30,12 +31,23 @@ class ParentUserRepositoryImpl(private val realm: Realm) : ParentUserRepository 
 
     override suspend fun getParentUserById(id: String): ParentUser? =
         withContext(Dispatchers.IO) {
-            realm.query<ParentUser>(query = "id == $0", id).find().firstOrNull()?.copyFromRealm()
+            try{
+                realm.query<ParentUser>(query = "id == $0", id).find().firstOrNull()
+                    ?.copyFromRealm()
+            } catch (e: Exception){
+                Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
+                null
+            }
         }
 
-    override fun getParentUser(): Flow<ParentUser?> {
-        return realm.query<ParentUser>().find().asFlow().map {
-            it.list.firstOrNull()?.copyFromRealm()
+    override fun getParentUser(): Flow<ParentUser?>? {
+        return try {
+            realm.query<ParentUser>().find().asFlow().map {
+                it.list.firstOrNull()?.copyFromRealm()
+            }
+        } catch (e: Exception){
+            Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
+            null
         }
     }
 }

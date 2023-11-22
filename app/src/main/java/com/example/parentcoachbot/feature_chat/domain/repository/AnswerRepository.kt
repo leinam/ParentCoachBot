@@ -3,7 +3,7 @@ package com.example.parentcoachbot.feature_chat.domain.repository
 import com.example.parentcoachbot.feature_chat.domain.model.Answer
 
 interface AnswerRepository  {
-    suspend fun getQuestionAnswers(idList: List<String>): List<Answer>
+    suspend fun getQuestionAnswers(idList: List<String>): List<Answer>?
 
     suspend fun getAnswerById(id: String): Answer?
 

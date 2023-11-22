@@ -113,10 +113,10 @@ class ChatListViewModel @Inject constructor(
             _currentChildProfile.onEach { childProfile ->
                 // println(childProfile?.name)
                 childProfile?.let {
-                    chatSessionUseCases.getProfileChatSessions(it._id).onEach { chatSessionList ->
+                    chatSessionUseCases.getProfileChatSessions(it._id)?.onEach { chatSessionList ->
                         // on each emission we set the state again
                         _chatSessionsListState.value = chatSessionList
-                    }.collect()
+                    }?.collect()
                 }
             }.collect()
         }
@@ -125,7 +125,7 @@ class ChatListViewModel @Inject constructor(
 
     private fun getTopicsList() {
         viewModelScope.launch {
-            topicUseCases.getAllTopics().onEach {
+            topicUseCases.getAllTopics()?.onEach {
                 _topicsListState.value = it
             }
         }

@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.data.repository
 
+import android.util.Log
 import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
@@ -52,30 +53,47 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
 
 
     override suspend fun getChatSessionById(id: String): ChatSession? {
-        return realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
-            ?.copyFromRealm()
+        return try {
+            realm.query<ChatSession>(query = "_id == $0", id).find().firstOrNull()
+                ?.copyFromRealm()
+        } catch (e: Exception) {
+            Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
+            null
+        }
     }
 
-    override suspend fun getChatSessionsByChildProfile(childProfileId: String): Flow<List<ChatSession>> =
+    override suspend fun getChatSessionsByChildProfile(childProfileId: String): Flow<List<ChatSession>>? =
         withContext(Dispatchers.IO) {
-            realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
-                .find()
-                .asFlow()
-                .map { chatSessionResultsChange ->
-                    chatSessionResultsChange.list.copyFromRealm()
-                        .sortedWith(compareByDescending<ChatSession> { it.isPinned }.thenByDescending { it.timeLastUpdated })
-                }
+            try{
+                realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
+                    .find()
+                    .asFlow()
+                    .map { chatSessionResultsChange ->
+                        chatSessionResultsChange.list.copyFromRealm()
+                            .sortedWith(compareByDescending<ChatSession> { it.isPinned }.thenByDescending { it.timeLastUpdated })
+                    }
+            }
+            catch (e: Exception){
+                Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
+                null
+            }
 
         }
 
     override suspend fun getChatSessionsByChildProfileAsynch(
         childProfileId: String
-    ): Flow<ChatSession> = withContext(Dispatchers.IO)
+    ): Flow<ChatSession>? = withContext(Dispatchers.IO)
     {
-        realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
-            .find()
-            .map { it }
-            .asFlow()
+        try{
+            realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
+                .find()
+                .map { it }
+                .asFlow()
+        }
+        catch (e: Exception){
+            Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
+            null
+        }
     }
 
     override suspend fun updateLastAnswerText(answer: Answer, chatSessionId: String): Unit =
