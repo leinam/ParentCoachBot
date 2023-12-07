@@ -15,12 +15,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +43,7 @@ import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatStateWrapper
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
@@ -53,12 +59,26 @@ fun SelectLanguageScreen(
         ChatStateWrapper()
     )
 ) {
-
+    val currentLanguageCode =
+        chatViewModelState.value.currentLanguageCode.collectAsStateWithLifecycle()
     val chatStateWrapper = chatViewModelState.value
     val application by chatStateWrapper.application.collectAsStateWithLifecycle()
     val context = application?.applicationContext
+    val radioButtonSelectedOption by remember {
+        mutableStateOf(currentLanguageCode)
+    }
+    val scope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    Scaffold()
+    Scaffold(topBar = {
+        TopNavBar(
+            navController = navController,
+            screenIndex = 6,
+            drawerState = drawerState,
+            scope = scope
+        )
+    })
+
     { contentPadding ->
         Box(
             modifier = Modifier
@@ -91,23 +111,23 @@ fun SelectLanguageScreen(
                 }
 
                 LazyColumn {
-                    items(languageList) { item ->
-                        Box(modifier = Modifier
-                            .padding(10.dp)
-                            .clickable {
-                                onEvent(ChatEvent.ChangeLanguage(item.isoCode)).also {
-                                    val intent = Intent(context, MainActivity::class.java)
-                                    intent.flags =
-                                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    context?.startActivity(intent)
+                    items(languageList) { language ->
+                        Box(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(color = ThinGreen)
+                                .fillMaxWidth()
+                                .height(70.dp)
+                                .padding(10.dp)
+                                .clickable {
+                                    onEvent(ChatEvent.ChangeLanguage(language.isoCode)).also {
+                                        val intent = Intent(context, MainActivity::class.java)
+                                        intent.flags =
+                                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        context?.startActivity(intent)
+                                    }
                                 }
-                            }
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(color = ThinGreen)
-                            .fillMaxWidth()
-                            .height(70.dp)
-                            .padding(10.dp)
-
                         )
                         {
 
@@ -115,33 +135,37 @@ fun SelectLanguageScreen(
                                 modifier = Modifier
                                     .align(Alignment.CenterStart)
                                     .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-
+                                RadioButton(selected = radioButtonSelectedOption.value == language.isoCode,
+                                    onClick = {
+                                        onEvent(ChatEvent.ChangeLanguage(language.isoCode)).also {
+                                            val intent = Intent(context, MainActivity::class.java)
+                                            intent.flags =
+                                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                            context?.startActivity(intent)
+                                        }
+                                    })
 
                                 Row {
                                     Image(
-                                        painter = painterResource(id = item.icon),
+                                        painter = painterResource(id = language.icon),
                                         contentDescription = null,
                                         modifier = Modifier
                                             .padding(end = 18.dp)
                                             .align(Alignment.CenterVertically)
                                     )
 
-                                    item.name.let {
-                                        Text(
-                                            text = stringResource(id = it),
-                                            fontSize = 18.sp,
-                                            fontFamily = PlexSans,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = TextGrey,
-                                            modifier = Modifier.align(
-                                                Alignment.CenterVertically
-                                            )
+                                    Text(
+                                        text = stringResource(id = language.name),
+                                        fontSize = 18.sp,
+                                        fontFamily = PlexSans,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = TextGrey,
+                                        modifier = Modifier.align(
+                                            Alignment.CenterVertically
                                         )
-
-                                    }
+                                    )
                                 }
 
 
@@ -162,4 +186,10 @@ fun SelectLanguageScreen(
 
 }
 
-val languageList: List<Language> = listOf(Language.English, Language.Portuguese, Language.Zulu)
+val languageList: List<Language> = listOf(
+    Language.English,
+    Language.Portuguese,
+    Language.Zulu
+)
+
+

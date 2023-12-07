@@ -34,11 +34,12 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
                 findLatest(chatSession)?.let {
                     val isPinned = !it.isPinned
                     it.isPinned = isPinned
+                    it.timePinned = if (isPinned) RealmInstant.now() else null
+
                 }
-
             }
-        }
 
+        }
     }
 
     override suspend fun deleteChatSession(id: String): Unit = withContext(Dispatchers.IO) {
@@ -64,16 +65,15 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
 
     override suspend fun getChatSessionsByChildProfile(childProfileId: String): Flow<List<ChatSession>>? =
         withContext(Dispatchers.IO) {
-            try{
+            try {
                 realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
                     .find()
                     .asFlow()
                     .map { chatSessionResultsChange ->
                         chatSessionResultsChange.list.copyFromRealm()
-                            .sortedWith(compareByDescending<ChatSession> { it.isPinned }.thenByDescending { it.timeLastUpdated })
+                            .sortedWith(compareByDescending<ChatSession> { it.isPinned }.thenByDescending { it.timePinned }.thenByDescending { it.timeLastUpdated })
                     }
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
                 null
             }
@@ -84,13 +84,12 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
         childProfileId: String
     ): Flow<ChatSession>? = withContext(Dispatchers.IO)
     {
-        try{
+        try {
             realm.query<ChatSession>(query = "childProfile == $0", childProfileId)
                 .find()
                 .map { it }
                 .asFlow()
-        }
-        catch (e: Exception){
+        } catch (e: Exception) {
             Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
             null
         }

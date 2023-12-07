@@ -2,4 +2,8 @@
 <resources>
 
     <style name="Theme.ParentCoachBot" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.SplashScreen" parent="android:Theme.Material.Light.NoActionBar"/>
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+    </style>
+
 </resources>

@@ -1,10 +1,11 @@
-package com.example.parentcoachbot.feature_chat.presentation
+package com.example.parentcoachbot.feature_chat.presentation.splash_screens
 
 import android.app.Application
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.parentcoachbot.common.GlobalState
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import com.example.parentcoachbot.feature_chat.domain.util.AuthResult
 import com.example.parentcoachbot.feature_chat.domain.util.RealmSyncRepository
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashScreenViewModel @Inject constructor(
     private val syncRepository: RealmSyncRepository,
+    private val globalState: GlobalState,
     private val authManager: AuthManager,
     private val application: Application
 ) : ViewModel() {
@@ -24,7 +26,8 @@ class SplashScreenViewModel @Inject constructor(
     val splashScreenViewModelState: State<SplashScreenStateWrapper> = mutableStateOf(
         SplashScreenStateWrapper(
             authenticationResultState = _authenticationResultState,
-            application = MutableStateFlow(application)
+            application = MutableStateFlow(application),
+            currentLanguageCode = globalState.currentLanguageCode
         )
     )
 

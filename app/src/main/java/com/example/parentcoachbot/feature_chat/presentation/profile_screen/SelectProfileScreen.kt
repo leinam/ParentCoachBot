@@ -125,12 +125,14 @@ fun SelectProfileScreen(navController: NavController = rememberNavController(),
                     contentDescription = null,
                     tint = LightBeige,
                     modifier = Modifier
+                        .padding(10.dp)
                         .size(28.dp)
                         .align(Alignment.Bottom)
                         .clickable {
                             navController.navigate(Screen.SelectLanguageScreen.route)
                         }
                 )
+
             }
         }
     }
@@ -152,7 +154,7 @@ fun ProfileItem(childProfile: ChildProfile =  ChildProfile().apply { this.name =
                 .clip(RoundedCornerShape(5.dp))
                 .background(color = Beige)
                 .clickable {
-                    onEvent(ProfileEvent.selectProfile(childProfile))
+                    onEvent(ProfileEvent.SelectProfile(childProfile))
                     navController.navigate(Screen.ChatListScreen.route)
                 },
             contentAlignment = Alignment.Center

@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,8 +20,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -36,11 +37,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.util.Language
+import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListStateWrapper
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.BackgroundBeige
 import com.example.parentcoachbot.ui.theme.PlexSans
@@ -53,16 +56,24 @@ import kotlinx.coroutines.launch
 
 @Preview
 @Composable
-fun ResourcesHomeScreen(navController: NavController = rememberNavController()) {
+fun ResourcesHomeScreen(
+    navController: NavController = rememberNavController(),
+    chatListViewModelState: State<ChatListStateWrapper> = mutableStateOf(ChatListStateWrapper()),
+
+    ) {
 
     val topicsList = listOf<Topic>(Topic().apply {
         title = realmDictionaryOf(
-            Pair(Language.English.isoCode, "Breastfeeding" ),
+            Pair(Language.English.isoCode, "Breastfeeding"),
             Pair(Language.Portuguese.isoCode, "Amamentação"),
             Pair(Language.Zulu.isoCode, "Ukuncelisa")
         )
         this.icon = R.drawable.breastfeeding_icon
     })
+
+    val chatListStateWrapper = chatListViewModelState.value
+    val currentLanguageCode = chatListStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
+
     val scope = rememberCoroutineScope()
     var drawerSelectedItemIndex by rememberSaveable { mutableIntStateOf(4) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -79,61 +90,67 @@ fun ResourcesHomeScreen(navController: NavController = rememberNavController()) 
                         selected = index == drawerSelectedItemIndex,
                         onClick = {
                             drawerSelectedItemIndex = index
-                            scope.launch{
+                            scope.launch {
                                 drawerState.close()
                                 navBarItem.route?.let { navController.navigate(route = it) }
                             }
                         },
-                        icon = { Icon(painter = painterResource(id = navBarItem.icon),
-                            contentDescription = navBarItem.title?.let { stringResource(it) }
-                        ) },
+                        icon = {
+                            Icon(painter = painterResource(id = navBarItem.icon),
+                                contentDescription = navBarItem.title?.let { stringResource(it) }
+                            )
+                        },
                         modifier = Modifier.padding(10.dp)
                     )
                 }
             }
         }
-    ){
+    ) {
         Scaffold(
             topBar = {
                 TopNavBar(
-                    navController=navController,
+                    navController = navController,
                     screenIndex = 6,
                     drawerState = drawerState,
-                    scope = scope)
+                    scope = scope
+                )
             },
 
             )
-        {contentPadding ->
+        { contentPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = BackgroundBeige)
                     .padding(contentPadding)
 
-            ){
+            ) {
 
                 Column {
 
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(PrimaryGreen.copy(alpha = 0.3f))
-                        .padding(17.dp),
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(PrimaryGreen.copy(alpha = 0.3f))
+                            .padding(17.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically){
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-                        Text(text = "Resources",
+                        Text(
+                            text = stringResource(id = R.string.resources_label),
                             color = PrimaryGreen,
                             textAlign = TextAlign.Center,
                             fontFamily = PlexSans,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 20.sp)
+                            fontSize = 20.sp
+                        )
 
 
                     }
 
                     LazyColumn {
-                        items(topicsList){
-                                topic ->
+                        items(topicsList) { topic ->
                             Box(modifier = Modifier
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(10.dp))
@@ -147,32 +164,40 @@ fun ResourcesHomeScreen(navController: NavController = rememberNavController()) 
                             )
                             {
 
-                                Row(modifier = Modifier
-                                    .align(Alignment.CenterStart)
-                                    .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                Row(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterStart)
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
 
 
-                                    Row{
+                                    Row {
                                         topic.icon?.let {
-                                            Icon(painter = painterResource(id = it),
-                                                contentDescription = null, tint = TextGrey
-                                                , modifier = Modifier.padding(end = 12.dp))
+                                            Icon(
+                                                painter = painterResource(id = it),
+                                                contentDescription = null,
+                                                tint = TextGrey,
+                                                modifier = Modifier.padding(end = 12.dp)
+                                            )
                                         }
 
-                                        Text(
-                                            text = topic.title["en"] ?: "",
-                                            fontSize = 18.sp,
-                                            fontFamily = PlexSans,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = TextGrey
-                                        )
+                                        (topic.title[currentLanguageCode.value] ?: topic.title["en"])?.let {
+                                            Text(
+                                                text = it,
+                                                fontSize = 18.sp,
+                                                fontFamily = PlexSans,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = TextGrey
+                                            )
+                                        }
                                     }
 
-                                    Icon(painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_30),
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_30),
                                         contentDescription = null, tint = TextGrey
                                     )
                                 }
-
 
 
                             }

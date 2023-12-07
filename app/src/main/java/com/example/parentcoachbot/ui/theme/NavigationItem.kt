@@ -59,7 +59,7 @@ val settingsItemList = listOf(
     NavigationItem(
         R.string.edit_profile_label,
         R.drawable.baseline_account_circle_24,
-        route = Screen.UpdateProfileScreen.route
+        route = null
     ),
 
     NavigationItem(

@@ -76,11 +76,12 @@ class ProfileViewModel @Inject constructor(
 
     fun onEvent(profileEvent: ProfileEvent) {
         when (profileEvent) {
-            is ProfileEvent.selectProfile -> {
-                _currentChildProfile.value = profileEvent.childProfile
+            is ProfileEvent.SelectProfile -> {
+                globalState.updateCurrentChildProfile(profileEvent.childProfile)
+                // globalState.currentChildProfileState.value = profileEvent.childProfile
             }
 
-            is ProfileEvent.newProfile -> {
+            is ProfileEvent.NewProfile -> {
                 viewModelScope.launch {
                     childProfileUseCases.newChildProfile(profileEvent.childProfile.apply {
                         this._partition = authManager.authenticatedRealmUser.value?.id

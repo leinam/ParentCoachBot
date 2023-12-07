@@ -164,10 +164,6 @@ fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
                                         }
                                     }
 
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_30),
-                                        contentDescription = null, tint = TextGrey
-                                    )
                                 }
 
 

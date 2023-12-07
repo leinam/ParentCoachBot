@@ -14,6 +14,7 @@
     <string name="new_chat_label">Nova Conversa</string>
     <string name="delete_chat_label">Apagar Conversa</string>
     <string name="pin_chat_label">Fixar bate-papo</string>
+    <string name="unpin_chat_label">Liberar bate-papo</string>
     <string name="subtopics_label">Subtópicos</string>
     <string name="topics_label">Tópicas</string>
     <string name="search_results_label">Procurar Resultados</string>
@@ -56,7 +57,19 @@
     <string name="toast_warning_name">O nome não pode ter mais de 10 caracteres</string>
     <string name="edit_profile_label">Editar Perfil</string>
     <string name="current_profile">Perfil</string>
+    <string name="disclaimer_text">Se considera que algo está fora do normal com o seu filho, contacte o seu médico de família ou pediatra, ou ligue para as linhas dos serviços de emergência.</string>
+    <string name="medical_emergency_label">Linha de Emergência</string>
+    <string name="sa_emergency_contact">Ambulância: 10177</string>
     <string name="zulu_lang">Zulu</string>
     <string name="english_lang">Inglês</string>
     <string name="portuguese_lang">Português</string>
+    <string name="emergency_message_1">Para atendimento médico de emergência</string>
+    <string name="mental_health_header">Saúde mental</string>
+    <string name="sadag_info">Apoio 24 horas por dia a pessoas na África do Sul que correm risco de suicídio</string>
+    <string name="sadag_contact">SADAG: 0800 567 567</string>
+    <string name="toll_free_lines">Linhas de apoio gratuitas 24 horas por dia</string>
+    <string name="sa_police">Serviço de Polícia da África do Sul - 10111</string>
+    <string name="team_contact_label">Contato da equipe de pesquisa</string>
+    <string name="research_contact_description">"Em caso de dúvidas ou questões relacionadas com a aplicação ou o seu conteúdo. "</string>
+    <string name="sa_emergency_contact_description">Contato de serviço de emergência médica e de resgate 24 horas</string>
 </resources>

@@ -18,6 +18,7 @@ class ChatSession: RealmObject {
     var timeLastUpdated: RealmInstant? = timeStarted
     @Index
     var isPinned: Boolean = false
+    var timePinned: RealmInstant? = null
     var lastAnswerText: RealmDictionary<String> = realmDictionaryOf()
 
 }

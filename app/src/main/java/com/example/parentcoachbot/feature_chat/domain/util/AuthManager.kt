@@ -7,18 +7,24 @@ import io.realm.kotlin.mongodb.User
 import io.realm.kotlin.mongodb.exceptions.ConnectionException
 import io.realm.kotlin.mongodb.exceptions.InvalidCredentialsException
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class AuthManager @Inject constructor(val app: App) {
-    val authenticatedRealmUser: MutableStateFlow<User?> =
+    private val _authenticatedRealmUser: MutableStateFlow<User?> =
         MutableStateFlow(app.currentUser) // add to global state rather
 
+    val authenticatedRealmUser: StateFlow<User?> = _authenticatedRealmUser
+
     init {
-        // TODO what if changes to null
+        runBlocking {
+            authenticateUser()
+        }
     }
 
-    suspend fun authenticateUser(): AuthResult {
-        val anonymousCredentials = Credentials.anonymous(reuseExisting = true)
+    private suspend fun authenticateUser(): AuthResult {
+        val anonymousCredentials = Credentials.anonymous(reuseExisting = false)
         var authenticationResult: User? = null
 
         runCatching {
@@ -26,13 +32,13 @@ class AuthManager @Inject constructor(val app: App) {
         }
             .onSuccess {
                 if (authenticationResult?.loggedIn == true) {
-                    authenticatedRealmUser.value = app.currentUser
+                    _authenticatedRealmUser.value = app.currentUser
 
                     Log.println(
                         Log.INFO,
                         "Realm",
                         "Successful Authentication of User: " +
-                                "${authenticatedRealmUser.value?.id}"
+                                "${_authenticatedRealmUser.value?.id}"
                     )
                     return AuthResult.Success(app.currentUser!!)
                 }

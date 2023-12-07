@@ -13,7 +13,7 @@
     <string name="new_chat_label">New Chat</string>
     <string name="delete_chat_label">Delete Chat</string>
     <string name="pin_chat_label">Pin Chat</string>
-    <string name="unpin_chat_label" translatable="false">Unpin Chat</string>
+    <string name="unpin_chat_label">Unpin Chat</string>
     <string name="subtopics_label">Subtopics</string>
     <string name="topics_label">Topics</string>
     <string name="search_results_label">Search Results</string>
@@ -56,9 +56,9 @@
     <string name="toast_warning_name">Enter a valid name: must use only a-Z and less than 10 Characters long</string>
     <string name="edit_profile_label">Edit Profile</string>
     <string name="current_profile">Profile</string>
-    <string name="disclaimer_text" translatable="false">If you consider that something is out of normal with your child, contact your family doctor or paediatrician, or call the emergency services lines.</string>
-    <string name="medical_emergency_label" translatable="false">Medical Emergency</string>
-    <string name="main_emergency_contact" translatable="false">Contact: 112</string>
+    <string name="disclaimer_text">If you consider that something is out of normal with your child, contact your family doctor or paediatrician, or call the emergency services lines.</string>
+    <string name="medical_emergency_label">Medical Emergency</string>
+    <string name="sa_emergency_contact">Ambulance: 10177</string>
     <string name="contacts_header" translatable="false">Helpful Contacts</string>
     <string name="save_question_label" translatable="false">Save Question</string>
     <string name="unsave_question_label" translatable="false">Unsave Question</string>
@@ -66,4 +66,23 @@
     <string name="zulu_lang">isiZulu</string>
     <string name="english_lang">English</string>
     <string name="portuguese_lang">Portuguese</string>
+    <string name="emergency_message_1">Medical Emergency Care</string>
+    <string name="mental_health_header">Mental Health</string>
+    <string name="sadag_info">Offers 24-hour support to people in South Africa who are at risk of suicide.</string>
+    <string name="sadag_contact">SADAG: 0800 567 567</string>
+    <string name="toll_free_lines">24-Hour Toll-free Helplines</string>
+    <string name="sa_police">South Africa Police Service - 10111</string>
+    <string name="pt_medical_emergency" translatable="false">Emergência médica - 112</string>
+    <string name="pt_medical_emergency_description" translatable="false">Disponível 24h por dia, todos os dias.  O 112 é o número de telefone de emergência único europeu, disponível em toda a União Europeia. As chamadas são gratuitas.</string>
+    <string name="pt_medical_emergency_2" translatable="false">Linha Saúde 24 - 808 24 24 24</string>
+    <string name="pt_medical_emergency_2_description" translatable="false">Para contacto clínico, disponível 24h por dia, todos os dias.  A Linha Saúde 24 assegura triagem, aconselhamento e encaminhamento em situações de doença. O valor da chamada é o de uma chamada para a rede fixa.</string>
+    <string name="pt_mental_health_contact" translatable="false">Serviço de Aconselhamento Psicológico da Linha SNS24 - 808 24 24 24</string>
+    <string name="pt_mental_health_contact_description" translatable="false">Fale com um/a Psicólogo/a. Disponível 24h por dia, todos os dias.</string>
+    <string name="pt_mental_health_contact_2" translatable="false">SOS VOZ AMIGA - 213 544 545 | 912 802 669 | 963 524 660</string>
+    <string name="pt_mental_health_contact_2_description" translatable="false">Horário: Diariamente das 15:30 às 00:30</string>
+    <string name="team_contact_label">Reseach Team Contact</string>
+    <string name="portugal_team_contact" translatable="false">Beatriz Félix | beatriz.felix@fraunhofer.pt</string>
+    <string name="sa_team_contact" translatable="false">Leina Meoli | mlxlei001@myuct.ac.za</string>
+    <string name="research_contact_description">In case of doubts or questions related to the application or its content.</string>
+    <string name="sa_emergency_contact_description">24-hour emergency medical and rescue service contact</string>
 </resources>

@@ -14,5 +14,6 @@ class QuestionSession: RealmObject {
     var question: String? = null
     var timeAsked: RealmInstant = RealmInstant.now()
     var isSaved: Boolean = false
+    var timeSaved: RealmInstant? = null
 }
 

@@ -1,9 +1,10 @@
-package com.example.parentcoachbot.feature_chat.domain.model
+package com.example.parentcoachbot.feature_chat.domain.util
 
 import com.example.parentcoachbot.common.portugueseStopWordsCharArraySet
 import com.example.parentcoachbot.common.zuluStopWordsCharArraySet
+import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
-import com.example.parentcoachbot.feature_chat.domain.util.Language
+import org.apache.commons.lang3.StringUtils
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.document.Document
@@ -21,6 +22,7 @@ import org.apache.lucene.search.similarities.BM25Similarity
 import org.apache.lucene.store.Directory
 import org.apache.lucene.store.RAMDirectory
 
+
 class QuestionSearcherImplementation(
     val questionUseCases: QuestionUseCases,
 ) : QuestionSearcher {
@@ -28,6 +30,7 @@ class QuestionSearcherImplementation(
     private var indexSearcher: IndexSearcher? = null
     private val questionTextFieldName = "questionText"
     private val questionIdFieldName = "questionId"
+
 
     private val analyzers: Map<String, Analyzer> =
         mapOf(
@@ -64,7 +67,7 @@ class QuestionSearcherImplementation(
                     questionTextFieldName,
                     analyzers[currentLanguage]
                 )
-                val query = queryParser.parse(queryText)
+                val query = queryParser.parse(StringUtils.stripAccents(queryText))
                 val topDocs: TopDocs = it.search(query, 5)
 
                 searchResults = topDocs.scoreDocs.mapNotNull { scoreDoc: ScoreDoc ->
@@ -98,7 +101,7 @@ class QuestionSearcherImplementation(
                     add(
                         TextField(
                             questionTextFieldName,
-                            it,
+                            StringUtils.stripAccents(it),
                             Field.Store.YES
                         )
                     )

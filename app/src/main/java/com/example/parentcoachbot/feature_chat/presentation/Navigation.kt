@@ -22,9 +22,13 @@ import com.example.parentcoachbot.feature_chat.presentation.profile_screen.Creat
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileViewModel
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
+import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsScreenEvent
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsViewModel
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SelectLanguageScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SettingsHomeScreen
+import com.example.parentcoachbot.feature_chat.presentation.splash_screens.FirstTimeSplashScreen
+import com.example.parentcoachbot.feature_chat.presentation.splash_screens.OnboardingScreen
+import com.example.parentcoachbot.feature_chat.presentation.splash_screens.SplashScreenViewModel
 import com.example.parentcoachbot.ui.theme.OnboardingPageItem
 import com.google.firebase.analytics.FirebaseAnalytics
 
@@ -103,8 +107,10 @@ fun Navigation() {
                 profileState = profileViewModel.profileViewModelState,
                 onEvent = { profileEvent ->
                     profileViewModel.onEvent(profileEvent)
-                    // todo is it really necessary to trigger this - can we observe and trigger directly
-                    chatListViewModel.onEvent(chatListEvent = ChatListEvent.SelectProfile)
+                    // todo WHY is it really necessary to trigger this - can we observe and trigger directly
+                    chatListViewModel.onEvent(chatListEvent = ChatListEvent.UpdateChildProfile)
+                    savedQuestionsViewModel.onEvent(SavedQuestionsScreenEvent.UpdateChildProfile)
+                    // todo trigger list update on saved screen - must do this for all things depending on global state
 
                 })
         }
@@ -159,7 +165,9 @@ fun Navigation() {
                 profileState = profileViewModel.profileViewModelState,
                 onEvent = { profileEvent ->
                     profileViewModel.onEvent(profileEvent)
-                    chatListViewModel.onEvent(chatListEvent = ChatListEvent.SelectProfile)
+                    chatListViewModel.onEvent(chatListEvent = ChatListEvent.UpdateChildProfile)
+                    savedQuestionsViewModel.onEvent(SavedQuestionsScreenEvent.UpdateChildProfile)
+                    // todo trigger list update on saved screen - must do this for all things depending on global state
                 })
         }
         composable(route = Screen.SettingsHomeScreen.route) {
@@ -173,7 +181,8 @@ fun Navigation() {
         composable(route = Screen.SavedQuestionsScreen.route) {
             SavedQuestionsScreen(
                 navController = navHostController,
-                savedQuestionsViewModelState = savedQuestionsViewModel.savedChatViewModelState
+                savedQuestionsViewModelState = savedQuestionsViewModel.savedChatViewModelState,
+                onEvent = { savedScreenEvent -> savedQuestionsViewModel.onEvent(savedScreenEvent) }
             )
         }
         composable(route = Screen.ResourcesHomeScreen.route) {

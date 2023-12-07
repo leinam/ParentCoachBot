@@ -1,4 +1,4 @@
-package com.example.parentcoachbot.feature_chat.presentation
+package com.example.parentcoachbot.feature_chat.presentation.splash_screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
+import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.LightGreen

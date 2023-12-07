@@ -12,8 +12,8 @@ import com.example.parentcoachbot.feature_chat.data.repository.QuestionRepositor
 import com.example.parentcoachbot.feature_chat.data.repository.QuestionSessionRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.SubtopicRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.TopicRepositoryImpl
-import com.example.parentcoachbot.feature_chat.domain.model.QuestionSearcher
-import com.example.parentcoachbot.feature_chat.domain.model.QuestionSearcherImplementation
+import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcher
+import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcherImplementation
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerThreadRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.ChatSessionRepository
@@ -214,13 +214,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideChatSessionUseCases(chatSessionRepository: ChatSessionRepository): ChatSessionUseCases {
+    fun provideChatSessionUseCases(
+        chatSessionRepository: ChatSessionRepository,
+        questionSessionRepository: QuestionSessionRepository
+    ): ChatSessionUseCases {
         return ChatSessionUseCases(
             GetChatSessionsByChildProfile(chatSessionRepository),
             GetChatSessionById(chatSessionRepository),
             NewChatSession(chatSessionRepository),
             TogglePinChatSession(chatSessionRepository),
-            DeleteChatSession(chatSessionRepository),
+            DeleteChatSession(chatSessionRepository, questionSessionRepository),
             UpdateChatLastAnswerText(chatSessionRepository),
             UpdateChatTitle(chatSessionRepository),
             UpdateChatTimeLastUpdated(chatSessionRepository)
@@ -238,7 +241,9 @@ object AppModule {
             ),
             toggleSaveQuestionSession = ToggleSaveQuestionSession(questionSessionRepository),
             deleteQuestionSession = DeleteQuestionSession(questionSessionRepository),
-            getSavedQuestionSessionsByProfile = GetSavedQuestionSessionsByProfile(questionSessionRepository)
+            getSavedQuestionSessionsByProfile = GetSavedQuestionSessionsByProfile(
+                questionSessionRepository
+            )
         )
     }
 

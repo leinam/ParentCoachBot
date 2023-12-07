@@ -33,7 +33,7 @@ enum class Sex(var description: Map<String, String>) {
     ),
     NotSpecified(
         description = mapOf(
-            Pair("en", "Female"),
+            Pair("en", "Not Specified"),
             Pair("zu", "Kungcono ungasho"),
             Pair("pt", "Prefiro não dizer")
         )

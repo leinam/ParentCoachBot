@@ -6,6 +6,7 @@ import com.example.parentcoachbot.feature_chat.domain.repository.QuestionSession
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.copyFromRealm
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -35,7 +36,7 @@ class QuestionSessionRepositoryImpl(private val realm: Realm) : QuestionSessionR
                     childProfileId
                 ).asFlow().map {
                     it.list.copyFromRealm().sortedWith(compareBy(
-                        { it.chatSession }, { it.timeAsked })
+                        { it.timeSaved }, { it.timeAsked })
                     )
                 }
             } catch (e: Exception) {
@@ -43,6 +44,24 @@ class QuestionSessionRepositoryImpl(private val realm: Realm) : QuestionSessionR
                 null
             }
         }
+
+    override suspend fun deleteQuestionSessionsByChatSession(chatSessionId: String) {
+        realm.write {
+            val questionSessions =
+                realm.query<QuestionSession>(query = "chatSession == $0", chatSessionId).find()
+                    .map { it }
+
+            if (questionSessions.isNotEmpty()) {
+                questionSessions.forEach { questionSession ->
+                    findLatest(questionSession)?.also { liveQuestionSession ->
+                        delete(liveQuestionSession)
+                    }
+                }
+            }
+
+
+        }
+    }
 
     override suspend fun newQuestionSession(questionSession: QuestionSession): Unit =
         withContext(Dispatchers.IO) {
@@ -86,7 +105,7 @@ class QuestionSessionRepositoryImpl(private val realm: Realm) : QuestionSessionR
                 realm.query<QuestionSession>(query = "chatSession == $0", chatSessionId).find()
                     .last()
                     .copyFromRealm()
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
                 null
             }
@@ -102,6 +121,7 @@ class QuestionSessionRepositoryImpl(private val realm: Realm) : QuestionSessionR
                 findLatest(it)?.let { liveQuestionSession ->
                     val isSaved = !liveQuestionSession.isSaved
                     liveQuestionSession.isSaved = isSaved
+                    liveQuestionSession.timeSaved = if (isSaved) RealmInstant.now() else null
                 }
             }
 

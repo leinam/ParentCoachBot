@@ -13,7 +13,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.Question
-import com.example.parentcoachbot.feature_chat.domain.model.QuestionSearcher
+import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcher
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic

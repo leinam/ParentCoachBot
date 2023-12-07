@@ -8,4 +8,6 @@ sealed class SavedQuestionsScreenEvent {
 
     data class SaveQuestionSession(val questionSessionId: String) :
         SavedQuestionsScreenEvent()
+
+    object UpdateChildProfile: SavedQuestionsScreenEvent()
 }

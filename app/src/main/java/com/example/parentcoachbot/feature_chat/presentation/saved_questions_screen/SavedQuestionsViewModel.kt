@@ -18,9 +18,9 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUs
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
-import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -46,6 +46,9 @@ class SavedQuestionsViewModel @Inject constructor(
     private val _savedQuestions: MutableStateFlow<List<QuestionSession>> = MutableStateFlow(
         emptyList()
     )
+    private var getSavedQuestionSessionsJob: Job? = null
+
+    private val _currentChildProfile = globalState.currentChildProfileState
     private val _questionSessionsWithQuestionAndAnswersListState:
             MutableStateFlow<List<Triple<QuestionSession, Question?, List<Answer>?>?>> =
         MutableStateFlow(emptyList())
@@ -66,10 +69,13 @@ class SavedQuestionsViewModel @Inject constructor(
     }
 
     private fun getSavedQuestionSessions() {
-        viewModelScope.launch {
-            globalState.currentChildProfileState.onEach {
-                it?.let { currentChildProfile ->
-                    questionSessionUseCases.getSavedQuestionSessionsByProfile(currentChildProfile._id)
+        getSavedQuestionSessionsJob?.cancel()
+
+        getSavedQuestionSessionsJob = viewModelScope.launch {
+            _currentChildProfile.onEach { currentChildProfile ->
+                // println("current ${currentChildProfile?._id}")
+                currentChildProfile?.let {
+                    questionSessionUseCases.getSavedQuestionSessionsByProfile(it._id)
                         ?.onEach { questionSessionList ->
                             _savedQuestions.value = questionSessionList
                             println(_savedQuestions.value + "saved questions")
@@ -123,6 +129,10 @@ class SavedQuestionsViewModel @Inject constructor(
                 viewModelScope.launch {
                     questionSessionUseCases.deleteQuestionSession(event.questionSession._id)
                 }
+            }
+
+            SavedQuestionsScreenEvent.UpdateChildProfile -> {
+                getSavedQuestionSessions()
             }
         }
     }

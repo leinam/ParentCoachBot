@@ -16,6 +16,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,6 +36,7 @@ import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
 import com.example.parentcoachbot.feature_chat.domain.util.Language
+import com.example.parentcoachbot.feature_chat.presentation.ConfirmDeleteDialog
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsScreenEvent
@@ -56,10 +58,28 @@ fun QuestionBox(
     onEvent: (chatEvent: ChatEvent) -> Unit = {},
     screenName: String = Screen.ChatScreen.route,
     onSavedScreenEvent: (savedQuestionsScreenEvent: SavedQuestionsScreenEvent) -> Unit = {},
-    currentLanguageCode: String = Language.English.isoCode
+    currentLanguageCode: String = Language.English.isoCode,
+    openAlertDialogState: MutableState<Boolean> = mutableStateOf(false)
 ) {
     var isContextMenuVisible by rememberSaveable {
         mutableStateOf(false)
+    }
+
+    when {
+        openAlertDialogState.value -> {
+            ConfirmDeleteDialog(
+                onConfirmation = {
+                    openAlertDialogState.value = false
+                    questionSession?.let {
+                        onEvent(ChatEvent.DeleteQuestionSession(questionSession = it))
+                    }
+                },
+                dialogText = "Are you sure you want to delete this question?",
+                dialogTitle = "Delete Question",
+                onDismissRequest = {
+                    openAlertDialogState.value = false
+                })
+        }
     }
 
     val questionText = question.questionText[currentLanguageCode]
@@ -164,10 +184,10 @@ fun QuestionBox(
                 onClick = {
                     questionSession?.let {
                         if (screenName == Screen.ChatScreen.route) {
-                            onEvent(ChatEvent.DeleteQuestionSession(questionSession = it))
-                        }
+                            openAlertDialogState.value = true
+                            isContextMenuVisible = false
 
-                        else if (screenName == Screen.SavedQuestionsScreen.route) {
+                        } else if (screenName == Screen.SavedQuestionsScreen.route) {
                             onSavedScreenEvent(
                                 SavedQuestionsScreenEvent.DeleteQuestionSession(
                                     questionSession = it
@@ -185,9 +205,7 @@ fun QuestionBox(
                     questionSession?.let {
                         if (screenName == Screen.ChatScreen.route) {
                             onEvent(ChatEvent.SaveQuestionSession(questionSession._id))
-                        }
-
-                        else if (screenName == Screen.SavedQuestionsScreen.route) {
+                        } else if (screenName == Screen.SavedQuestionsScreen.route) {
                             onSavedScreenEvent(
                                 SavedQuestionsScreenEvent.SaveQuestionSession(
                                     questionSession._id

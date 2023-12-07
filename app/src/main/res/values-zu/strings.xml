@@ -14,6 +14,7 @@
     <string name="new_chat_label">Ingxoxo Entsha</string>
     <string name="delete_chat_label">Susa Ingxoxo</string>
     <string name="pin_chat_label">Phina Ingxoxo</string>
+    <string name="unpin_chat_label">Susa ukuphina ingxoxo</string>
     <string name="subtopics_label">Izihloko ezingezansi</string>
     <string name="topics_label">Izihloko</string>
     <string name="search_results_label">Imiphumela Yokusesha</string>
@@ -56,7 +57,19 @@
     <string name="toast_warning_name">Igama alikwazi ukuba ngaphezu kwezinhlamvu eziyi-10</string>
     <string name="edit_profile_label">Hlela iphrofayela</string>
     <string name="current_profile">iphrofayela</string>
+    <string name="disclaimer_text">Uma ucabanga ukuthi kukhona okungahambi kahle ngengane yakho, xhumana nodokotela womndeni wakho noma udokotela wezingane, noma ushayele abezimo eziphuthumayo.</string>
+    <string name="medical_emergency_label">Isimo Esiphuthumayo Sezokwelapha</string>
+    <string name="sa_emergency_contact">i-ambulensi: 10177</string>
     <string name="zulu_lang">isiZulu</string>
     <string name="english_lang">IsiNgisi</string>
     <string name="portuguese_lang">IsiPutukezi</string>
+    <string name="emergency_message_1">Ngokunakekelwa kwezempilo okuphuthumayo</string>
+    <string name="mental_health_header">Impilo yengqondo</string>
+    <string name="sadag_info">Ukwesekwa kwamahora angu-24 kubantu baseNingizimu Afrika abasengozini yokuzibulala.</string>
+    <string name="sadag_contact">SADAG: 0800 567 567</string>
+    <string name="toll_free_lines">Izinombolo Zosizo Zamahhala Zamahora angu-24</string>
+    <string name="sa_police">Amaphoyisa aseNingizimu Afrika - 10111</string>
+    <string name="team_contact_label">Othintana Nethimba Locwaningo</string>
+    <string name="research_contact_description">Esimeni sokungabaza noma imibuzo ehlobene nesicelo noma okuqukethwe kwayo.</string>
+    <string name="sa_emergency_contact_description">Amahora angama-24 othintana naye wesevisi yezimo eziphuthumayo nesevisi yokuhlenga</string>
 </resources>

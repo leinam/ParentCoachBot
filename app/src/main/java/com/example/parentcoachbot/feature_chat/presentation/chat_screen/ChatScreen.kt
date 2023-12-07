@@ -90,6 +90,8 @@ fun ChatScreen(
 
     val chatStateWrapper = chatViewModelState.value
     val keyboardController = LocalSoftwareKeyboardController.current
+    val openAlertDialog = remember { mutableStateOf(false) }
+
 
     val topicsList: List<Topic> by chatStateWrapper.topicsListState.collectAsStateWithLifecycle()
     val questionSessionWithQuestionAndAnswersList by chatStateWrapper.questionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
@@ -124,7 +126,6 @@ fun ChatScreen(
         )
     )
 
-    val currentTopic: Topic? by chatStateWrapper.currentTopicState.collectAsStateWithLifecycle()
     var currentSubtopic: Subtopic? by remember { mutableStateOf(null) }
 
     ModalNavigationDrawer(
@@ -510,7 +511,8 @@ fun ChatScreen(
                                                 questionSession = questionSessionAnswerTriple.first,
                                                 onEvent = onEvent,
                                                 currentLanguageCode = currentLanguageCode
-                                                    ?: Language.English.isoCode
+                                                    ?: Language.English.isoCode,
+                                                openAlertDialogState = openAlertDialog
                                             )
                                         }
 
@@ -524,7 +526,7 @@ fun ChatScreen(
                                                 // different behavior for first answer
                                                 LaunchedEffect(key1 = isVisible) {
                                                     isAnimationActive.value = true
-                                                    delay((answerIndex + 1) * 3500L)
+                                                    delay((answerIndex + 1) * 5000L)
                                                     isVisible = true
 
                                                     if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {

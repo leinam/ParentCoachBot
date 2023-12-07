@@ -6,6 +6,6 @@ sealed class ChatListEvent {
     object NewChat : ChatListEvent()
     data class DeleteChat(val chatSession: ChatSession) : ChatListEvent()
     data class PinChat(val chatSession: ChatSession) : ChatListEvent()
-    object SelectProfile : ChatListEvent()
+    object UpdateChildProfile : ChatListEvent()
 
 }

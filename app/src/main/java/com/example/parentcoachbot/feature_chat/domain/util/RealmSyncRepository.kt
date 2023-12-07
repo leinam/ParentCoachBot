@@ -33,10 +33,6 @@ class RealmSyncRepository @Inject constructor(
     init { // TODO move to viewmodel
         runBlocking {
             currentUser = app.currentUser
-            if (currentUser == null) {
-               authManager.authenticateUser()
-                currentUser = app.currentUser
-            } // remove this? single auth point??
         }
 
         currentUser?.let {

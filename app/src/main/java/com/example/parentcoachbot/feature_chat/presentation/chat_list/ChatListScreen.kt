@@ -32,6 +32,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -57,6 +58,7 @@ import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.util.Language
+import com.example.parentcoachbot.feature_chat.presentation.ConfirmDeleteDialog
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
@@ -86,6 +88,8 @@ fun ChatListScreen(
         "MyAppPreferences",
         Context.MODE_PRIVATE
     )
+
+    val openAlertDialog = remember { mutableStateOf(false) }
 
     val currentLanguageCode = appPreferences.getString("default_language", Language.English.isoCode)
         ?: Language.English.isoCode
@@ -205,6 +209,30 @@ fun ChatListScreen(
                                     mutableStateOf(false)
                                 }
 
+                                when {
+                                    openAlertDialog.value -> {
+                                        ConfirmDeleteDialog(onConfirmation = {
+
+                                            openAlertDialog.value = false
+                                            onChatListEvent(
+                                                ChatListEvent.DeleteChat(
+                                                    chatSession
+                                                )
+                                            )
+
+
+
+
+
+                                        },
+                                            onDismissRequest =
+                                            {
+                                                openAlertDialog.value = false
+
+                                            })
+                                    }
+                                }
+
                                 Box(modifier = Modifier.onSizeChanged { }) {
                                     Box(modifier = Modifier
                                         .padding(10.dp)
@@ -322,12 +350,7 @@ fun ChatListScreen(
                                         DropdownMenuItem(
                                             text = { Text(text = stringResource(id = R.string.delete_chat_label)) },
                                             onClick = {
-                                                onChatListEvent(
-                                                    ChatListEvent.DeleteChat(
-                                                        chatSession
-                                                    )
-                                                )
-
+                                                openAlertDialog.value = true
                                                 isContextMenuVisible = false
                                             })
 
@@ -377,6 +400,8 @@ fun ChatListScreen(
             }
         }
     }
+
+
 }
 
 

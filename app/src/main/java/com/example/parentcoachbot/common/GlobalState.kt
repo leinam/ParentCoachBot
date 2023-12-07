@@ -44,6 +44,7 @@ class GlobalState(private val parentUserUseCases: ParentUserUseCases,
 
     fun updateCurrentChildProfile(childProfile: ChildProfile){
         currentChildProfileState.value = childProfile
+        println(currentChildProfileState.value?._id)
     }
 
 }

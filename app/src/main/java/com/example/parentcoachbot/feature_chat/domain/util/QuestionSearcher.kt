@@ -1,4 +1,6 @@
-package com.example.parentcoachbot.feature_chat.domain.model
+package com.example.parentcoachbot.feature_chat.domain.util
+
+import com.example.parentcoachbot.feature_chat.domain.model.Question
 
 
 interface QuestionSearcher {

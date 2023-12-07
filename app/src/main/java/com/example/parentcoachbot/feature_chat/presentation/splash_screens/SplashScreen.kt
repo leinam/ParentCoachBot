@@ -1,4 +1,4 @@
-package com.example.parentcoachbot.feature_chat.presentation
+package com.example.parentcoachbot.feature_chat.presentation.splash_screens
 
 import android.content.Intent
 import androidx.compose.foundation.background
@@ -9,16 +9,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,26 +42,39 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.MainActivity
 import com.example.parentcoachbot.R
-import com.example.parentcoachbot.feature_chat.domain.util.Language
+import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
-import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatStateWrapper
+import com.example.parentcoachbot.feature_chat.presentation.settings_screen.languageList
+import com.example.parentcoachbot.ui.theme.BackgroundBeige
+import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.LightBeige
+import com.example.parentcoachbot.ui.theme.LightGreen
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
+import com.example.parentcoachbot.ui.theme.TextGrey
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun FirstTimeSplashScreen(
-    splashScreenViewModelState: State<SplashScreenStateWrapper> = mutableStateOf(SplashScreenStateWrapper()),
+    splashScreenViewModelState: State<SplashScreenStateWrapper> = mutableStateOf(
+        SplashScreenStateWrapper()
+    ),
     navController: NavController = rememberNavController(),
     onEvent: (chatEvent: ChatEvent) -> Unit = {}
 ) {
 
     val splashScreenStateWrapper = splashScreenViewModelState.value
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
 
     val application by splashScreenStateWrapper.application.collectAsStateWithLifecycle()
     val context = application?.applicationContext
+    val currentLanguageCode =
+        splashScreenStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
+
 
     Box(
         modifier = Modifier
@@ -116,51 +137,77 @@ fun FirstTimeSplashScreen(
             }
 
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.padding(10.dp)
-            ) {
-                Text(
-                    text = "PT",
-                    color = Beige,
-                    fontSize = 18.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                horizontalArrangement = Arrangement.Center
+            )
+            {
+                ExposedDropdownMenuBox(
                     modifier = Modifier
-                        .padding(15.dp)
-                        .clickable {
-                            onEvent(ChatEvent.ChangeLanguage(Language.Portuguese.isoCode)).also {
-                                val intent = Intent(context, MainActivity::class.java)
-                                intent.flags =
-                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                context?.startActivity(intent)
-                            }
-                        }
-                )
-                Text(
-                    text = "EN",
-                    color = Beige,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(15.dp).clickable {
-                        onEvent(ChatEvent.ChangeLanguage(Language.English.isoCode)).also {
-                            val intent = Intent(context, MainActivity::class.java)
-                            intent.flags =
-                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            context?.startActivity(intent)
+                        .width(190.dp),
+                    expanded = isExpanded,
+                    onExpandedChange = {
+                        isExpanded = !isExpanded
+                    })
+                {
+
+
+                    TextField(
+                        readOnly = true,
+                        value = stringResource(
+                            id = languageList.filter { language -> language.isoCode == currentLanguageCode.value }[0].name
+                        )
+                            ?: currentLanguageCode.value,
+                        onValueChange = { },
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.language_label),
+                                fontSize = 10.sp
+                            )
+                        },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = isExpanded
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_language_24),
+                                contentDescription = null
+                            )
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(
+                            unfocusedContainerColor = LightGreen,
+                            focusedContainerColor = LightGreen,
+                            unfocusedTextColor = BackgroundBeige,
+                            focusedTextColor = BackgroundBeige,
+                            focusedLeadingIconColor = BackgroundWhite,
+                            unfocusedLeadingIconColor = BackgroundWhite,
+                            focusedLabelColor = TextGrey
+                        ),
+                        modifier = Modifier.menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(expanded = isExpanded,
+                        onDismissRequest = { isExpanded = false }) {
+
+                        languageList.forEach { language ->
+                            DropdownMenuItem(text = { Text(text = stringResource(language.name)) },
+                                onClick = {
+                                    onEvent(ChatEvent.ChangeLanguage(language.isoCode)).also {
+                                        val intent = Intent(context, MainActivity::class.java)
+                                        intent.flags =
+                                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        context?.startActivity(intent)
+                                    }
+                                })
                         }
                     }
-                )
-                Text(
-                    text = "ZU",
-                    color = Beige,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(15.dp).clickable {
-                        onEvent(ChatEvent.ChangeLanguage(Language.Zulu.isoCode)).also {
-                            val intent = Intent(context, MainActivity::class.java)
-                            intent.flags =
-                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            context?.startActivity(intent)
-                        }
-                    }
-                )
+
+                }
             }
+
 
             Spacer(modifier = Modifier.size(10.dp))
 

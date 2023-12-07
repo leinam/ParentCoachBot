@@ -193,8 +193,9 @@ fun AddProfileScreen(
                 Box(modifier = Modifier) {
                     Icon(
                         tint = Beige, painter =
-                        painterResource(id = R.drawable.logo_sleepy),
-                        contentDescription = "Aurora Logo"
+                        painterResource(id = R.drawable.pclogo),
+                        contentDescription = "Aurora Logo",
+                        modifier = Modifier.size(200.dp)
                     )
                 }
 
@@ -426,8 +427,8 @@ fun AddProfileScreen(
                                         this.parentUser = parentUser?._id
                                     }
 
-                                    onEvent(ProfileEvent.newProfile(newChildProfile)).also {
-                                        onEvent(ProfileEvent.selectProfile(newChildProfile))
+                                    onEvent(ProfileEvent.NewProfile(newChildProfile)).also {
+                                        onEvent(ProfileEvent.SelectProfile(newChildProfile))
 
                                         navController.navigate(Screen.ChatListScreen.route)
                                         {
