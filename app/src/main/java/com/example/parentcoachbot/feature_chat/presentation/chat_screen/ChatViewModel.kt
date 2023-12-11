@@ -13,7 +13,6 @@ import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.Question
-import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcher
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
@@ -27,6 +26,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import com.example.parentcoachbot.feature_chat.domain.util.Language
+import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcher
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -102,6 +102,11 @@ class ChatViewModel @Inject constructor(
     private var getChatQuestionSessionsJob: Job? = null
     private var getChildProfilesJob: Job? = null
     private var getAllQuestionsJob: Job? = null
+    private var listenForNewChatJob: Job? = null
+    private var listenForSearchQueryJob: Job? = null
+    private var getCurrentLanguageJob: Job? = null
+    private var getQuestionSessionWithQuestionAndAnswersJob: Job? = null
+
     private val appPreferences: SharedPreferences =
         application.applicationContext.getSharedPreferences(
             "MyAppPreferences",
@@ -115,12 +120,14 @@ class ChatViewModel @Inject constructor(
         getQuestionsWithAnswers()
         getChildProfiles()
         listenForNewChat()
-        listenForChatQuery()
+        listenForSearchQuery()
         getCurrentLanguage()
     }
 
     private fun listenForNewChat() {
-        viewModelScope.launch {
+        listenForNewChatJob?.cancel()
+
+        listenForNewChatJob = viewModelScope.launch {
             _newChatSession.onEach {
                 // println("new ${_newChatSession.value?._id}")
                 _currentChatState.value = it
@@ -130,8 +137,10 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    private fun listenForChatQuery() {
-        viewModelScope.launch {
+    private fun listenForSearchQuery() {
+        listenForSearchQueryJob?.cancel()
+
+        listenForSearchQueryJob = viewModelScope.launch {
             _typedQueryText.debounce(1000).onEach {
                 searchQuestions(it.trim())
             }.collect()
@@ -139,7 +148,9 @@ class ChatViewModel @Inject constructor(
     }
 
     private fun getCurrentLanguage() {
-        viewModelScope.launch {
+        getCurrentLanguageJob?.cancel()
+
+        getCurrentLanguageJob = viewModelScope.launch {
             _currentLanguageCode.onEach {
                 appPreferences.edit().putString("default_language", it).apply()
                 populateQuestionIndex(currentLanguage = it)
@@ -171,7 +182,7 @@ class ChatViewModel @Inject constructor(
                     _searchResultsQuestionsListState.value = it
                 }
 
-                    // fix this
+                // fix this
             } else {
                 _searchResultsQuestionsListState.value = emptyList()
             }
@@ -188,7 +199,6 @@ class ChatViewModel @Inject constructor(
             }
 
             is ChatEvent.DeleteQuestionSession -> {
-                eventLogger.logComposableLoad("")
                 viewModelScope.launch {
                     lastDeletedQuestion = event.questionSession
                     questionSessionUseCases.deleteQuestionSession(event.questionSession._id)
@@ -324,21 +334,20 @@ class ChatViewModel @Inject constructor(
 
 
     private fun getChildProfiles() {
-        viewModelScope.launch {
 
-            getChildProfilesJob?.cancel()
+        getChildProfilesJob?.cancel()
 
-            getChildProfilesJob = viewModelScope.launch {
-                globalState.parentUserState.onEach { parentUser ->
-                    parentUser?.let {
-                        childProfileUseCases.getChildProfilesByParentUser(parentUser._id)
-                            ?.onEach { childProfilesList ->
-                                _childProfilesListState.value = childProfilesList
-                            }?.collect()
-                    }
+        getChildProfilesJob = viewModelScope.launch {
+            globalState.parentUserState.onEach { parentUser ->
+                parentUser?.let {
+                    childProfileUseCases.getChildProfilesByParentUser(parentUser._id)
+                        ?.onEach { childProfilesList ->
+                            _childProfilesListState.value = childProfilesList
+                        }?.collect()
+                }
 
-                }.collect()
-            }
+            }.collect()
+
         }
     }
 
@@ -356,10 +365,11 @@ class ChatViewModel @Inject constructor(
 
     // debug this
     private fun getQuestionSessionWithQuestionAndAnswers() {
+        getQuestionSessionWithQuestionAndAnswersJob?.cancel()
         var questionWithAnswer: Pair<Question, List<Answer>>? = null
         var questionSessionWithQuestionAndAnswersList: List<Triple<QuestionSession, Question?, List<Answer>?>?>
 
-        viewModelScope.launch {
+        getQuestionSessionWithQuestionAndAnswersJob = viewModelScope.launch {
 
             _currentChatState.onEach {
                 // println("the current chat is ${_currentChatState.value?._id}")

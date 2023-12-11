@@ -45,6 +45,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             globalState.getParentUser()
         }
+
         getChildProfilesList()
     }
 

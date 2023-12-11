@@ -47,6 +47,7 @@ class SavedQuestionsViewModel @Inject constructor(
         emptyList()
     )
     private var getSavedQuestionSessionsJob: Job? = null
+    private var getSavedQuestionSessionWithQuestionAndAnswersJob: Job? = null
 
     private val _currentChildProfile = globalState.currentChildProfileState
     private val _questionSessionsWithQuestionAndAnswersListState:
@@ -86,10 +87,12 @@ class SavedQuestionsViewModel @Inject constructor(
     }
 
     private fun getSavedQuestionSessionWithQuestionAndAnswers() {
+        getSavedQuestionSessionWithQuestionAndAnswersJob?.cancel()
+
         var questionWithAnswer: Pair<Question, List<Answer>>? = null
         var questionSessionWithQuestionAndAnswersList: List<Triple<QuestionSession, Question?, List<Answer>?>?>
 
-        viewModelScope.launch {
+        getSavedQuestionSessionWithQuestionAndAnswersJob = viewModelScope.launch {
 
             _savedQuestions.onEach { questionSessionList ->
                 questionSessionWithQuestionAndAnswersList =

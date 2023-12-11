@@ -19,6 +19,7 @@ import com.example.parentcoachbot.feature_chat.presentation.Navigation
 import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
 import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.mongodb.User
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,12 +32,14 @@ class MainActivity() : ComponentActivity() {
     @Inject
     lateinit var authManager: AuthManager
     private var isLoggedIn = false
+    private var checkAuthJob: Job? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkAuthJob?.cancel()
 
-        lifecycleScope.launch {
+        checkAuthJob = lifecycleScope.launch {
             authManager.authenticatedRealmUser.onEach { user ->
                 user?.let {
                     if (user.loggedIn) {

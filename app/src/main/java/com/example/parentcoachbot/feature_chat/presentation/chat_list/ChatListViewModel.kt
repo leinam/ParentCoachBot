@@ -9,7 +9,6 @@ import com.example.parentcoachbot.common.GlobalState
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
-import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -23,7 +22,6 @@ import javax.inject.Inject
 class ChatListViewModel @Inject constructor(
     private val application: Application,
     private val chatSessionUseCases: ChatSessionUseCases,
-    private val topicUseCases: TopicUseCases,
     private val globalState: GlobalState,
     private val authManager: AuthManager
 ) : ViewModel() {
@@ -37,6 +35,7 @@ class ChatListViewModel @Inject constructor(
     private val _currentLanguageCode = globalState.currentLanguageCode
 
     private var getChildProfileChatSessionsJob: Job? = null
+    private var getCurrentLanguageJob: Job? = null
 
     private val _chatListStateWrapper = mutableStateOf(
         ChatListStateWrapper(
@@ -49,10 +48,12 @@ class ChatListViewModel @Inject constructor(
         )
     )
 
-
     var chatListViewModelState: State<ChatListStateWrapper> = _chatListStateWrapper
+
     private fun getCurrentLanguage() {
-        viewModelScope.launch {
+        getCurrentLanguageJob?.cancel()
+
+        getCurrentLanguageJob = viewModelScope.launch {
 
         }
     }
@@ -123,13 +124,5 @@ class ChatListViewModel @Inject constructor(
         }
     }
 
-
-    private fun getTopicsList() {
-        viewModelScope.launch {
-            topicUseCases.getAllTopics()?.onEach {
-                _topicsListState.value = it
-            }
-        }
-    }
 }
 
