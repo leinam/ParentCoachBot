@@ -31,7 +31,7 @@ val drawerItemsList = listOf(
     ),
 
     NavigationItem(
-        R.string.saved_questions_menu_label,
+        R.string.saved_questions_title,
         R.drawable.favourites_icon,
         route = Screen.SavedQuestionsScreen.route
     ),
@@ -65,7 +65,7 @@ val settingsItemList = listOf(
     NavigationItem(
         R.string.edit_profile_label,
         R.drawable.baseline_child_care_24,
-        route = null
+        route = Screen.UpdateProfileScreen.route
     ),
 
     NavigationItem(

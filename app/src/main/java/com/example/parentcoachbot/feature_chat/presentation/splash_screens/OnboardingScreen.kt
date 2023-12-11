@@ -39,45 +39,53 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 
 @Preview
 @Composable
-fun OnboardingScreen(onboardingPageItem: OnboardingPageItem = OnboardingPageItem.ExploreTopics,
-                     navController: NavController = rememberNavController()) {
+fun OnboardingScreen(
+    onboardingPageItem: OnboardingPageItem = OnboardingPageItem.ExploreTopics,
+    navController: NavController = rememberNavController()
+) {
 
     val headerText: String = stringResource(onboardingPageItem.headerText)
     val descriptionText: String = stringResource(onboardingPageItem.descriptionText)
     val pageIndex: Int = onboardingPageItem.pageIndex
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Beige))
-    {
-        Column(modifier = Modifier
-            .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
 
-            Box(modifier = Modifier){
-                Icon(tint = PrimaryGreen, painter =
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Beige)
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        Box(modifier = Modifier) {
+            Icon(
+                tint = PrimaryGreen, painter =
                 painterResource(id = R.drawable.pclogo),
-                    modifier = Modifier.size(180.dp),
-                    contentDescription ="Aurora Logo")
-            }
-
-            Spacer(modifier = Modifier.size(30.dp))
-
-            Text(text = headerText,
-                textAlign = TextAlign.Center,
-                fontFamily = PlexSans,
-                fontWeight = FontWeight.Medium,
-                fontSize = 36.sp,
-                color = PrimaryGreen
+                modifier = Modifier.size(130.dp),
+                contentDescription = "Aurora Logo"
             )
+        }
 
-            Spacer(modifier = Modifier.size(30.dp))
+        Spacer(modifier = Modifier.size(30.dp))
+
+        Text(
+            text = headerText,
+            textAlign = TextAlign.Center,
+            fontFamily = PlexSans,
+            fontWeight = FontWeight.Medium,
+            fontSize = 30.sp,
+            color = PrimaryGreen
+        )
+
+        Spacer(modifier = Modifier.size(30.dp))
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
 
             Box(
                 modifier = Modifier
                     .width(300.dp)
-                    .padding(20.dp)
+                    .padding(27.dp)
                     .clip(
                         RoundedCornerShape(
                             topEnd = 20.dp,
@@ -91,77 +99,91 @@ fun OnboardingScreen(onboardingPageItem: OnboardingPageItem = OnboardingPageItem
 
                     }
             ) {
-                Text(text = descriptionText,
+                Text(
+                    text = descriptionText,
                     textAlign = TextAlign.Start,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.Normal,
                     fontSize = 19.sp
                 )
+
+
             }
-
-            Spacer(modifier = Modifier.size(30.dp))
-
-            Box(
-                modifier = Modifier
-                    .width(180.dp)
-                    .padding(10.dp)
-                    .clip(
-                        RoundedCornerShape(30.dp)
-                    )
-                    .background(color = PrimaryGreen)
-                    .padding(10.dp)
-                    .clickable {
-                        when (onboardingPageItem) {
-                            OnboardingPageItem.ExploreTopics -> navController.navigate(route = Screen.SearchOnboardingScreen.route)
-                            OnboardingPageItem.SaveFavourites -> navController.navigate(route = Screen.CreateProfileSplashScreen.route)
-                            OnboardingPageItem.SearchQuestions -> navController.navigate(route = Screen.FavouriteOnboardingScreen.route)
-                        }
-                    },
-                contentAlignment = Alignment.Center
-            ){
-                Text(text = stringResource(id = R.string.continue_label).uppercase(),
-                    textAlign = TextAlign.Center,
-                    fontFamily = PlexSans,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 19.sp,
-                    color = Beige
-                )
-            }
-
-            Spacer(modifier = Modifier.size(15.dp))
-
-            Text(text = stringResource(id = R.string.skip_label).uppercase(),
-                textAlign = TextAlign.Center,
-                fontFamily = PlexSans,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-                color = PrimaryGreen,
-                modifier = Modifier.clickable {
-                    navController.navigate(route = Screen.SelectProfileScreen.route)
-                }
-            )
-
-            Spacer(modifier = Modifier.size(60.dp))
-
-            LazyRow(){
-                items(3){
-                    selectedIndex ->
-                        if (pageIndex == selectedIndex) {
-                            Box(modifier = Modifier
+            LazyRow() {
+                items(3) { selectedIndex ->
+                    if (pageIndex == selectedIndex) {
+                        Box(
+                            modifier = Modifier
                                 .padding(10.dp)
-                                .size(15.dp)
+                                .size(10.dp)
                                 .clip(CircleShape)
                                 .background(PrimaryGreen)
-                                .padding(10.dp))
-                        } else {
-                            Box(modifier = Modifier
                                 .padding(10.dp)
-                                .size(15.dp)
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .size(10.dp)
                                 .clip(RoundedCornerShape(5.dp))
-                                .background(LightGreen))
-                        }
+                                .background(LightGreen)
+                        )
+                    }
                 }
             }
         }
+
+
+
+        Spacer(modifier = Modifier.size(30.dp))
+
+
+        Box(
+            modifier = Modifier
+                .width(180.dp)
+                .padding(10.dp)
+                .clip(
+                    RoundedCornerShape(30.dp)
+                )
+                .background(color = PrimaryGreen)
+                .padding(10.dp)
+                .clickable {
+                    when (onboardingPageItem) {
+                        OnboardingPageItem.ExploreTopics -> navController.navigate(route = Screen.SearchOnboardingScreen.route)
+                        OnboardingPageItem.SaveFavourites -> navController.navigate(route = Screen.CreateProfileSplashScreen.route)
+                        OnboardingPageItem.SearchQuestions -> navController.navigate(route = Screen.FavouriteOnboardingScreen.route)
+                    }
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(id = R.string.continue_label).uppercase(),
+                textAlign = TextAlign.Center,
+                fontFamily = PlexSans,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 19.sp,
+                color = Beige
+            )
+        }
+
+        Spacer(modifier = Modifier.size(15.dp))
+
+        if (pageIndex < 2){
+            Text(text = stringResource(id = R.string.skip_label).uppercase(),
+            textAlign = TextAlign.Center,
+            fontFamily = PlexSans,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            color = PrimaryGreen,
+            modifier = Modifier.clickable {
+                navController.navigate(route = Screen.SelectProfileScreen.route)
+            }
+        )
+        }
+
+
+
+
     }
+    
 }

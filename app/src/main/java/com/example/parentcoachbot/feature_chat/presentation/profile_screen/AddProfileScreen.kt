@@ -184,7 +184,7 @@ fun AddProfileScreen(
 
             Column(
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
+                    .align(Alignment.Center)
                     .padding(vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -195,7 +195,7 @@ fun AddProfileScreen(
                         tint = Beige, painter =
                         painterResource(id = R.drawable.pclogo),
                         contentDescription = "Aurora Logo",
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(130.dp)
                     )
                 }
 
@@ -216,7 +216,7 @@ fun AddProfileScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(5.dp),
+                        .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -238,7 +238,8 @@ fun AddProfileScreen(
                                 Toast.LENGTH_SHORT
                             ).show()
                         },
-                        textStyle = LocalTextStyle.current.copy()
+                        textStyle = LocalTextStyle.current.copy(),
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     // TODO add date picker
@@ -256,7 +257,7 @@ fun AddProfileScreen(
                                 focusedContainerColor = BackgroundWhite,
                                 focusedLabelColor = BackgroundWhite
                             ),
-                            modifier = Modifier.menuAnchor(),
+                            modifier = Modifier.menuAnchor().fillMaxWidth(),
                             label = { Text(text = stringResource(R.string.child_gender_label)) },
                             placeholder = { Text(text = stringResource(id = R.string.gender_placeholder)) },
                             readOnly = true,
@@ -268,7 +269,7 @@ fun AddProfileScreen(
                                 ExposedDropdownMenuDefaults.TrailingIcon(
                                     expanded = isGenderDropdownExpanded
                                 )
-                            },
+                            }
                         )
 
                         ExposedDropdownMenu(expanded = isGenderDropdownExpanded,
@@ -327,7 +328,7 @@ fun AddProfileScreen(
                                 focusedContainerColor = BackgroundWhite,
                                 focusedLabelColor = BackgroundWhite
                             ),
-                            modifier = Modifier.menuAnchor(),
+                            modifier = Modifier.menuAnchor().fillMaxWidth(),
                             label = { Text(text = stringResource(R.string.month_placeholder)) },
                             placeholder = { Text(text = stringResource(id = R.string.month_label)) },
                             readOnly = true,
@@ -339,7 +340,7 @@ fun AddProfileScreen(
                                 ExposedDropdownMenuDefaults.TrailingIcon(
                                     expanded = isMobDropdownExpanded
                                 )
-                            },
+                            }
                         )
 
                         ExposedDropdownMenu(expanded = isMobDropdownExpanded,
@@ -371,7 +372,8 @@ fun AddProfileScreen(
                                 focusedLabelColor = BackgroundWhite
                             ),
                             modifier = Modifier
-                                .menuAnchor(),
+                                .menuAnchor()
+                                .fillMaxWidth(),
                             label = { Text(text = stringResource(R.string.year_placeholder)) },
                             placeholder = { Text(text = stringResource(id = R.string.year_label)) },
                             readOnly = true,

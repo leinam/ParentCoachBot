@@ -38,7 +38,6 @@
     <string name="save_favourites_description_text">Guarde mensagens ou imagens úteis nos favoritos para as poder consultar mais tarde.</string>
     <string name="continue_label">Continuar</string>
     <string name="skip_label">Saltar</string>
-    <string name="search_bar_placeholder">O que você gostaria de saber?</string>
     <string name="language_label">Idiomas</string>
     <string name="data_privacy_label">Privacidade e Segurança dos Dados</string>
     <string name="terms_label">Termos de Uso</string>
@@ -72,4 +71,5 @@
     <string name="team_contact_label">Contato da equipe de pesquisa</string>
     <string name="research_contact_description">"Em caso de dúvidas ou questões relacionadas com a aplicação ou o seu conteúdo. "</string>
     <string name="sa_emergency_contact_description">Contato de serviço de emergência médica e de resgate 24 horas</string>
+    <string name="saved_questions_drawer_label">Guardadaos</string>
 </resources>

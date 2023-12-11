@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.RadioButton
@@ -23,9 +24,11 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +46,7 @@ import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatStateWrapper
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.PlexSans
@@ -67,7 +71,10 @@ fun SelectLanguageScreen(
     val radioButtonSelectedOption by remember {
         mutableStateOf(currentLanguageCode)
     }
+
     val scope = rememberCoroutineScope()
+    val scrollState = rememberLazyListState()
+    var drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(3) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     Scaffold(topBar = {
@@ -79,112 +86,121 @@ fun SelectLanguageScreen(
         )
     })
 
+
     { contentPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Beige)
-                .padding(contentPadding)
-
-        ) {
-
-            Column {
-
-                Row(
+        CustomNavigationDrawer(
+            drawerState = drawerState,
+            drawerSelectedItemIndex = drawerSelectedItemIndex,
+            navController = navController,
+            contentPadding = contentPadding,
+            content ={
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(PrimaryGreen.copy(alpha = 0.3f))
-                        .padding(17.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxSize()
+                        .background(color = Beige)
+                        .padding(contentPadding)
+
                 ) {
 
-                    Text(
-                        text = stringResource(id = R.string.language_label),
-                        color = PrimaryGreen,
-                        fontFamily = PlexSans,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 19.sp
-                    )
+                    Column {
 
-
-                }
-
-                LazyColumn {
-                    items(languageList) { language ->
-                        Box(
+                        Row(
                             modifier = Modifier
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(color = ThinGreen)
                                 .fillMaxWidth()
-                                .height(70.dp)
-                                .padding(10.dp)
-                                .clickable {
-                                    onEvent(ChatEvent.ChangeLanguage(language.isoCode)).also {
-                                        val intent = Intent(context, MainActivity::class.java)
-                                        intent.flags =
-                                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        context?.startActivity(intent)
-                                    }
-                                }
-                        )
-                        {
+                                .background(PrimaryGreen.copy(alpha = 0.3f))
+                                .padding(17.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
 
-                            Row(
-                                modifier = Modifier
-                                    .align(Alignment.CenterStart)
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RadioButton(selected = radioButtonSelectedOption.value == language.isoCode,
-                                    onClick = {
-                                        onEvent(ChatEvent.ChangeLanguage(language.isoCode)).also {
-                                            val intent = Intent(context, MainActivity::class.java)
-                                            intent.flags =
-                                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                            context?.startActivity(intent)
-                                        }
-                                    })
-
-                                Row {
-                                    Image(
-                                        painter = painterResource(id = language.icon),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .padding(end = 18.dp)
-                                            .align(Alignment.CenterVertically)
-                                    )
-
-                                    Text(
-                                        text = stringResource(id = language.name),
-                                        fontSize = 18.sp,
-                                        fontFamily = PlexSans,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = TextGrey,
-                                        modifier = Modifier.align(
-                                            Alignment.CenterVertically
-                                        )
-                                    )
-                                }
-
-
-                            }
+                            Text(
+                                text = stringResource(id = R.string.language_label),
+                                color = PrimaryGreen,
+                                fontFamily = PlexSans,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 19.sp
+                            )
 
 
                         }
+
+                        LazyColumn {
+                            items(languageList) { language ->
+                                Box(
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(color = ThinGreen)
+                                        .fillMaxWidth()
+                                        .height(70.dp)
+                                        .padding(10.dp)
+                                        .clickable {
+                                            onEvent(ChatEvent.ChangeLanguage(language.isoCode)).also {
+                                                val intent =
+                                                    Intent(context, MainActivity::class.java)
+                                                intent.flags =
+                                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                                context?.startActivity(intent)
+                                            }
+                                        }
+                                )
+                                {
+
+                                    Row(
+                                        modifier = Modifier
+                                            .align(Alignment.CenterStart)
+                                            .fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(selected = radioButtonSelectedOption.value == language.isoCode,
+                                            onClick = {
+                                                onEvent(ChatEvent.ChangeLanguage(language.isoCode)).also {
+                                                    val intent =
+                                                        Intent(context, MainActivity::class.java)
+                                                    intent.flags =
+                                                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                                    context?.startActivity(intent)
+                                                }
+                                            })
+
+                                        Row {
+                                            Image(
+                                                painter = painterResource(id = language.icon),
+                                                contentDescription = null,
+                                                modifier = Modifier
+                                                    .padding(end = 18.dp)
+                                                    .align(Alignment.CenterVertically)
+                                            )
+
+                                            Text(
+                                                text = stringResource(id = language.name),
+                                                fontSize = 18.sp,
+                                                fontFamily = PlexSans,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = TextGrey,
+                                                modifier = Modifier.align(
+                                                    Alignment.CenterVertically
+                                                )
+                                            )
+                                        }
+
+
+                                    }
+
+
+                                }
+                            }
+                        }
+
+
                     }
-                }
 
+                }})
 
-            }
-
-        }
 
     }
-
-
 }
+
 
 val languageList: List<Language> = listOf(
     Language.English,

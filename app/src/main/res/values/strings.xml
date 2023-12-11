@@ -37,7 +37,7 @@
     <string name="save_favourites_description_text">Save useful messages  or images as favourites ⭐️ to look for them in  the future.</string>
     <string name="continue_label">Continue</string>
     <string name="skip_label">Skip</string>
-    <string name="search_bar_placeholder">What would you like to know?</string>
+    <string name="search_bar_placeholder" translatable="false">Search for a question</string>
     <string name="language_label">Languages</string>
     <string name="data_privacy_label">Data Privacy And Security</string>
     <string name="terms_label">Terms of Use</string>
@@ -50,7 +50,7 @@
     <string name="month_placeholder">Enter Month of Birth</string>
     <string name="year_placeholder">Enter Year of Birth</string>
     <string name="tour_button_text">Take Tour</string>
-    <string name="create_profile_onboarding_description">Create an account for each parent and different profiles for your babies.</string>
+    <string name="create_profile_onboarding_description">Create an account and different profiles for your babies.</string>
     <string name="create_profile_onboarding_header">Create Profiles for Everyone</string>
     <string name="menu_label">Menu</string>
     <string name="toast_warning_name">Enter a valid name: must use only a-Z and less than 10 Characters long</string>
@@ -86,4 +86,9 @@
     <string name="research_contact_description">In case of doubts or questions related to the application or its content.</string>
     <string name="sa_emergency_contact_description">24-hour emergency medical and rescue service contact</string>
     <string name="account_settings_label" translatable="false">My Account</string>
+    <string name="no_chats_prompt" translatable="false">Click on the button below to start a new chat</string>
+    <string name="saved_questions_drawer_label">Saved Questions</string>
+    <string name="saved_messages_label" translatable="false">Saved Messages</string>
+    <string name="no_saved_messages_label" translatable="false">No Saved Messages</string>
+    <string name="no_saved_messages_prompt" translatable="false">Long Press a question in a chat to save it for later.</string>
 </resources>

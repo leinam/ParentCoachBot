@@ -84,63 +84,13 @@ fun FirstTimeSplashScreen(
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
-
-            Box(modifier = Modifier) {
-                Icon(
-                    tint = Beige, painter =
-                    painterResource(id = R.drawable.pclogo),
-                    contentDescription = "Aurora Logo",
-                    modifier = Modifier
-                        .size(175.dp)
-                        .align(Alignment.Center)
-                )
-
-            }
-
-            Spacer(modifier = Modifier.size(30.dp))
-
-            Text(
-                text = "ParentCoach",
-                textAlign = TextAlign.Center,
-                fontFamily = PlexSans,
-                fontWeight = FontWeight.Medium,
-                fontSize = 45.sp,
-                color = Beige
-            )
-
-            Spacer(modifier = Modifier.size(25.dp))
-
-            Box(
-                modifier = Modifier
-                    .width(300.dp)
-                    .padding(20.dp)
-                    .clip(
-                        RoundedCornerShape(
-                            topEnd = 20.dp,
-                            bottomStart = 20.dp,
-                            bottomEnd = 20.dp
-                        )
-                    )
-                    .background(color = LightBeige)
-                    .padding(15.dp)
-
-            ) {
-                Text(
-                    text = stringResource(id = R.string.app_intro_message),
-                    textAlign = TextAlign.Start,
-                    fontFamily = PlexSans,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 19.sp
-                )
-            }
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.End
             )
             {
                 ExposedDropdownMenuBox(
@@ -207,6 +157,60 @@ fun FirstTimeSplashScreen(
 
                 }
             }
+
+            Spacer(modifier = Modifier.size(42.dp))
+
+            Box(modifier = Modifier) {
+                Icon(
+                    tint = Beige, painter =
+                    painterResource(id = R.drawable.pclogo),
+                    contentDescription = "Aurora Logo",
+                    modifier = Modifier
+                        .size(130.dp)
+                        .align(Alignment.Center)
+                )
+
+            }
+
+            Spacer(modifier = Modifier.size(30.dp))
+
+            Text(
+                text = stringResource(id = R.string.welcome),
+                textAlign = TextAlign.Center,
+                fontFamily = PlexSans,
+                fontWeight = FontWeight.Medium,
+                fontSize = 36.sp,
+                lineHeight = 45.sp,
+                color = Beige
+            )
+
+            Spacer(modifier = Modifier.size(25.dp))
+
+            Box(
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(20.dp)
+                    .clip(
+                        RoundedCornerShape(
+                            topEnd = 20.dp,
+                            bottomStart = 20.dp,
+                            bottomEnd = 20.dp
+                        )
+                    )
+                    .background(color = LightBeige)
+                    .padding(10.dp)
+
+            ) {
+                Text(
+                    text = stringResource(id = R.string.app_intro_message),
+                    textAlign = TextAlign.Start,
+                    fontFamily = PlexSans,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 19.sp, modifier = Modifier.padding(5.dp)
+                )
+            }
+
+
 
 
             Spacer(modifier = Modifier.size(10.dp))

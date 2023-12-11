@@ -27,7 +27,7 @@ class AuthManager @Inject constructor(val app: App) {
     }
 
     private suspend fun authenticateUser(): AuthResult {
-        val anonymousCredentials = Credentials.anonymous(reuseExisting = false)
+        val anonymousCredentials = Credentials.anonymous(reuseExisting = true)
         var authenticationResult: User? = null
 
         runCatching {

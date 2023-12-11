@@ -23,9 +23,6 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
@@ -61,6 +58,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.AnswerBox
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionInputSection
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
@@ -70,7 +68,6 @@ import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.LightGreen
 import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
-import com.example.parentcoachbot.ui.theme.drawerItemsList
 import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -105,12 +102,12 @@ fun ChatScreen(
 
 
     val scope = rememberCoroutineScope()
-    var drawerSelectedItemIndex by rememberSaveable {
+    val drawerSelectedItemIndex = rememberSaveable {
         mutableIntStateOf(1)
     }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scrollState = rememberLazyListState()
-    var isAnimationActive = remember {
+    val isAnimationActive = remember {
         mutableStateOf(false)
     }
 
@@ -128,291 +125,79 @@ fun ChatScreen(
 
     var currentSubtopic: Subtopic? by remember { mutableStateOf(null) }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet()
-            {
-                drawerItemsList.forEachIndexed { index, navBarItem ->
-                    NavigationDrawerItem(
-                        label = {
-                            if (index == 0) navBarItem.title?.let {
-                                Text(
-                                    text = stringResource(
-                                        id = it
-                                    ) + ": ${currentChildProfile?.name}"
-                                )
-                            } else navBarItem.title?.let { Text(text = stringResource(id = it)) }
-                        },
-                        selected = index == drawerSelectedItemIndex,
-                        onClick = {
-                            drawerSelectedItemIndex = index
-                            scope.launch {
-                                drawerState.close()
-                                navBarItem.route?.let { navController.navigate(route = it) }
-                            }
-                        },
-                        icon = {
-                            Icon(painter = painterResource(id = navBarItem.icon),
-                                contentDescription = navBarItem.title?.let { stringResource(it) }
-                            )
-                        },
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-        }
-    )
-    {
-        ParentCoachBotTheme {
-            Scaffold(
-                bottomBar = {
-                    QuestionInputSection(
-                        modifier = Modifier
-                            .background(color = LightGreen)
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        onEvent = onEvent, scope = scope,
-                        bottomSheetContentState = bottomSheetContentState,
-                        bottomSheetScaffoldState = bottomSheetScaffoldState
-                    )
-                }, topBar = {
-                    TopNavBar(
-                        drawerState = drawerState,
-                        scope = scope,
-                        navController = navController
-                    )
-                })
-            { contentPadding ->
-                Box(
+
+    ParentCoachBotTheme {
+        Scaffold(
+            bottomBar = {
+                QuestionInputSection(
                     modifier = Modifier
-                        .background(color = BackgroundWhite)
-                        .fillMaxSize()
-                        .padding(contentPadding)
-                ) {
+                        .background(color = LightGreen)
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    onEvent = onEvent, scope = scope,
+                    bottomSheetContentState = bottomSheetContentState,
+                    bottomSheetScaffoldState = bottomSheetScaffoldState
+                )
+            }, topBar = {
+                TopNavBar(
+                    drawerState = drawerState,
+                    scope = scope,
+                    navController = navController
+                )
+            })
+        { contentPadding ->
+            CustomNavigationDrawer(
+                drawerState = drawerState,
+                drawerSelectedItemIndex = drawerSelectedItemIndex,
+                navController = navController,
+                contentPadding = contentPadding,
+                currentChildProfileName = currentChildProfile?.name ?: "",
+                content ={
+                    Box(
+                        modifier = Modifier
+                            .background(color = BackgroundWhite)
+                            .fillMaxSize()
+                            .padding(contentPadding)
+                    ) {
 
-                    BottomSheetScaffold(
-                        scaffoldState = bottomSheetScaffoldState,
-                        sheetContent = {
-                            when (bottomSheetContent) {
-                                BottomSheetContent.Questions -> {
-                                    Column(modifier = Modifier.height(300.dp)) {
-                                        Box(
-                                            modifier = Modifier.fillMaxWidth(),
-                                        ) {
+                        BottomSheetScaffold(
+                            scaffoldState = bottomSheetScaffoldState,
+                            sheetContent = {
+                                when (bottomSheetContent) {
+                                    BottomSheetContent.Questions -> {
+                                        Column(modifier = Modifier.height(300.dp)) {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth(),
+                                            ) {
 
-                                            Icon(painter = painterResource(
-                                                id =
-                                                R.drawable.baseline_arrow_back_24
-                                            ),
-                                                contentDescription = null,
-                                                tint = BackgroundWhite,
-                                                modifier = Modifier
-                                                    .clickable {
-                                                        bottomSheetContentState.value =
-                                                            BottomSheetContent.SubTopics
-                                                    }
-                                                    .align(Alignment.CenterStart)
-                                                    .padding(horizontal = 10.dp)
-                                            )
-                                            val currentSubtopicTitle =
-                                                currentSubtopic?.title?.get(currentLanguageCode)
-
-                                            Text(
-                                                text = currentSubtopicTitle?.uppercase() ?: "",
-                                                color = LightBeige,
-                                                modifier = Modifier.align(Alignment.Center)
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.size(10.dp))
-                                        LazyColumn {
-
-                                            items(subtopicQuestionsList) { question ->
-                                                Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                                Icon(painter = painterResource(
+                                                    id =
+                                                    R.drawable.baseline_arrow_back_24
+                                                ),
+                                                    contentDescription = null,
+                                                    tint = BackgroundWhite,
                                                     modifier = Modifier
-                                                        .padding(16.dp)
-                                                        .fillMaxWidth()
                                                         .clickable {
-                                                            onEvent(
-                                                                ChatEvent.AddQuestionSession(
-                                                                    question
-                                                                )
-                                                            )
-                                                            scope.launch {
-                                                                bottomSheetScaffoldState.bottomSheetState.partialExpand()
-                                                            }
-
-                                                            isAnswerVisible = true
-                                                            isAnimationActive.value = true
-                                                        }) {
-                                                    val questionText =
-                                                        question.questionText[currentLanguageCode]
-
-                                                    questionText?.let {
-                                                        Text(
-                                                            text = it,
-                                                            color = Color.White
-                                                        )
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                BottomSheetContent.SubTopics -> {
-                                    Column(modifier = Modifier.height(300.dp)) {
-                                        Box(modifier = Modifier.fillMaxWidth()) {
-                                            Icon(painter = painterResource(
-                                                id = R.drawable.baseline_arrow_back_24
-                                            ),
-                                                contentDescription = null,
-                                                tint = BackgroundWhite,
-                                                modifier = Modifier
-                                                    .clickable {
-                                                        bottomSheetContentState.value =
-                                                            BottomSheetContent.Topics
-                                                    }
-                                                    .align(Alignment.CenterStart)
-                                                    .padding(horizontal = 10.dp))
-
-                                            Text(
-                                                text = stringResource(
-                                                    id = R.string.subtopics_label
-                                                ).uppercase(),
-                                                color = LightBeige, modifier =
-                                                Modifier.align(Alignment.Center)
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.size(10.dp))
-                                        LazyColumn {
-                                            items(subtopicList) { subtopic ->
-                                                Row(horizontalArrangement = Arrangement.SpaceBetween,
-                                                    modifier = Modifier
-                                                        .padding(16.dp)
-                                                        .fillMaxWidth()
-                                                        .clickable {
-                                                            onEvent(
-                                                                ChatEvent.SelectSubtopic(
-                                                                    subtopic
-                                                                )
-                                                            )
-                                                            currentSubtopic = subtopic
-                                                            bottomSheetContentState.value =
-                                                                BottomSheetContent.Questions
-                                                        }) {
-
-                                                    val subtopicTitle =
-                                                        subtopic.title[currentLanguageCode] ?: subtopic.title[Language.English.isoCode]
-
-                                                    Text(
-                                                        text = subtopicTitle
-                                                            ?: "",
-                                                        color = Color.White
-                                                    )
-
-
-                                                    subtopic.icon?.let {
-                                                        Icon(
-                                                            painter = painterResource(id = subtopic.icon!!),
-                                                            contentDescription = subtopicTitle,
-                                                            tint = Color.White
-                                                        )
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                BottomSheetContent.Topics -> {
-                                    Column(modifier = Modifier.height(300.dp)) {
-                                        Box(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = stringResource(
-                                                    id = R.string.topics_label
-                                                ).uppercase(),
-                                                color = LightBeige
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.size(10.dp))
-
-                                        LazyColumn {
-                                            items(topicsList) { topic ->
-                                                val topicTitle = topic.title[currentLanguageCode]
-
-                                                Row(horizontalArrangement = Arrangement.SpaceBetween,
-                                                    modifier = Modifier
-                                                        .padding(16.dp)
-                                                        .fillMaxWidth()
-                                                        .clickable {
-                                                            onEvent(ChatEvent.SelectTopic(topic))
                                                             bottomSheetContentState.value =
                                                                 BottomSheetContent.SubTopics
                                                         }
-                                                ) {
-                                                    topicTitle?.let {
-                                                        Text(
-                                                            text = it,
-                                                            color = Color.White
-                                                        )
-                                                    }
+                                                        .align(Alignment.CenterStart)
+                                                        .padding(horizontal = 10.dp)
+                                                )
+                                                val currentSubtopicTitle =
+                                                    currentSubtopic?.title?.get(currentLanguageCode)
 
-                                                    topic.icon?.let {
-                                                        Icon(
-                                                            painter = painterResource(id = it),
-                                                            contentDescription = topic.title[currentLanguageCode],
-                                                            tint = Color.White
-                                                        )
-                                                    }
-
-                                                }
+                                                Text(
+                                                    text = currentSubtopicTitle?.uppercase() ?: "",
+                                                    color = LightBeige,
+                                                    modifier = Modifier.align(Alignment.Center)
+                                                )
                                             }
-                                        }
-                                    }
-                                }
 
-                                BottomSheetContent.SearchResults -> {
-                                    Column(modifier = Modifier.height(300.dp)) {
-                                        Box(
-                                            modifier = Modifier.fillMaxWidth(),
-                                        ) {
-
-                                            Icon(painter = painterResource(
-                                                id =
-                                                R.drawable.baseline_home_24
-                                            ),
-                                                contentDescription = null,
-                                                tint = BackgroundWhite,
-                                                modifier = Modifier
-                                                    .clickable {
-                                                        bottomSheetContentState.value =
-                                                            BottomSheetContent.Topics
-                                                    }
-                                                    .align(Alignment.CenterStart)
-                                                    .padding(horizontal = 10.dp)
-                                            )
-
-                                            Text(
-                                                text = stringResource(id = R.string.search_results_label).uppercase(),
-                                                color = LightBeige,
-                                                modifier = Modifier.align(Alignment.Center)
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.size(10.dp))
-
-                                        if (searchResultQuestionsList.isNotEmpty()) {
+                                            Spacer(modifier = Modifier.size(10.dp))
                                             LazyColumn {
-                                                items(searchResultQuestionsList) { question ->
+
+                                                items(subtopicQuestionsList) { question ->
                                                     Row(horizontalArrangement = Arrangement.SpaceBetween,
                                                         modifier = Modifier
                                                             .padding(16.dp)
@@ -426,167 +211,354 @@ fun ChatScreen(
                                                                 scope.launch {
                                                                     bottomSheetScaffoldState.bottomSheetState.partialExpand()
                                                                 }
+
                                                                 isAnswerVisible = true
                                                                 isAnimationActive.value = true
-
-                                                                keyboardController?.hide()
                                                             }) {
-
                                                         val questionText =
                                                             question.questionText[currentLanguageCode]
 
+                                                        questionText?.let {
+                                                            Text(
+                                                                text = it,
+                                                                color = Color.White
+                                                            )
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    BottomSheetContent.SubTopics -> {
+                                        Column(modifier = Modifier.height(300.dp)) {
+                                            Box(modifier = Modifier.fillMaxWidth()) {
+                                                Icon(painter = painterResource(
+                                                    id = R.drawable.baseline_arrow_back_24
+                                                ),
+                                                    contentDescription = null,
+                                                    tint = BackgroundWhite,
+                                                    modifier = Modifier
+                                                        .clickable {
+                                                            bottomSheetContentState.value =
+                                                                BottomSheetContent.Topics
+                                                        }
+                                                        .align(Alignment.CenterStart)
+                                                        .padding(horizontal = 10.dp))
+
+                                                Text(
+                                                    text = stringResource(
+                                                        id = R.string.topics_label
+                                                    ).uppercase(),
+                                                    color = LightBeige, modifier =
+                                                    Modifier.align(Alignment.Center)
+                                                )
+                                            }
+
+                                            Spacer(modifier = Modifier.size(10.dp))
+                                            LazyColumn {
+                                                items(subtopicList) { subtopic ->
+                                                    Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                                        modifier = Modifier
+                                                            .padding(16.dp)
+                                                            .fillMaxWidth()
+                                                            .clickable {
+                                                                onEvent(
+                                                                    ChatEvent.SelectSubtopic(
+                                                                        subtopic
+                                                                    )
+                                                                )
+                                                                currentSubtopic = subtopic
+                                                                bottomSheetContentState.value =
+                                                                    BottomSheetContent.Questions
+                                                            }) {
+
+                                                        val subtopicTitle =
+                                                            subtopic.title[currentLanguageCode]
+                                                                ?: subtopic.title[Language.English.isoCode]
 
                                                         Text(
-                                                            text = questionText ?: "",
+                                                            text = subtopicTitle
+                                                                ?: "",
                                                             color = Color.White
                                                         )
 
 
-                                                    }
-
-
-                                                }
-                                            }
-                                        } else {
-                                            Row(
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                modifier = Modifier
-                                                    .padding(16.dp)
-                                                    .fillMaxWidth()
-                                            ) {
-                                                Text(
-                                                    text = "No Matching Question.",
-                                                    color = Color.White
-                                                )
-
-
-                                            }
-                                        }
-
-
-                                    }
-                                }
-                            }
-                        },
-                        sheetPeekHeight = 80.dp,
-                        sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
-
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(PrimaryGreen.copy(alpha = 0.3f))
-                                    .padding(15.dp),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Box(modifier = Modifier)
-
-                                TypingAnimation(
-                                    isAnimationActive = isAnimationActive,
-                                    transition = typingTransition
-                                )
-
-                            }
-
-                            LazyColumn(
-                                state = scrollState,
-                                modifier = Modifier.padding(bottom = 80.dp)
-                            )
-                            {
-
-
-                                itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionSessionWithQuestionAndAnswer ->
-
-                                    questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
-                                        val timeDifference = Duration.between(
-                                            Instant.ofEpochSecond(questionSessionAnswerTriple.first.timeAsked.epochSeconds),
-                                            Instant.ofEpochSecond(RealmInstant.now().epochSeconds)
-                                        ).seconds
-
-                                        questionSessionAnswerTriple.second?.let { question ->
-                                            QuestionBox(
-                                                question = question,
-                                                questionSession = questionSessionAnswerTriple.first,
-                                                onEvent = onEvent,
-                                                currentLanguageCode = currentLanguageCode
-                                                    ?: Language.English.isoCode,
-                                                openAlertDialogState = openAlertDialog
-                                            )
-                                        }
-
-                                        questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
-                                            // todo check how long ago questions session was loaded
-                                            if ((index == questionSessionWithQuestionAndAnswersList.lastIndex) and (timeDifference < 25) and (answerIndex != 0)) {
-                                                var isVisible by remember {
-                                                    mutableStateOf(false)
-                                                }
-
-                                                // different behavior for first answer
-                                                LaunchedEffect(key1 = isVisible) {
-                                                    isAnimationActive.value = true
-                                                    delay((answerIndex + 1) * 5000L)
-                                                    isVisible = true
-
-                                                    if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
-                                                        scope.launch {
-                                                            scrollState.animateScrollToItem(
-                                                                questionSessionWithQuestionAndAnswersList.lastIndex + 1,
-                                                                scrollOffset = 360
+                                                        subtopic.icon?.let {
+                                                            Icon(
+                                                                painter = painterResource(id = subtopic.icon!!),
+                                                                contentDescription = subtopicTitle,
+                                                                tint = Color.White
                                                             )
                                                         }
-                                                    }
 
-                                                    isAnimationActive.value = false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    BottomSheetContent.Topics -> {
+                                        Column(modifier = Modifier.height(300.dp)) {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = stringResource(
+                                                        id = R.string.topics_label
+                                                    ).uppercase(),
+                                                    color = LightBeige
+                                                )
+                                            }
+
+                                            Spacer(modifier = Modifier.size(10.dp))
+
+                                            LazyColumn {
+                                                items(topicsList) { topic ->
+                                                    val topicTitle =
+                                                        topic.title[currentLanguageCode]
+
+                                                    Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                                        modifier = Modifier
+                                                            .padding(16.dp)
+                                                            .fillMaxWidth()
+                                                            .clickable {
+                                                                onEvent(ChatEvent.SelectTopic(topic))
+                                                                bottomSheetContentState.value =
+                                                                    BottomSheetContent.SubTopics
+                                                            }
+                                                    ) {
+                                                        topicTitle?.let {
+                                                            Text(
+                                                                text = it,
+                                                                color = Color.White
+                                                            )
+                                                        }
+
+                                                        topic.icon?.let {
+                                                            Icon(
+                                                                painter = painterResource(id = it),
+                                                                contentDescription = topic.title[currentLanguageCode],
+                                                                tint = Color.White
+                                                            )
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    BottomSheetContent.SearchResults -> {
+                                        Column(modifier = Modifier.height(300.dp)) {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth(),
+                                            ) {
+
+                                                Icon(painter = painterResource(
+                                                    id =
+                                                    R.drawable.baseline_home_24
+                                                ),
+                                                    contentDescription = null,
+                                                    tint = BackgroundWhite,
+                                                    modifier = Modifier
+                                                        .clickable {
+                                                            bottomSheetContentState.value =
+                                                                BottomSheetContent.Topics
+                                                        }
+                                                        .align(Alignment.CenterStart)
+                                                        .padding(horizontal = 10.dp)
+                                                )
+
+                                                Text(
+                                                    text = stringResource(id = R.string.search_results_label).uppercase(),
+                                                    color = LightBeige,
+                                                    modifier = Modifier.align(Alignment.Center)
+                                                )
+                                            }
+
+                                            Spacer(modifier = Modifier.size(10.dp))
+
+                                            if (searchResultQuestionsList.isNotEmpty()) {
+                                                LazyColumn {
+                                                    items(searchResultQuestionsList) { question ->
+                                                        Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                                            modifier = Modifier
+                                                                .padding(16.dp)
+                                                                .fillMaxWidth()
+                                                                .clickable {
+                                                                    onEvent(
+                                                                        ChatEvent.AddQuestionSession(
+                                                                            question
+                                                                        )
+                                                                    )
+                                                                    scope.launch {
+                                                                        bottomSheetScaffoldState.bottomSheetState.partialExpand()
+                                                                    }
+                                                                    isAnswerVisible = true
+                                                                    isAnimationActive.value = true
+
+                                                                    keyboardController?.hide()
+                                                                }) {
+
+                                                            val questionText =
+                                                                question.questionText[currentLanguageCode]
+
+
+                                                            Text(
+                                                                text = questionText ?: "",
+                                                                color = Color.White
+                                                            )
+
+
+                                                        }
+
+
+                                                    }
+                                                }
+                                            } else {
+                                                Row(
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    modifier = Modifier
+                                                        .padding(16.dp)
+                                                        .fillMaxWidth()
+                                                ) {
+                                                    Text(
+                                                        text = "No Matching Question.",
+                                                        color = Color.White
+                                                    )
 
 
                                                 }
+                                            }
 
-                                                AnimatedVisibility(visible = isVisible) {
+
+                                        }
+                                    }
+                                }
+                            },
+                            sheetPeekHeight = 80.dp,
+                            sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
+
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(PrimaryGreen.copy(alpha = 0.3f))
+                                        .padding(15.dp),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(modifier = Modifier)
+
+                                    TypingAnimation(
+                                        isAnimationActive = isAnimationActive,
+                                        transition = typingTransition
+                                    )
+
+                                }
+
+                                LazyColumn(
+                                    state = scrollState,
+                                    modifier = Modifier.padding(bottom = 80.dp)
+                                )
+                                {
+
+
+                                    itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionSessionWithQuestionAndAnswer ->
+
+                                        questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
+                                            val timeDifference = Duration.between(
+                                                Instant.ofEpochSecond(questionSessionAnswerTriple.first.timeAsked.epochSeconds),
+                                                Instant.ofEpochSecond(RealmInstant.now().epochSeconds)
+                                            ).seconds
+
+                                            questionSessionAnswerTriple.second?.let { question ->
+                                                QuestionBox(
+                                                    question = question,
+                                                    questionSession = questionSessionAnswerTriple.first,
+                                                    onEvent = onEvent,
+                                                    currentLanguageCode = currentLanguageCode
+                                                        ?: Language.English.isoCode,
+                                                    openAlertDialogState = openAlertDialog
+                                                )
+                                            }
+
+                                            questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
+                                                // todo check how long ago questions session was loaded
+                                                if ((index == questionSessionWithQuestionAndAnswersList.lastIndex) and (timeDifference < 25) and (answerIndex != 0)) {
+                                                    var isVisible by remember {
+                                                        mutableStateOf(false)
+                                                    }
+
+                                                    // different behavior for first answer
+                                                    LaunchedEffect(key1 = isVisible) {
+                                                        isAnimationActive.value = true
+                                                        delay((answerIndex + 1) * 5000L)
+                                                        isVisible = true
+
+                                                        if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
+                                                            scope.launch {
+                                                                scrollState.animateScrollToItem(
+                                                                    questionSessionWithQuestionAndAnswersList.lastIndex + 1,
+                                                                    scrollOffset = 360
+                                                                )
+                                                            }
+                                                        }
+
+                                                        isAnimationActive.value = false
+
+
+                                                    }
+
+                                                    AnimatedVisibility(visible = isVisible) {
+                                                        AnswerBox(
+                                                            questionAnswer = answer,
+                                                            currentLanguageCode = currentLanguageCode
+                                                                ?: Language.English.isoCode
+                                                        )
+                                                    }
+                                                } else {
                                                     AnswerBox(
                                                         questionAnswer = answer,
                                                         currentLanguageCode = currentLanguageCode
                                                             ?: Language.English.isoCode
                                                     )
                                                 }
-                                            } else {
-                                                AnswerBox(
-                                                    questionAnswer = answer,
-                                                    currentLanguageCode = currentLanguageCode
-                                                        ?: Language.English.isoCode
-                                                )
-                                            }
 
+
+                                            }
 
                                         }
 
                                     }
 
-                                }
 
+                                    item {
+                                        Box(modifier = Modifier.height(57.dp)) {
 
-                                item {
-                                    Box(modifier = Modifier.height(57.dp)) {
-
+                                        }
                                     }
-                                }
 
-                                if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
-                                    scope.launch {
-                                        scrollState.animateScrollToItem(
-                                            questionSessionWithQuestionAndAnswersList.lastIndex + 1,
-                                        )
+                                    if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
+                                        scope.launch {
+                                            scrollState.animateScrollToItem(
+                                                questionSessionWithQuestionAndAnswersList.lastIndex + 1,
+                                            )
+                                        }
                                     }
                                 }
                             }
+
                         }
+                    }})
 
-                    }
-                }
-            }
         }
-
     }
+
 }
+
 

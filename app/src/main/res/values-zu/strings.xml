@@ -38,7 +38,6 @@
     <string name="save_favourites_description_text">Gcina imilayezo ewusizo noma izithombe njengezinto ozithandayo ukuze uzibheke esikhathini esizayo.</string>
     <string name="continue_label">Qhubeka</string>
     <string name="skip_label">Yeqa</string>
-    <string name="search_bar_placeholder">Yini ongathanda ukuyazi?</string>
     <string name="language_label">Ulwimi</string>
     <string name="data_privacy_label">Ukugcinwa kolwazi kanye nokuphepha</string>
     <string name="terms_label">Imigomo Yokusebenzisa</string>
@@ -72,4 +71,5 @@
     <string name="team_contact_label">Othintana Nethimba Locwaningo</string>
     <string name="research_contact_description">Esimeni sokungabaza noma imibuzo ehlobene nesicelo noma okuqukethwe kwayo.</string>
     <string name="sa_emergency_contact_description">Amahora angama-24 othintana naye wesevisi yezimo eziphuthumayo nesevisi yokuhlenga</string>
+    <string name="saved_questions_drawer_label">Okugciniwe</string>
 </resources>

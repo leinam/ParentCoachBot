@@ -21,9 +21,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
@@ -61,15 +58,15 @@ import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.ConfirmDeleteDialog
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.BackgroundBeige
 import com.example.parentcoachbot.ui.theme.ChatListGreen
+import com.example.parentcoachbot.ui.theme.LightGreen
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import com.example.parentcoachbot.ui.theme.TextGrey
 import com.example.parentcoachbot.ui.theme.ThinGreen
-import com.example.parentcoachbot.ui.theme.drawerItemsList
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -99,238 +96,211 @@ fun ChatListScreen(
 
 
     val scope = rememberCoroutineScope()
-    var drawerSelectedItemIndex by rememberSaveable { mutableIntStateOf(1) }
+    var drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(1) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
 
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet()
+
+    Scaffold(
+        topBar = {
+            TopNavBar(
+                navController = navController,
+                screenIndex = 0,
+                drawerState = drawerState,
+                scope = scope
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    onChatListEvent(ChatListEvent.NewChat).also {
+                        navController.navigate(Screen.ChatScreen.route)
+                    }
+                },
+                containerColor = PrimaryGreen,
+                contentColor = Color.White,
+            )
             {
-                drawerItemsList.forEachIndexed { index, navBarItem ->
-                    NavigationDrawerItem(
-                        label = {
-                            if (index == 0) navBarItem.title?.let {
-                                Text(
-                                    text = stringResource(
-                                        id = it
-                                    ) + ": ${currentChildProfile?.name}"
-                                )
-                            } else navBarItem.title?.let { Text(text = stringResource(id = it)) }
-                        },
-                        selected = index == drawerSelectedItemIndex,
-                        onClick = {
-                            drawerSelectedItemIndex = index
-                            scope.launch {
-                                drawerState.close()
-                                navBarItem.route?.let { navController.navigate(route = it) }
-                            }
-                        },
-                        icon = {
-                            Icon(painter = painterResource(id = navBarItem.icon),
-                                contentDescription = navBarItem.title?.let { stringResource(it) }
-                            )
-                        },
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
+                Icon(
+                    painter = painterResource(
+                        id = R.drawable.newchat_icon
+                    ),
+                    contentDescription = stringResource(R.string.new_chat_label)
+                )
             }
         }
-    ) {
-        Scaffold(
-            topBar = {
-                TopNavBar(
-                    navController = navController,
-                    screenIndex = 0,
-                    drawerState = drawerState,
-                    scope = scope
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        onChatListEvent(ChatListEvent.NewChat).also {
-                            navController.navigate(Screen.ChatScreen.route)
+    )
+    { contentPadding ->
+        CustomNavigationDrawer(
+            drawerState = drawerState,
+            drawerSelectedItemIndex = drawerSelectedItemIndex,
+            navController = navController,
+            currentChildProfileName = currentChildProfile?.name ?: "",
+            contentPadding = contentPadding,
+            content ={
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = BackgroundBeige)
+                        .padding(contentPadding)
+
+                ) {
+
+                    Column {
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(PrimaryGreen.copy(alpha = 0.3f))
+                                .padding(17.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            Text(
+                                text = stringResource(id = R.string.chats_label),
+                                color = PrimaryGreen,
+                                fontFamily = PlexSans,
+                                fontWeight = Normal,
+                                fontSize = 19.sp
+                            )
+
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_more_vert_24),
+                                contentDescription = null, tint = PrimaryGreen
+                            )
                         }
-                    },
-                    containerColor = PrimaryGreen,
-                    contentColor = Color.White
-                )
-                {
-                    Icon(
-                        painter = painterResource(
-                            id = R.drawable.newchat_icon
-                        ),
-                        contentDescription = stringResource(R.string.new_chat_label)
-                    )
-                }
-            }
-        )
-        { contentPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = BackgroundBeige)
-                    .padding(contentPadding)
 
-            ) {
-
-                Column {
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(PrimaryGreen.copy(alpha = 0.3f))
-                            .padding(17.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
-                        Text(
-                            text = stringResource(id = R.string.chats_label),
-                            color = PrimaryGreen,
-                            fontFamily = PlexSans,
-                            fontWeight = Normal,
-                            fontSize = 19.sp
-                        )
-
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_more_vert_24),
-                            contentDescription = null, tint = PrimaryGreen
-                        )
-                    }
-
-                    if (chatSessionList.isNotEmpty()) {
-                        LazyColumn {
-                            items(chatSessionList) { chatSession ->
-                                var isContextMenuVisible by rememberSaveable {
-                                    mutableStateOf(false)
-                                }
-
-                                when {
-                                    openAlertDialog.value -> {
-                                        ConfirmDeleteDialog(onConfirmation = {
-
-                                            openAlertDialog.value = false
-                                            onChatListEvent(
-                                                ChatListEvent.DeleteChat(
-                                                    chatSession
-                                                )
-                                            )
-
-
-
-
-
-                                        },
-                                            onDismissRequest =
-                                            {
-                                                openAlertDialog.value = false
-
-                                            })
+                        if (chatSessionList.isNotEmpty()) {
+                            LazyColumn {
+                                items(chatSessionList) { chatSession ->
+                                    var isContextMenuVisible by rememberSaveable {
+                                        mutableStateOf(false)
                                     }
-                                }
 
-                                Box(modifier = Modifier.onSizeChanged { }) {
-                                    Box(modifier = Modifier
-                                        .padding(10.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(color = ChatListGreen)
-                                        .fillMaxWidth()
-                                        .height(90.dp)
-                                        .padding(15.dp)
-                                        .pointerInput(true) {
-                                            detectTapGestures(onLongPress = {
-                                                isContextMenuVisible = true
-                                            }, onTap = {
-                                                onChatEvent(ChatEvent.SelectChat(chatSession))
-                                                navController.navigate(route = Screen.ChatScreen.route)
-                                            })
-                                        }
+                                    when {
+                                        openAlertDialog.value -> {
+                                            ConfirmDeleteDialog(onConfirmation = {
 
-                                    )
-                                    {
-
-                                        val titleText: String =
-                                            chatSession.chatTitle[currentLanguageCode]
-                                                ?: stringResource(id = R.string.new_chat_label)
-                                        Text(
-                                            text = titleText.substring(
-                                                startIndex = 0,
-                                                endIndex = if (titleText.length < 30) titleText.length else 29
-                                            ),
-                                            fontSize = 16.sp,
-                                            color = TextGrey,
-                                            fontFamily = PlexSans,
-                                            fontWeight = SemiBold,
-                                            modifier = Modifier.align(
-                                                Alignment.TopStart
-                                            )
-                                        )
-
-                                        var lastUpdated = ""
-
-                                        chatSession.timeLastUpdated?.let {
-                                            lastUpdated = LocalDateTime.ofEpochSecond(
-                                                it.epochSeconds,
-                                                it.nanosecondsOfSecond,
-                                                ZoneOffset.UTC
-                                            ).format(DateTimeFormatter.ofPattern("E H:mm"))
-                                        }
-
-                                        Row(
-                                            modifier = Modifier
-                                                .align(Alignment.TopEnd),
-                                            horizontalArrangement = Arrangement.Center,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-
-                                            if (chatSession.isPinned) {
-                                                Icon(
-                                                    painter = painterResource(id = R.drawable.baseline_push_pin_24),
-                                                    contentDescription = null,
-                                                    modifier = Modifier
-                                                        .size(15.dp)
-                                                        .padding(end = 5.dp),
-                                                    tint = TextGrey
+                                                openAlertDialog.value = false
+                                                onChatListEvent(
+                                                    ChatListEvent.DeleteChat(
+                                                        chatSession
+                                                    )
                                                 )
+
+
+                                            },
+                                                onDismissRequest =
+                                                {
+                                                    openAlertDialog.value = false
+
+                                                })
+                                        }
+                                    }
+
+                                    Box(modifier = Modifier.onSizeChanged { }) {
+                                        Box(modifier = Modifier
+                                            .padding(10.dp)
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(color = ChatListGreen)
+                                            .fillMaxWidth()
+                                            .height(90.dp)
+                                            .padding(15.dp)
+                                            .pointerInput(true) {
+                                                detectTapGestures(onLongPress = {
+                                                    isContextMenuVisible = true
+                                                }, onTap = {
+                                                    onChatEvent(ChatEvent.SelectChat(chatSession))
+                                                    navController.navigate(route = Screen.ChatScreen.route)
+                                                })
                                             }
 
+                                        )
+                                        {
+
+                                            val titleText: String =
+                                                chatSession.chatTitle[currentLanguageCode]
+                                                    ?: stringResource(id = R.string.new_chat_label)
                                             Text(
-                                                text = lastUpdated,
-                                                fontSize = 10.sp,
+                                                text = titleText.substring(
+                                                    startIndex = 0,
+                                                    endIndex = if (titleText.length < 30) titleText.length else 29
+                                                ),
+                                                fontSize = 16.sp,
+                                                color = TextGrey,
                                                 fontFamily = PlexSans,
                                                 fontWeight = SemiBold,
-
+                                                modifier = Modifier.align(
+                                                    Alignment.TopStart
                                                 )
-                                        }
+                                            )
 
-                                        Row(
-                                            modifier = Modifier
-                                                .align(Alignment.BottomStart)
-                                                .fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                            chatSession.lastAnswerText[currentLanguageCode]?.let {
-                                                if (it.isNotBlank()) {
-                                                    Text(
-                                                        text = "ParentCoach: ${
-                                                            it.substring(
-                                                                startIndex = 0,
-                                                                endIndex = if (it.length < 34) it.length - 1 else 33
-                                                            )
-                                                        }",
-                                                        fontSize = 12.sp,
-                                                        fontFamily = PlexSans,
-                                                        fontWeight = Normal
-                                                    )
+                                            var lastUpdated = ""
 
+                                            chatSession.timeLastUpdated?.let {
+                                                lastUpdated = LocalDateTime.ofEpochSecond(
+                                                    it.epochSeconds,
+                                                    it.nanosecondsOfSecond,
+                                                    ZoneOffset.UTC
+                                                ).format(DateTimeFormatter.ofPattern("E H:mm"))
+                                            }
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .align(Alignment.TopEnd),
+                                                horizontalArrangement = Arrangement.Center,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+
+                                                if (chatSession.isPinned) {
                                                     Icon(
-                                                        painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                                                        contentDescription = null, tint = TextGrey
+                                                        painter = painterResource(id = R.drawable.baseline_push_pin_24),
+                                                        contentDescription = null,
+                                                        modifier = Modifier
+                                                            .size(15.dp)
+                                                            .padding(end = 5.dp),
+                                                        tint = TextGrey
                                                     )
+                                                }
+
+                                                Text(
+                                                    text = lastUpdated,
+                                                    fontSize = 10.sp,
+                                                    fontFamily = PlexSans,
+                                                    fontWeight = SemiBold,
+
+                                                    )
+                                            }
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .align(Alignment.BottomStart)
+                                                    .fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                chatSession.lastAnswerText[currentLanguageCode]?.let {
+                                                    if (it.isNotBlank()) {
+                                                        Text(
+                                                            text = "ParentCoach: ${
+                                                                it.substring(
+                                                                    startIndex = 0,
+                                                                    endIndex = if (it.length < 34) it.length - 1 else 33
+                                                                )
+                                                            }",
+                                                            fontSize = 12.sp,
+                                                            fontFamily = PlexSans,
+                                                            fontWeight = Normal
+                                                        )
+
+                                                        Icon(
+                                                            painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                                                            contentDescription = null, tint = TextGrey
+                                                        )
+
+                                                    }
+
 
                                                 }
 
@@ -339,70 +309,87 @@ fun ChatListScreen(
 
 
                                         }
+                                        DropdownMenu(
+                                            expanded = isContextMenuVisible,
+                                            onDismissRequest = { isContextMenuVisible = false },
+                                            modifier = Modifier.padding(10.dp)
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = { Text(text = stringResource(id = R.string.delete_chat_label)) },
+                                                onClick = {
+                                                    openAlertDialog.value = true
+                                                    isContextMenuVisible = false
+                                                })
 
-
-                                    }
-                                    DropdownMenu(
-                                        expanded = isContextMenuVisible,
-                                        onDismissRequest = { isContextMenuVisible = false },
-                                        modifier = Modifier.padding(10.dp)
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = { Text(text = stringResource(id = R.string.delete_chat_label)) },
-                                            onClick = {
-                                                openAlertDialog.value = true
-                                                isContextMenuVisible = false
-                                            })
-
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    text = if (chatSession.isPinned) stringResource(
-                                                        id = R.string.unpin_chat_label
-                                                    ) else stringResource(
-                                                        id = R.string.pin_chat_label
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        text = if (chatSession.isPinned) stringResource(
+                                                            id = R.string.unpin_chat_label
+                                                        ) else stringResource(
+                                                            id = R.string.pin_chat_label
+                                                        )
                                                     )
-                                                )
-                                            },
-                                            onClick = {
-                                                onChatListEvent(
-                                                    ChatListEvent.PinChat(
-                                                        chatSession
+                                                },
+                                                onClick = {
+                                                    onChatListEvent(
+                                                        ChatListEvent.PinChat(
+                                                            chatSession
+                                                        )
                                                     )
-                                                )
 
-                                                isContextMenuVisible = false
-                                            })
+                                                    isContextMenuVisible = false
+                                                })
 
+                                        }
                                     }
                                 }
                             }
-                        }
-                    } else {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(color = ThinGreen)
-                                    .padding(15.dp)
-                                    .align(Alignment.Center)
-                            ) {
+                        } else {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            )
+                            {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(color = ThinGreen)
+                                        .padding(15.dp),
+
+                                    ) {
+                                    Text(
+                                        text = stringResource(id = R.string.no_chats_label).uppercase(),
+                                        textAlign = TextAlign.Center, color = TextGrey
+                                    )
+                                }
+
                                 Text(
-                                    text = stringResource(id = R.string.no_chats_label).uppercase(),
-                                    textAlign = TextAlign.Center, color = TextGrey
+                                    text = stringResource(id = R.string.no_chats_prompt),
+                                    textAlign = TextAlign.Center,
+                                    color = LightGreen,
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.padding(
+                                        vertical = 8.dp,
+                                        horizontal = 90.dp
+                                    )
                                 )
+
+
                             }
                         }
+
                     }
-
                 }
-            }
-        }
+            })
+
     }
-
-
 }
+
+
+
 
 
 

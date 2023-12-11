@@ -157,7 +157,9 @@ fun Navigation() {
         }
 
         composable(route = Screen.UpdateProfileScreen.route) {
-            UpdateProfileScreen(navController = navHostController)
+            UpdateProfileScreen(navController = navHostController,
+                profileViewModel.profileViewModelState)
+
         }
 
         composable(route = Screen.AddProfileScreen.route) {

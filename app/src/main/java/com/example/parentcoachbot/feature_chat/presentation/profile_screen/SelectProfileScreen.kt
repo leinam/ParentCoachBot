@@ -2,7 +2,7 @@ package com.example.parentcoachbot.feature_chat.presentation.profile_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,91 +47,100 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 
 @Preview
 @Composable
-fun SelectProfileScreen(navController: NavController = rememberNavController(),
-                        profileState: State<ProfileStateWrapper> = mutableStateOf(ProfileStateWrapper()),
-                        onEvent: (ProfileEvent) -> Unit = {}
+fun SelectProfileScreen(
+    navController: NavController = rememberNavController(),
+    profileState: State<ProfileStateWrapper> = mutableStateOf(ProfileStateWrapper()),
+    onEvent: (ProfileEvent) -> Unit = {}
 ) {
 
     val profileStateWrapper = profileState.value
     val childProfileList: List<ChildProfile> by profileStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
+    println(childProfileList)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = PrimaryGreen)
+    ) {
+        Row (horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth()){
 
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = PrimaryGreen.copy(alpha = 0.8f)),
-    contentAlignment = Alignment.Center
-    ){
+        }
 
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(36.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-            ){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = PrimaryGreen.copy(alpha = 0.8f)),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
 
-            Text(text = stringResource(id = R.string.select_profile_label),
-                textAlign = TextAlign.Center,
-                fontFamily = PlexSans,
-                fontWeight = FontWeight.Medium,
-                fontSize = 30.sp,
-                color = BackgroundWhite
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(36.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-            Spacer(modifier = Modifier.size(20.dp))
+                Text(
+                    text = stringResource(id = R.string.select_profile_label),
+                    textAlign = TextAlign.Center,
+                    fontFamily = PlexSans,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 39.sp,
+                    color = BackgroundWhite
+                )
 
-            LazyVerticalGrid(columns = GridCells.Fixed(2)){
-                items(childProfileList){
-                        childProfile ->
+                Spacer(modifier = Modifier.size(20.dp))
 
-                    ProfileItem(childProfile = childProfile,
-                    navController = navController, onEvent = onEvent)
+                LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                    items(childProfileList) { childProfile ->
 
-                }
+                        ProfileItem(
+                            childProfile = childProfile,
+                            navController = navController, onEvent = onEvent
+                        )
 
-                items(1){
+                    }
 
-                    Column(horizontalAlignment = Alignment.CenterHorizontally){
+                    items(1) {
 
-                        BoxWithConstraints(
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .aspectRatio(1f)
-                                .clip(RoundedCornerShape(5.dp))
-                                .background(color = Beige)
-                                .clickable {
-                                    navController.navigate(Screen.AddProfileScreen.route)
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_add_24),
-                                contentDescription = null, tint = LightGreen,
-                                modifier = Modifier.size(90.dp)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                            BoxWithConstraints(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(color = LightGreen)
+                                    .clickable {
+                                        navController.navigate(Screen.AddProfileScreen.route)
+                                    }
+                                ,
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_add_24),
+                                    contentDescription = null, tint = Beige,
+                                    modifier = Modifier.size(100.dp)
+                                )
+
+
+
+                            }
+
+                            Text(
+                                text = stringResource(id = R.string.new_profile_label),
+                                color = LightBeige,
+                                fontSize = 18.sp
                             )
                         }
-
-                        Text(text = stringResource(id = R.string.new_profile_label), color = LightBeige, fontSize = 18.sp)
                     }
+
                 }
 
-            }
+                Spacer(modifier = Modifier.size(50.dp))
 
-            Spacer(modifier = Modifier.size(50.dp))
-
-            Row {
-                // Text(text = stringResource(id = R.string.language_label), color = LightBeige, fontSize = 18.sp)
-
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_language_24),
-                    contentDescription = null,
-                    tint = LightBeige,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(28.dp)
-                        .align(Alignment.Bottom)
-                        .clickable {
-                            navController.navigate(Screen.SelectLanguageScreen.route)
-                        }
-                )
 
             }
         }
@@ -142,16 +151,18 @@ fun SelectProfileScreen(navController: NavController = rememberNavController(),
 
 @Preview
 @Composable
-fun ProfileItem(childProfile: ChildProfile =  ChildProfile().apply { this.name = "Bob" },
-                navController: NavController = rememberNavController(),
-                onEvent: (ProfileEvent) -> Unit = {}) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally){
+fun ProfileItem(
+    childProfile: ChildProfile = ChildProfile().apply { this.name = "Bob" },
+    navController: NavController = rememberNavController(),
+    onEvent: (ProfileEvent) -> Unit = {}
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         BoxWithConstraints(
             modifier = Modifier
                 .padding(10.dp)
                 .aspectRatio(1f)
-                .clip(RoundedCornerShape(5.dp))
+                .clip(RoundedCornerShape(10.dp))
                 .background(color = Beige)
                 .clickable {
                     onEvent(ProfileEvent.SelectProfile(childProfile))
@@ -161,12 +172,16 @@ fun ProfileItem(childProfile: ChildProfile =  ChildProfile().apply { this.name =
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.breastfeeding_icon),
-                contentDescription = null, tint = LightGreen,
+                contentDescription = null, tint = PrimaryGreen,
                 modifier = Modifier.size(100.dp)
             )
         }
 
-        childProfile.name?.let { Text(text = it,
-            color = LightBeige, fontSize = 18.sp) }
+        childProfile.name?.let {
+            Text(
+                text = it,
+                color = LightBeige, fontSize = 18.sp
+            )
+        }
     }
 }

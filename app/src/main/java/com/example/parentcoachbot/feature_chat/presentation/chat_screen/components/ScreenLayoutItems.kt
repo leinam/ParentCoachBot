@@ -29,38 +29,46 @@ import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.ui.theme.Beige
-import com.example.parentcoachbot.ui.theme.TextGrey
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.LightGreen
 import com.example.parentcoachbot.ui.theme.NavigationItem
+import com.example.parentcoachbot.ui.theme.TextGrey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
-fun TopNavBar(navBarItems: List<NavigationItem>? = listOf(
-    NavigationItem(R.string.chats_label,
-        R.drawable.chats_icon,
-        route = Screen.ChatListScreen.route),
+fun TopNavBar(
+    navBarItems: List<NavigationItem>? = listOf(
+        NavigationItem(
+            R.string.chats_label,
+            R.drawable.chats_icon,
+            route = Screen.ChatListScreen.route
+        ),
 
-    NavigationItem(R.string.help_label,
-        R.drawable.help_icon,
-        route = Screen.EmergencyInfoScreen.route),
+        NavigationItem(
+            R.string.help_label,
+            R.drawable.help_icon,
+            route = Screen.EmergencyInfoScreen.route
+        ),
 
-    NavigationItem(R.string.saved_questions_menu_label,
-        R.drawable.favourites_icon,
-        route = Screen.SavedQuestionsScreen.route),
+        NavigationItem(
+            R.string.saved_questions_menu_label,
+            R.drawable.favourites_icon,
+            route = Screen.SavedQuestionsScreen.route
+        ),
 
-    NavigationItem(R.string.profile_label,
-        R.drawable.profile_icon,
-        route = Screen.SelectProfileScreen.route)
-),
-              drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
-              scope: CoroutineScope = rememberCoroutineScope(),
-              navController: NavController = rememberNavController(),
-              screenIndex: Int = 5,
-)
-{
+        NavigationItem(
+            R.string.profile_label,
+            R.drawable.profile_icon,
+            route = Screen.SelectProfileScreen.route
+        )
+    ),
+    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
+    scope: CoroutineScope = rememberCoroutineScope(),
+    navController: NavController = rememberNavController(),
+    screenIndex: Int = 5,
+) {
     var selectedIndex: Int by remember {
         mutableIntStateOf(screenIndex)
     }
@@ -71,29 +79,37 @@ fun TopNavBar(navBarItems: List<NavigationItem>? = listOf(
         windowInsets = NavigationBarDefaults.windowInsets,
     ) {
 
-        val menuItem = NavigationItem(null,
+        val menuItem = NavigationItem(
+            null,
             R.drawable.menu_icon,
-            route = null)
+            route = null
+        )
 
         NavigationBarItem(
-            colors=NavigationBarItemDefaults.colors(
-            selectedIconColor = TextGrey,
-            indicatorColor = LightBeige)
-            ,
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = TextGrey,
+                indicatorColor = LightBeige
+            ),
             selected = false,
-            onClick = {scope.launch {
-                drawerState.open()
-            }},
+            onClick = {
+                scope.launch {
+                    if (drawerState.isClosed) {
+                        drawerState.open()
+                    } else {
+                        drawerState.close()
+                    }
+                }
+            },
             modifier = Modifier
                 .padding(vertical = 9.dp),
-            label ={
+            label = {
                 Text(
-                text = stringResource(id = R.string.menu_label),
-                color = Beige,
-                style = MaterialTheme.typography.labelSmall)
+                    text = stringResource(id = R.string.menu_label),
+                    color = Beige,
+                    style = MaterialTheme.typography.labelSmall
+                )
 
-                    }
-                ,
+            },
             icon = {
                 Icon(
                     painter = painterResource(id = menuItem.icon),
@@ -104,31 +120,31 @@ fun TopNavBar(navBarItems: List<NavigationItem>? = listOf(
 
             })
 
-        navBarItems?.forEachIndexed{
-                index, item ->
-            NavigationBarItem(colors=NavigationBarItemDefaults.colors(
+        navBarItems?.forEachIndexed { index, item ->
+            NavigationBarItem(colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = TextGrey,
                 indicatorColor = LightBeige,
             ),
 
                 selected = selectedIndex == index,
-                onClick = { selectedIndex = index
+                onClick = {
+                    selectedIndex = index
                     item.route?.let {
                         navController.navigate(route = item.route)
                     }
-                          },
+                },
                 modifier = Modifier
                     .padding(vertical = 14.dp),
                 label = {
                     item.title?.let {
-                    Text(
-                        text = stringResource(id = it),
-                        color = Beige,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
+                        Text(
+                            text = stringResource(id = it),
+                            color = Beige,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
 
-                }, icon =   {
+                }, icon = {
                     Icon(
                         painter = painterResource(id = item.icon),
                         contentDescription = item.title?.let { stringResource(it) },

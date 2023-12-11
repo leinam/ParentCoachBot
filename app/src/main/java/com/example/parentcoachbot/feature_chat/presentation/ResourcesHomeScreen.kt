@@ -13,20 +13,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,15 +39,14 @@ import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListStateWrapper
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.ui.theme.BackgroundBeige
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import com.example.parentcoachbot.ui.theme.TextGrey
 import com.example.parentcoachbot.ui.theme.ThinGreen
-import com.example.parentcoachbot.ui.theme.drawerItemsList
 import io.realm.kotlin.ext.realmDictionaryOf
-import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -75,139 +69,121 @@ fun ResourcesHomeScreen(
     val currentLanguageCode = chatListStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
-    var drawerSelectedItemIndex by rememberSaveable { mutableIntStateOf(4) }
+    var drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(4) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet()
-            {
-                drawerItemsList.forEachIndexed { index, navBarItem ->
-                    NavigationDrawerItem(
-                        label = { navBarItem.title?.let { Text(text = stringResource(id = it)) } },
-                        selected = index == drawerSelectedItemIndex,
-                        onClick = {
-                            drawerSelectedItemIndex = index
-                            scope.launch {
-                                drawerState.close()
-                                navBarItem.route?.let { navController.navigate(route = it) }
-                            }
-                        },
-                        icon = {
-                            Icon(painter = painterResource(id = navBarItem.icon),
-                                contentDescription = navBarItem.title?.let { stringResource(it) }
-                            )
-                        },
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-        }
-    ) {
-        Scaffold(
-            topBar = {
-                TopNavBar(
-                    navController = navController,
-                    screenIndex = 6,
-                    drawerState = drawerState,
-                    scope = scope
-                )
-            },
 
+    Scaffold(
+        topBar = {
+            TopNavBar(
+                navController = navController,
+                screenIndex = 6,
+                drawerState = drawerState,
+                scope = scope
             )
-        { contentPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = BackgroundBeige)
-                    .padding(contentPadding)
+        },
 
-            ) {
+        )
+    { contentPadding ->
+        CustomNavigationDrawer(
+            drawerState = drawerState,
+            drawerSelectedItemIndex = drawerSelectedItemIndex,
+            navController = navController,
+            contentPadding = contentPadding,
+            content = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = BackgroundBeige)
+                        .padding(contentPadding)
 
-                Column {
+                ) {
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(PrimaryGreen.copy(alpha = 0.3f))
-                            .padding(17.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Column {
 
-                        Text(
-                            text = stringResource(id = R.string.resources_label),
-                            color = PrimaryGreen,
-                            textAlign = TextAlign.Center,
-                            fontFamily = PlexSans,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 20.sp
-                        )
-
-
-                    }
-
-                    LazyColumn {
-                        items(topicsList) { topic ->
-                            Box(modifier = Modifier
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(color = ThinGreen)
+                        Row(
+                            modifier = Modifier
                                 .fillMaxWidth()
-                                .height(70.dp)
-                                .padding(10.dp)
-                                .clickable {
+                                .background(PrimaryGreen.copy(alpha = 0.3f))
+                                .padding(17.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
 
-                                }
+                            Text(
+                                text = stringResource(id = R.string.resources_label),
+                                color = PrimaryGreen,
+                                textAlign = TextAlign.Center,
+                                fontFamily = PlexSans,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 20.sp
                             )
-                            {
-
-                                Row(
-                                    modifier = Modifier
-                                        .align(Alignment.CenterStart)
-                                        .fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
 
 
-                                    Row {
-                                        topic.icon?.let {
-                                            Icon(
-                                                painter = painterResource(id = it),
-                                                contentDescription = null,
-                                                tint = TextGrey,
-                                                modifier = Modifier.padding(end = 12.dp)
-                                            )
+                        }
+
+                        LazyColumn {
+                            items(topicsList) { topic ->
+                                Box(modifier = Modifier
+                                    .padding(10.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(color = ThinGreen)
+                                    .fillMaxWidth()
+                                    .height(70.dp)
+                                    .padding(10.dp)
+                                    .clickable {
+
+                                    }
+                                )
+                                {
+
+                                    Row(
+                                        modifier = Modifier
+                                            .align(Alignment.CenterStart)
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+
+
+                                        Row {
+                                            topic.icon?.let {
+                                                Icon(
+                                                    painter = painterResource(id = it),
+                                                    contentDescription = null,
+                                                    tint = TextGrey,
+                                                    modifier = Modifier.padding(end = 12.dp)
+                                                )
+                                            }
+
+                                            (topic.title[currentLanguageCode.value]
+                                                ?: topic.title["en"])?.let {
+                                                Text(
+                                                    text = it,
+                                                    fontSize = 18.sp,
+                                                    fontFamily = PlexSans,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    color = TextGrey
+                                                )
+                                            }
                                         }
 
-                                        (topic.title[currentLanguageCode.value] ?: topic.title["en"])?.let {
-                                            Text(
-                                                text = it,
-                                                fontSize = 18.sp,
-                                                fontFamily = PlexSans,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = TextGrey
-                                            )
-                                        }
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_30),
+                                            contentDescription = null, tint = TextGrey
+                                        )
                                     }
 
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_30),
-                                        contentDescription = null, tint = TextGrey
-                                    )
+
                                 }
-
-
                             }
                         }
+
+
                     }
 
-
                 }
+            })
 
-            }
-        }
     }
 }

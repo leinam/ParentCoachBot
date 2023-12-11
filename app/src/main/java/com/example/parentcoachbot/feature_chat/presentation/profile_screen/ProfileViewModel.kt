@@ -85,6 +85,7 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.NewProfile -> {
                 viewModelScope.launch {
                     childProfileUseCases.newChildProfile(profileEvent.childProfile.apply {
+                        println(authManager.authenticatedRealmUser.value?.id)
                         this._partition = authManager.authenticatedRealmUser.value?.id
                     })
                 }

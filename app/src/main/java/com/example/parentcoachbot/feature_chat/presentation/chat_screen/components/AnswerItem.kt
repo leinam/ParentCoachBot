@@ -74,7 +74,7 @@ fun AnswerBox(
         }
 
         Icon(
-            painter = painterResource(id = R.drawable.support_agent),
+            painter = painterResource(id = R.drawable.robot),
             contentDescription = null,
             modifier = Modifier
                 .padding(10.dp)
