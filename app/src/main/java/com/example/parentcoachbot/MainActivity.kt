@@ -1,11 +1,14 @@
 package com.example.parentcoachbot
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
+import android.view.View
+import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
+import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -47,9 +50,24 @@ class MainActivity() : ComponentActivity() {
             setKeepOnScreenCondition {
                 !isLoggedIn
             }
+            setOnExitAnimationListener { screen ->
+                val zoomX = ObjectAnimator.ofFloat(screen.view, View.ROTATION_X, 0.4f, 0.0f)
+                zoomX.interpolator = OvershootInterpolator()
+                zoomX.duration = 50L
+                zoomX.doOnEnd { screen.remove() }
 
-            Toast.makeText(applicationContext, "Logging in", Toast.LENGTH_SHORT).show()
+                val zoomY = ObjectAnimator.ofFloat(screen.view, View.ROTATION_Y, 0.4f, 0.0f)
+                zoomY.interpolator = OvershootInterpolator()
+                zoomY.duration = 50L
+                zoomY.doOnEnd { screen.remove() }
+
+                zoomX.start()
+                zoomY.start()
+            }
+
         }
+
+
         setContent {
             ParentCoachBotTheme {
                 // A surface container using the 'background' color from the theme

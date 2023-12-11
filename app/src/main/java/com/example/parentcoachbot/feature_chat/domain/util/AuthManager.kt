@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class AuthManager @Inject constructor(val app: App) {
     private val _authenticatedRealmUser: MutableStateFlow<User?> =
@@ -18,8 +19,10 @@ class AuthManager @Inject constructor(val app: App) {
     val authenticatedRealmUser: StateFlow<User?> = _authenticatedRealmUser
 
     init {
-        runBlocking {
-            authenticateUser()
+        thread {
+            runBlocking {
+                authenticateUser()
+            }
         }
     }
 

@@ -54,7 +54,7 @@
     <string name="create_profile_onboarding_header">Create Profiles for Everyone</string>
     <string name="menu_label">Menu</string>
     <string name="toast_warning_name">Enter a valid name: must use only a-Z and less than 10 Characters long</string>
-    <string name="edit_profile_label">Edit Profile</string>
+    <string name="edit_profile_label">Edit Child Profile</string>
     <string name="current_profile">Profile</string>
     <string name="disclaimer_text">If you consider that something is out of normal with your child, contact your family doctor or paediatrician, or call the emergency services lines.</string>
     <string name="medical_emergency_label">Medical Emergency</string>
@@ -85,4 +85,5 @@
     <string name="sa_team_contact" translatable="false">Leina Meoli | mlxlei001@myuct.ac.za</string>
     <string name="research_contact_description">In case of doubts or questions related to the application or its content.</string>
     <string name="sa_emergency_contact_description">24-hour emergency medical and rescue service contact</string>
+    <string name="account_settings_label" translatable="false">My Account</string>
 </resources>

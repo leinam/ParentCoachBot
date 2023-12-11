@@ -57,8 +57,14 @@ val drawerItemsList = listOf(
 
 val settingsItemList = listOf(
     NavigationItem(
-        R.string.edit_profile_label,
+        R.string.account_settings_label,
         R.drawable.baseline_account_circle_24,
+        route = null
+    ),
+
+    NavigationItem(
+        R.string.edit_profile_label,
+        R.drawable.baseline_child_care_24,
         route = null
     ),
 
