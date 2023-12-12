@@ -11,12 +11,15 @@ import kotlinx.coroutines.withContext
 
 class AnswerRepositoryImpl(private val realm: Realm) : AnswerRepository {
     override suspend fun getAnswerById(id: String): Answer? = withContext(Dispatchers.IO) {
-        try {
+        runCatching {
             realm.query<Answer>(query = "_id == $0", id).find().firstOrNull()?.copyFromRealm()
-        } catch (e: Exception) {
+        }.onFailure { e: Throwable ->
             Log.println(Log.ERROR, "DB", "An error occurred: ${e.message}}")
-            null
+        }.onSuccess {
+            Log.println(Log.DEBUG, "DB", "Successfully fetched answer of ID: ${it?._id}")
         }
+            .getOrNull()
+
     }
 
     // return flow ?? the answers not likely to change in real time
@@ -24,8 +27,7 @@ class AnswerRepositoryImpl(private val realm: Realm) : AnswerRepository {
         withContext(Dispatchers.IO) {
             try {
                 realm.query<Answer>(query = "_id IN $0", idList).find().copyFromRealm()
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 Log.println(Log.ERROR, "DB", "An error occurred: ${e.message}}")
                 null
             }
@@ -33,14 +35,13 @@ class AnswerRepositoryImpl(private val realm: Realm) : AnswerRepository {
 
     override suspend fun getAnswersByAnswerThreadCode(answerThreadCode: String): List<Answer>? =
         withContext(Dispatchers.IO) {
-            try{
+            try {
                 realm.query<Answer>(query = "answerThread == $0", answerThreadCode).find()
                     .copyFromRealm()
                     .sortedBy { answer ->
                         answer.answerThreadPosition
                     }
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 Log.println(Log.ERROR, "DB", "An error occurred: ${e.message}}")
                 null
             }

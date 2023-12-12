@@ -26,7 +26,7 @@ class PopulateDb(
 
         val breastfeedingTopic: Topic = Topic().apply {
             this.title = titleDict
-            this.icon = R.drawable.breastfeeding_icon
+            this.icon = R.drawable.breastfeeding
             this._partition = userId
         }
 

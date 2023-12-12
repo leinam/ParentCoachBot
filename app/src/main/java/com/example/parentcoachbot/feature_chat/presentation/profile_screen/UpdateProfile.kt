@@ -216,7 +216,7 @@ fun UpdateProfileScreen(
                     currentChildProfile?.let {
 
                         Icon(
-                            painter = painterResource(id = R.drawable.breastfeeding_icon),
+                            painter = painterResource(id = R.drawable.child_face),
                             contentDescription = null, tint = PrimaryGreen,
                             modifier = Modifier.size(100.dp)
                         )

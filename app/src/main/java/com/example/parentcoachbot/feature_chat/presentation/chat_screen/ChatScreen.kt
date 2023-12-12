@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,6 +67,7 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_screen.componen
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.LightGreen
+import com.example.parentcoachbot.ui.theme.LighterBeige
 import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import io.realm.kotlin.types.RealmInstant
@@ -152,11 +154,11 @@ fun ChatScreen(
                 navController = navController,
                 contentPadding = contentPadding,
                 currentChildProfileName = currentChildProfile?.name ?: "",
-                content ={
+                content = {
                     Box(
                         modifier = Modifier
-                            .background(color = BackgroundWhite)
                             .fillMaxSize()
+                            .background(color = LightBeige)
                             .padding(contentPadding)
                     ) {
 
@@ -238,7 +240,7 @@ fun ChatScreen(
                                                     id = R.drawable.baseline_arrow_back_24
                                                 ),
                                                     contentDescription = null,
-                                                    tint = BackgroundWhite,
+                                                    tint = LightBeige,
                                                     modifier = Modifier
                                                         .clickable {
                                                             bottomSheetContentState.value =
@@ -252,7 +254,8 @@ fun ChatScreen(
                                                         id = R.string.topics_label
                                                     ).uppercase(),
                                                     color = LightBeige, modifier =
-                                                    Modifier.align(Alignment.Center)
+                                                    Modifier.align(Alignment.Center),
+                                                    fontWeight = FontWeight.Bold
                                                 )
                                             }
 
@@ -386,7 +389,10 @@ fun ChatScreen(
                                                     items(searchResultQuestionsList) { question ->
                                                         Row(horizontalArrangement = Arrangement.SpaceBetween,
                                                             modifier = Modifier
-                                                                .padding(16.dp)
+                                                                .padding(
+                                                                    horizontal = 16.dp,
+                                                                    vertical = 10.dp
+                                                                )
                                                                 .fillMaxWidth()
                                                                 .clickable {
                                                                     onEvent(
@@ -440,10 +446,11 @@ fun ChatScreen(
                                 }
                             },
                             sheetPeekHeight = 80.dp,
-                            sheetContainerColor = PrimaryGreen.copy(alpha = 0.98f)
+                            sheetContainerColor = PrimaryGreen.copy(alpha= 0.95f)
 
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.background(color = LightBeige)) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -538,7 +545,8 @@ fun ChatScreen(
 
 
                                     item {
-                                        Box(modifier = Modifier.height(57.dp)) {
+                                        Box(modifier = Modifier.height(57.dp)
+                                            .background(color = LighterBeige)) {
 
                                         }
                                     }
@@ -554,7 +562,8 @@ fun ChatScreen(
                             }
 
                         }
-                    }})
+                    }
+                })
 
         }
     }

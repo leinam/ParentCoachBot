@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,8 +25,8 @@ import androidx.compose.ui.unit.sp
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.util.Language
-import com.example.parentcoachbot.ui.theme.BackgroundWhite
-import com.example.parentcoachbot.ui.theme.LightBeige
+import com.example.parentcoachbot.ui.theme.Beige
+import com.example.parentcoachbot.ui.theme.LightGreen
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 
@@ -59,7 +61,7 @@ fun AnswerBox(
                         bottomEnd = cornerRadius
                     )
                 )
-                .background(color = LightBeige)
+                .background(color = PrimaryGreen)
                 .padding(16.dp)
                 .align(Alignment.Center)
 
@@ -69,7 +71,7 @@ fun AnswerBox(
                 textAlign = TextAlign.Start,
                 fontFamily = PlexSans,
                 fontWeight = FontWeight.Normal,
-                fontSize = 16.sp
+                fontSize = 16.sp, color = Color.White
             )
         }
 
@@ -77,12 +79,13 @@ fun AnswerBox(
             painter = painterResource(id = R.drawable.robot),
             contentDescription = null,
             modifier = Modifier
+                .size(54.dp)
                 .padding(10.dp)
                 .clip(CircleShape)
-                .background(color = PrimaryGreen)
+                .background(color = LightGreen)
                 .padding(4.dp)
                 .align(Alignment.TopStart),
-            tint = BackgroundWhite
+            tint = Beige
         )
     }
 }

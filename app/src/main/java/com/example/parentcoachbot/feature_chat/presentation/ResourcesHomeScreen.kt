@@ -62,7 +62,7 @@ fun ResourcesHomeScreen(
             Pair(Language.Portuguese.isoCode, "Amamentação"),
             Pair(Language.Zulu.isoCode, "Ukuncelisa")
         )
-        this.icon = R.drawable.breastfeeding_icon
+        this.icon = R.drawable.breastfeeding
     })
 
     val chatListStateWrapper = chatListViewModelState.value
@@ -142,11 +142,12 @@ fun ResourcesHomeScreen(
                                         modifier = Modifier
                                             .align(Alignment.CenterStart)
                                             .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
 
 
-                                        Row {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
                                             topic.icon?.let {
                                                 Icon(
                                                     painter = painterResource(id = it),
@@ -169,7 +170,7 @@ fun ResourcesHomeScreen(
                                         }
 
                                         Icon(
-                                            painter = painterResource(id = R.drawable.baseline_keyboard_arrow_down_30),
+                                            painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
                                             contentDescription = null, tint = TextGrey
                                         )
                                     }

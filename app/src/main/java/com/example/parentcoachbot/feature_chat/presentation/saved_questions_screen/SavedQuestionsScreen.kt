@@ -41,9 +41,8 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_screen.componen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionStateWrapper
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsScreenEvent
-import com.example.parentcoachbot.ui.theme.BackgroundBeige
-import com.example.parentcoachbot.ui.theme.BackgroundWhite
-import com.example.parentcoachbot.ui.theme.LightGreen
+import com.example.parentcoachbot.ui.theme.Beige
+import com.example.parentcoachbot.ui.theme.LightBeige
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import com.example.parentcoachbot.ui.theme.TextGrey
@@ -95,7 +94,7 @@ fun SavedQuestionsScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(color = BackgroundWhite)
+                        .background(color = LightBeige)
                         .padding(contentPadding)
 
                 ) {
@@ -169,7 +168,7 @@ fun SavedQuestionsScreen(
                                     modifier = Modifier
                                         .padding(10.dp)
                                         .clip(RoundedCornerShape(10.dp))
-                                        .background(color = BackgroundBeige)
+                                        .background(color = Beige)
                                         .padding(15.dp),
 
                                     ) {
@@ -182,7 +181,7 @@ fun SavedQuestionsScreen(
                                 Text(
                                     text = stringResource(id = R.string.no_saved_messages_prompt),
                                     textAlign = TextAlign.Center,
-                                    color = LightGreen,
+                                    color = PrimaryGreen,
                                     fontSize = 16.sp,
                                     modifier = Modifier.padding(
                                         vertical = 8.dp,
