@@ -43,7 +43,7 @@ fun TypingAnimation(
         isAnimationActive
     }
 
-    if (animationActive){
+    if (animationActive) {
         Row(modifier = modifier) {
             (0..2).forEach { circleIndex ->
 
@@ -51,9 +51,9 @@ fun TypingAnimation(
                     initialValue = ThinGreen,
                     targetValue = PrimaryGreen,
                     animationSpec = infiniteRepeatable(
-                        animation = tween(1000, easing = LinearEasing),
+                        animation = tween((1000), easing = LinearEasing),
                         repeatMode = RepeatMode.Reverse
-                    )
+                    ), label = "typingAnimation"
                 )
 
 
@@ -70,22 +70,22 @@ fun TypingAnimation(
                 }
             }
         }
-    }else{
+    } else {
         Row(modifier = modifier) {
-                Box(
-                    modifier = Modifier
-                        .size(circleSize)
-                        .padding(2.dp)
-                        .background(
-                            shape = CircleShape,
-                            color = PrimaryGreen
-                        )
-                ) {
+            Box(
+                modifier = Modifier
+                    .size(circleSize)
+                    .padding(2.dp)
+                    .background(
+                        shape = CircleShape,
+                        color = PrimaryGreen.copy(alpha = 0f)
+                    )
+            ) {
 
-                }
             }
         }
     }
+}
 
 
 

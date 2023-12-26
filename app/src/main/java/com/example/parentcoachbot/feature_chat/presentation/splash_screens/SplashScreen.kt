@@ -107,8 +107,7 @@ fun FirstTimeSplashScreen(
                         readOnly = true,
                         value = stringResource(
                             id = languageList.filter { language -> language.isoCode == currentLanguageCode.value }[0].name
-                        )
-                            ?: currentLanguageCode.value,
+                        ),
                         onValueChange = { },
                         label = {
                             Text(

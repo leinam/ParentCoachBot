@@ -37,6 +37,7 @@ import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.AnswerBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.DateBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionStateWrapper
@@ -69,6 +70,8 @@ fun SavedQuestionsScreen(
         savedQuestionsViewModelStateWrapper.currentChildProfile.collectAsStateWithLifecycle()
     val savedQuestionSessionsWithQuestionsAndAnswers =
         savedQuestionsViewModelStateWrapper.savedQuestionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
+    val savedQuestionSessionsWithQuestionsAndAnswersGroupedByDate =
+        savedQuestionsViewModelStateWrapper.savedQuestionSessionsWithQuestionAndAnswersListGroupedByDateState.collectAsStateWithLifecycle()
 
 
 
@@ -125,36 +128,45 @@ fun SavedQuestionsScreen(
                                 state = scrollState,
                                 modifier = Modifier.padding(bottom = 80.dp)
                             ) {
-                                println("Saved ${savedQuestionSessionsWithQuestionsAndAnswers.value}")
-                                items(savedQuestionSessionsWithQuestionsAndAnswers.value) { questionSessionWithQuestionAndAnswer ->
+                                savedQuestionSessionsWithQuestionsAndAnswersGroupedByDate.value.forEach {date, savedQuestionsTriple ->
+                                    item {
+                                        DateBox(
+                                            date = date,
+                                            currentLanguageCode = currentLanguageCode.value ?: "en"
+                                        )
+                                    }
 
-                                    questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
+                                    items(savedQuestionsTriple) { questionSessionWithQuestionAndAnswer ->
 
-                                        questionSessionAnswerTriple.second?.let { question ->
-                                            QuestionBox(
-                                                question = question,
-                                                questionSession = questionSessionAnswerTriple.first,
-                                                currentLanguageCode = currentLanguageCode.value
-                                                    ?: Language.English.isoCode,
-                                                onSavedScreenEvent = onEvent,
-                                                screenName = Screen.SavedQuestionsScreen.route
-                                            )
-                                        }
+                                        questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
 
-                                        questionSessionAnswerTriple.third?.forEach { answer ->
-                                            // todo check how long ago questions session was loaded
-                                            AnswerBox(
-                                                questionAnswer = answer,
-                                                currentLanguageCode = currentLanguageCode.value
-                                                    ?: Language.English.isoCode
-                                            )
+                                            questionSessionAnswerTriple.second?.let { question ->
+                                                QuestionBox(
+                                                    question = question,
+                                                    questionSession = questionSessionAnswerTriple.first,
+                                                    currentLanguageCode = currentLanguageCode.value
+                                                        ?: Language.English.isoCode,
+                                                    onSavedScreenEvent = onEvent,
+                                                    screenName = Screen.SavedQuestionsScreen.route
+                                                )
+                                            }
 
+                                            questionSessionAnswerTriple.third?.forEach { answer ->
+                                                // todo check how long ago questions session was loaded
+                                                AnswerBox(
+                                                    questionAnswer = answer,
+                                                    currentLanguageCode = currentLanguageCode.value
+                                                        ?: Language.English.isoCode
+                                                )
+
+
+                                            }
 
                                         }
 
                                     }
-
                                 }
+
 
                             }
                         } else {

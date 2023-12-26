@@ -74,7 +74,7 @@ fun SelectLanguageScreen(
 
     val scope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
-    var drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(3) }
+    val drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(3) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     Scaffold(topBar = {

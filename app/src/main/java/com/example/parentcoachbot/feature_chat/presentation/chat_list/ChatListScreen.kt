@@ -70,6 +70,7 @@ import com.example.parentcoachbot.ui.theme.ThinGreen
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Preview
 @Composable
@@ -244,7 +245,7 @@ fun ChatListScreen(
                                                     it.epochSeconds,
                                                     it.nanosecondsOfSecond,
                                                     ZoneOffset.UTC
-                                                ).format(DateTimeFormatter.ofPattern("E H:mm"))
+                                                ).format(DateTimeFormatter.ofPattern("E H:mm", Locale.forLanguageTag(currentLanguageCode)))
                                             }
 
                                             Row(

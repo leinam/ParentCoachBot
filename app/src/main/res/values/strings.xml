@@ -5,7 +5,7 @@
     <string name="saved_questions_title">Saved Questions</string>
     <string name="switch_profile_drawer_label">Switch Profile</string>
     <string name="chats_label">Chats</string>
-    <string name="help_label">Help</string>
+    <string name="help_label">Contacts</string>
     <string name="resources_label">Resources</string>
     <string name="saved_questions_menu_label">Saved</string>
     <string name="settings_label">Settings</string>
@@ -91,4 +91,10 @@
     <string name="saved_messages_label" translatable="false">Saved Messages</string>
     <string name="no_saved_messages_label" translatable="false">No Saved Messages</string>
     <string name="no_saved_messages_prompt" translatable="false">Long Press a question in a chat to save it for later.</string>
+    <string name="confirm_delete_question" translatable="false">Are you sure you want to delete this question?</string>
+    <string name="confirm_delete_chat" translatable="false">Are you sure you want to delete this chat?</string>
+    <string name="delete_label" translatable="false">Delete</string>
+    <string name="cancel_label" translatable="false">Cancel</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
 </resources>

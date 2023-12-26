@@ -60,6 +60,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.AnswerBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.DateBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionInputSection
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
@@ -94,6 +95,7 @@ fun ChatScreen(
 
     val topicsList: List<Topic> by chatStateWrapper.topicsListState.collectAsStateWithLifecycle()
     val questionSessionWithQuestionAndAnswersList by chatStateWrapper.questionSessionsWithQuestionAndAnswersState.collectAsStateWithLifecycle()
+    val questionSessionWithQuestionAndAnswersListGroupedByDate by chatStateWrapper.questionSessionsWithQuestionAndAnswersGroupedByDateState.collectAsStateWithLifecycle()
     val subtopicList: List<Subtopic> by chatStateWrapper.subtopicsListState.collectAsStateWithLifecycle()
     val subtopicQuestionsList: List<Question> by chatStateWrapper.subtopicQuestionsListState.collectAsStateWithLifecycle()
     val searchResultQuestionsList: List<Question> by chatStateWrapper.searchResultsQuestionsListState.collectAsStateWithLifecycle()
@@ -446,11 +448,13 @@ fun ChatScreen(
                                 }
                             },
                             sheetPeekHeight = 80.dp,
-                            sheetContainerColor = PrimaryGreen.copy(alpha= 0.95f)
+                            sheetContainerColor = PrimaryGreen.copy(alpha = 0.95f)
 
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.background(color = LightBeige)) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.background(color = LightBeige)
+                            ) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -474,79 +478,96 @@ fun ChatScreen(
                                 )
                                 {
 
+                                    questionSessionWithQuestionAndAnswersListGroupedByDate.forEach { (date, questionSessionList) ->
+                                        item {
+                                            DateBox(
+                                                date = date,
+                                                currentLanguageCode = currentLanguageCode ?: "en"
+                                            )
+                                        }
 
-                                    itemsIndexed(questionSessionWithQuestionAndAnswersList) { index, questionSessionWithQuestionAndAnswer ->
+                                        itemsIndexed(questionSessionList) { index, questionSessionWithQuestionAndAnswer ->
 
-                                        questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
-                                            val timeDifference = Duration.between(
-                                                Instant.ofEpochSecond(questionSessionAnswerTriple.first.timeAsked.epochSeconds),
-                                                Instant.ofEpochSecond(RealmInstant.now().epochSeconds)
-                                            ).seconds
+                                            questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
+                                                val timeDifference = Duration.between(
+                                                    Instant.ofEpochSecond(
+                                                        questionSessionAnswerTriple.first.timeAsked.epochSeconds
+                                                    ),
+                                                    Instant.ofEpochSecond(RealmInstant.now().epochSeconds)
+                                                ).seconds
 
-                                            questionSessionAnswerTriple.second?.let { question ->
-                                                QuestionBox(
-                                                    question = question,
-                                                    questionSession = questionSessionAnswerTriple.first,
-                                                    onEvent = onEvent,
-                                                    currentLanguageCode = currentLanguageCode
-                                                        ?: Language.English.isoCode,
-                                                    openAlertDialogState = openAlertDialog
-                                                )
-                                            }
+                                                questionSessionAnswerTriple.second?.let { question ->
+                                                    QuestionBox(
+                                                        question = question,
+                                                        questionSession = questionSessionAnswerTriple.first,
+                                                        onEvent = onEvent,
+                                                        currentLanguageCode = currentLanguageCode
+                                                            ?: Language.English.isoCode,
+                                                        openAlertDialogState = openAlertDialog
+                                                    )
+                                                }
 
-                                            questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
-                                                // todo check how long ago questions session was loaded
-                                                if ((index == questionSessionWithQuestionAndAnswersList.lastIndex) and (timeDifference < 25) and (answerIndex != 0)) {
-                                                    var isVisible by remember {
-                                                        mutableStateOf(false)
-                                                    }
-
-                                                    // different behavior for first answer
-                                                    LaunchedEffect(key1 = isVisible) {
-                                                        isAnimationActive.value = true
-                                                        delay((answerIndex + 1) * 5000L)
-                                                        isVisible = true
-
-                                                        if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
-                                                            scope.launch {
-                                                                scrollState.animateScrollToItem(
-                                                                    questionSessionWithQuestionAndAnswersList.lastIndex + 1,
-                                                                    scrollOffset = 360
-                                                                )
-                                                            }
+                                                questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
+                                                    // todo check how long ago questions session was loaded
+                                                    if ((index == questionSessionWithQuestionAndAnswersList.lastIndex) and (timeDifference < 25) and (answerIndex != 0)) {
+                                                        var isVisible by remember {
+                                                            mutableStateOf(false)
                                                         }
 
-                                                        isAnimationActive.value = false
+                                                        // different behavior for first answer
+                                                        LaunchedEffect(key1 = isVisible) {
+                                                            isAnimationActive.value = true
+                                                            delay((answerIndex + 1) * 5000L)
+                                                            isVisible = true
+
+                                                            if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
+                                                                scope.launch {
+                                                                    scrollState.animateScrollToItem(
+                                                                        questionSessionWithQuestionAndAnswersList.lastIndex + 1,
+                                                                        scrollOffset = 360
+                                                                    )
+                                                                }
+                                                            }
+
+                                                            isAnimationActive.value = false
 
 
-                                                    }
+                                                        }
 
-                                                    AnimatedVisibility(visible = isVisible) {
+                                                        AnimatedVisibility(visible = isVisible) {
+                                                            AnswerBox(
+                                                                questionAnswer = answer,
+                                                                currentLanguageCode = currentLanguageCode
+                                                                    ?: Language.English.isoCode
+                                                            )
+                                                        }
+                                                    } else {
                                                         AnswerBox(
                                                             questionAnswer = answer,
                                                             currentLanguageCode = currentLanguageCode
                                                                 ?: Language.English.isoCode
                                                         )
                                                     }
-                                                } else {
-                                                    AnswerBox(
-                                                        questionAnswer = answer,
-                                                        currentLanguageCode = currentLanguageCode
-                                                            ?: Language.English.isoCode
-                                                    )
-                                                }
 
+
+                                                }
 
                                             }
 
                                         }
 
+
                                     }
 
 
+
+
                                     item {
-                                        Box(modifier = Modifier.height(57.dp)
-                                            .background(color = LighterBeige)) {
+                                        Box(
+                                            modifier = Modifier
+                                                .height(57.dp)
+                                                .background(color = LighterBeige)
+                                        ) {
 
                                         }
                                     }

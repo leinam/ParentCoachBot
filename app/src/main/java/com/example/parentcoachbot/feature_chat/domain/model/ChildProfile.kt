@@ -40,9 +40,6 @@ enum class Sex(var description: Map<String, String>) {
     )
 }
 
-sealed class Month(number: String, name: String) {
-
-}
 
 
 

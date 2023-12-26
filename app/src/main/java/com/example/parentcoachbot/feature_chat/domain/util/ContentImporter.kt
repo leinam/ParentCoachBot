@@ -58,7 +58,7 @@ class ContentImporter(
 
             questionTextEn?.let {
                 val questionTextDict = realmDictionaryOf(
-                    Pair(Language.English.isoCode, questionTextEn ?: ""),
+                    Pair(Language.English.isoCode, questionTextEn),
                     Pair(Language.Portuguese.isoCode, questionTextPt ?: ""),
                     Pair(Language.Zulu.isoCode, questionTextZu?: "")
                 )
@@ -194,7 +194,7 @@ class ContentImporter(
                                 // println("Part $index: $answerTextEn: ${answerTextsPt[index]}: ${answerTextsZu[index]}")
 
                                 val answerTextDict: RealmDictionary<String> = realmDictionaryOf(
-                                    Pair(Language.English.isoCode, answerTextEn ?: ""),
+                                    Pair(Language.English.isoCode, answerTextEn),
                                     Pair(Language.Portuguese.isoCode, answerTextsPt[index] ?: ""),
                                     Pair(Language.Zulu.isoCode, answerTextsZu[index] ?: "")
                                 )

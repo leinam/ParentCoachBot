@@ -137,11 +137,13 @@ fun TopNavBar(
                     .padding(vertical = 14.dp),
                 label = {
                     item.title?.let {
+
                         Text(
                             text = stringResource(id = it),
                             color = Beige,
                             style = MaterialTheme.typography.labelSmall
                         )
+                        
                     }
 
                 }, icon = {

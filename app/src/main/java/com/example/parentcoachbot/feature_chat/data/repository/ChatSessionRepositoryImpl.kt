@@ -115,7 +115,7 @@ class ChatSessionRepositoryImpl(private val realm: Realm) : ChatSessionRepositor
             }
         }
 
-    override suspend fun updateChatTitle(subtopic: Subtopic, chatSessionId: String): Unit =
+    override suspend fun autoUpdateChatTitle(subtopic: Subtopic, chatSessionId: String): Unit =
         withContext(Dispatchers.IO) {
             realm.write {
                 val chatSession: ChatSession? =

@@ -72,4 +72,6 @@
     <string name="research_contact_description">Esimeni sokungabaza noma imibuzo ehlobene nesicelo noma okuqukethwe kwayo.</string>
     <string name="sa_emergency_contact_description">Amahora angama-24 othintana naye wesevisi yezimo eziphuthumayo nesevisi yokuhlenga</string>
     <string name="saved_questions_drawer_label">Okugciniwe</string>
+    <string name="today">Namuhla</string>
+    <string name="yesterday">Izolo</string>
 </resources>

@@ -74,8 +74,8 @@ fun QuestionBox(
                         onEvent(ChatEvent.DeleteQuestionSession(questionSession = it))
                     }
                 },
-                dialogText = "Are you sure you want to delete this question?",
-                dialogTitle = "Delete Question",
+                dialogText = stringResource(id = R.string.confirm_delete_question),
+                dialogTitle = stringResource(id = R.string.delete_question_label),
                 onDismissRequest = {
                     openAlertDialogState.value = false
                 })

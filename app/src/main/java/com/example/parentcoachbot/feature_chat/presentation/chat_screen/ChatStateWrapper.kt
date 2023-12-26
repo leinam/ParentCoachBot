@@ -9,10 +9,14 @@ import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.time.LocalDate
 
 data class ChatStateWrapper(
     val subtopicQuestionsListState: StateFlow<List<Question>> = MutableStateFlow(emptyList()),
     var questionSessionListState: StateFlow<List<QuestionSession>> = MutableStateFlow(emptyList()),
+    var questionSessionListGroupedByDateState: StateFlow<Map<LocalDate,List<QuestionSession>>> = MutableStateFlow(
+        emptyMap()
+    ),
     val questionsWithAnswersState: StateFlow<MutableList<Pair<Question,
             List<Answer>>?>> = MutableStateFlow(mutableListOf()),
     val topicsListState: StateFlow<List<Topic>> = MutableStateFlow(emptyList()),
@@ -24,6 +28,8 @@ data class ChatStateWrapper(
             Question?, List<Answer>?>?>> = MutableStateFlow(
         emptyList()
     ),
+    val questionSessionsWithQuestionAndAnswersGroupedByDateState: StateFlow<Map<LocalDate, List<Triple<QuestionSession, Question?, List<Answer>?>?>>> =
+        MutableStateFlow(emptyMap()),
     val searchQueryText: StateFlow<String> = MutableStateFlow(""),
     val searchResultsQuestionsListState: StateFlow<List<Question>> = MutableStateFlow(emptyList()),
     val currentTopicState: StateFlow<Topic?> = MutableStateFlow(null),

@@ -22,7 +22,7 @@ interface ChatSessionRepository {
 
     suspend fun updateTimeLastUpdated(chatSessionId: String)
 
-    suspend fun updateChatTitle(subtopic: Subtopic, chatSessionId: String)
+    suspend fun autoUpdateChatTitle(subtopic: Subtopic, chatSessionId: String)
 
 
 }

@@ -27,6 +27,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.Top
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcher
+import com.example.parentcoachbot.feature_chat.domain.util.RealmInstantConverter
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 // TODO SEPARATE CHAT STATES
@@ -62,11 +64,19 @@ class ChatViewModel @Inject constructor(
     private val _childProfilesListState = MutableStateFlow<List<ChildProfile>>(emptyList())
     private val _subtopicsListState = MutableStateFlow<List<Subtopic>>(emptyList())
     private val _questionSessionListState = MutableStateFlow<List<QuestionSession>>(emptyList())
+    private val _questionSessionListGroupedByDateState =
+        MutableStateFlow<Map<LocalDate, List<QuestionSession>>>(
+            emptyMap()
+        )
     private val _subtopicQuestionsListState = MutableStateFlow<List<Question>>(emptyList())
     private val _questionsWithAnswersListState =
         MutableStateFlow<MutableList<Pair<Question, List<Answer>>?>>(mutableListOf())
     private val _questionSessionsWithQuestionAndAnswersListState: MutableStateFlow<List<Triple<QuestionSession, Question?, List<Answer>?>?>> =
-        MutableStateFlow(emptyList())
+        MutableStateFlow(
+            emptyList()
+        )
+    private val _questionSessionsWithQuestionAndAnswersListGroupedByDateState: MutableStateFlow<Map<LocalDate, List<Triple<QuestionSession, Question?, List<Answer>?>?>>> =
+        MutableStateFlow(emptyMap())
     private val _currentTopic: MutableStateFlow<Topic?> = MutableStateFlow(null)
     private val _currentSubtopic: MutableStateFlow<Subtopic?> = MutableStateFlow(null)
     private val _typedQueryText = MutableStateFlow("")
@@ -82,9 +92,11 @@ class ChatViewModel @Inject constructor(
             topicsListState = _topicsListState,
             questionsWithAnswersState = _questionsWithAnswersListState,
             questionSessionListState = _questionSessionListState,
+            questionSessionListGroupedByDateState = _questionSessionListGroupedByDateState,
             subtopicsListState = _subtopicsListState,
             currentChildProfile = _currentChildProfile,
             questionSessionsWithQuestionAndAnswersState = _questionSessionsWithQuestionAndAnswersListState,
+            questionSessionsWithQuestionAndAnswersGroupedByDateState = _questionSessionsWithQuestionAndAnswersListGroupedByDateState,
             searchResultsQuestionsListState = _searchResultsQuestionsListState,
             currentTopicState = _currentTopic,
             application = MutableStateFlow(application),
@@ -106,6 +118,8 @@ class ChatViewModel @Inject constructor(
     private var listenForSearchQueryJob: Job? = null
     private var getCurrentLanguageJob: Job? = null
     private var getQuestionSessionWithQuestionAndAnswersJob: Job? = null
+    private var getQuestionSessionWithQuestionAndAnswersGroupedByDateJob: Job? = null
+    private var getChatQuestionSessionsGroupedByDateJob: Job? = null
 
     private val appPreferences: SharedPreferences =
         application.applicationContext.getSharedPreferences(
@@ -115,6 +129,7 @@ class ChatViewModel @Inject constructor(
 
     init {
         getChatQuestionSessions()
+        getChatQuestionSessionsGroupedByDate()
         getTopics()
         getAllQuestions()
         getQuestionsWithAnswers()
@@ -131,7 +146,8 @@ class ChatViewModel @Inject constructor(
             _newChatSession.onEach {
                 // println("new ${_newChatSession.value?._id}")
                 _currentChatState.value = it
-                getQuestionSessionWithQuestionAndAnswers()
+                getQuestionSessionsWithQuestionAndAnswers()
+                getQuestionSessionsWithQuestionAndAnswersGroupedByDate()
             }.collect()
         }
     }
@@ -254,7 +270,8 @@ class ChatViewModel @Inject constructor(
 
                 _currentChatState.value = event.chatSession
                 //println("current chat is ${_currentChatState.value?._id} new chat state is ${globalState._newChatState.value?._id}")
-                getQuestionSessionWithQuestionAndAnswers()
+                getQuestionSessionsWithQuestionAndAnswers()
+                getQuestionSessionsWithQuestionAndAnswersGroupedByDate()
 
                 //todo why do i need to call this each time
                 // todo for new chat not reflecting the change of current chat
@@ -325,6 +342,38 @@ class ChatViewModel @Inject constructor(
                     questionSessionUseCases.getChatQuestionSessions(chatSession._id)
                         ?.onEach { questionSessionList ->
                             _questionSessionListState.value = questionSessionList
+
+                            println(questionSessionList.groupBy {
+                                RealmInstantConverter.toLocalDate(
+                                    it.timeAsked
+                                )
+                            })
+
+                            // println("c${_currentChatState.value?._id}: ${_questionSessionListState.value}")
+                        }?.collect()
+                }
+            }
+        }
+    }
+
+    private fun getChatQuestionSessionsGroupedByDate() {
+        getChatQuestionSessionsGroupedByDateJob?.cancel()
+
+        getChatQuestionSessionsGroupedByDateJob = viewModelScope.launch {
+            // on each happens but what if it happens before
+            _currentChatState.collect {
+                // println("the current chat is ${_currentChatState.value?._id}")
+                it?.let { chatSession ->
+                    questionSessionUseCases.getChatQuestionSessions(chatSession._id)
+                        ?.onEach { questionSessionList ->
+                            _questionSessionListGroupedByDateState.value =
+                                questionSessionList.groupBy {
+                                    RealmInstantConverter.toLocalDate(
+                                        it.timeAsked
+                                    )
+                                }
+
+
                             // println("c${_currentChatState.value?._id}: ${_questionSessionListState.value}")
                         }?.collect()
                 }
@@ -364,7 +413,7 @@ class ChatViewModel @Inject constructor(
     }
 
     // debug this
-    private fun getQuestionSessionWithQuestionAndAnswers() {
+    private fun getQuestionSessionsWithQuestionAndAnswers() {
         getQuestionSessionWithQuestionAndAnswersJob?.cancel()
         var questionWithAnswer: Pair<Question, List<Answer>>? = null
         var questionSessionWithQuestionAndAnswersList: List<Triple<QuestionSession, Question?, List<Answer>?>?>
@@ -392,6 +441,53 @@ class ChatViewModel @Inject constructor(
                                 }
                             _questionSessionsWithQuestionAndAnswersListState.value =
                                 questionSessionWithQuestionAndAnswersList
+
+
+                        }?.collect()
+                }
+
+            }.collect()
+
+        }
+    }
+
+    private fun getQuestionSessionsWithQuestionAndAnswersGroupedByDate() {
+        getQuestionSessionWithQuestionAndAnswersGroupedByDateJob?.cancel()
+        var questionWithAnswer: Pair<Question, List<Answer>>? = null
+        var questionSessionWithQuestionAndAnswersListGroupedByDate: Map<LocalDate, List<Triple<QuestionSession, Question?, List<Answer>?>?>>
+
+        getQuestionSessionWithQuestionAndAnswersGroupedByDateJob = viewModelScope.launch {
+
+            _currentChatState.onEach {
+                // println("the current chat is ${_currentChatState.value?._id}")
+                it?.let {
+                    questionSessionUseCases.getChatQuestionSessions(chatSessionId = it._id)
+                        ?.onEach { questionSessionList ->
+                            val questionSessionListGroupedByDate =
+                                questionSessionList.groupBy { RealmInstantConverter.toLocalDate(it.timeAsked) }
+
+                            questionSessionWithQuestionAndAnswersListGroupedByDate =
+                                questionSessionListGroupedByDate.mapValues {
+                                    it.value.map { questionSession ->
+
+                                        questionSession.question?.let { questionId ->
+                                            questionWithAnswer =
+                                                questionUseCases.getQuestionWithAnswers(questionId)
+                                        }
+
+                                        Triple(
+                                            questionSession,
+                                            questionWithAnswer?.first,
+                                            questionWithAnswer?.second
+                                        )
+                                    }
+
+                                }
+
+                            _questionSessionsWithQuestionAndAnswersListGroupedByDateState.value =
+                                questionSessionWithQuestionAndAnswersListGroupedByDate
+
+
                         }?.collect()
                 }
 

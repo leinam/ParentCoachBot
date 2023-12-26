@@ -6,6 +6,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.time.LocalDate
 
 data class SavedQuestionStateWrapper(
     val savedQuestionsListState: StateFlow<List<QuestionSession>> = MutableStateFlow(emptyList()),
@@ -14,5 +15,7 @@ data class SavedQuestionStateWrapper(
     val savedQuestionSessionsWithQuestionAndAnswersState: StateFlow<List<Triple<QuestionSession,
             Question?, List<Answer>?>?>> = MutableStateFlow(
         emptyList()
-    )
+    ), val savedQuestionSessionsWithQuestionAndAnswersListGroupedByDateState:
+    MutableStateFlow<Map<LocalDate, List<Triple<QuestionSession, Question?, List<Answer>?>?>>> =
+        MutableStateFlow(emptyMap())
 )

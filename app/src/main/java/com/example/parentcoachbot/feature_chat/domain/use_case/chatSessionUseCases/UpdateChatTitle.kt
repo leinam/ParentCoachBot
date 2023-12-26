@@ -5,6 +5,6 @@ import com.example.parentcoachbot.feature_chat.domain.repository.ChatSessionRepo
 
 class UpdateChatTitle(private val chatSessionRepository: ChatSessionRepository){
     suspend operator fun invoke(subtopic: Subtopic, chatSessionId: String){
-        chatSessionRepository.updateChatTitle(subtopic, chatSessionId)
+        chatSessionRepository.autoUpdateChatTitle(subtopic, chatSessionId)
     }
 }

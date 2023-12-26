@@ -72,4 +72,6 @@
     <string name="research_contact_description">"Em caso de dúvidas ou questões relacionadas com a aplicação ou o seu conteúdo. "</string>
     <string name="sa_emergency_contact_description">Contato de serviço de emergência médica e de resgate 24 horas</string>
     <string name="saved_questions_drawer_label">Guardadaos</string>
+    <string name="today">Hoje</string>
+    <string name="yesterday">Ontem</string>
 </resources>
