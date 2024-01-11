@@ -51,7 +51,6 @@ class RealmSyncRepository @Inject constructor(
         }
 
 
-
         val config = SyncConfiguration.Builder(
             user = currentUser,
             partitionValue = currentUser.id,
@@ -63,8 +62,12 @@ class RealmSyncRepository @Inject constructor(
                 ChildProfile::class, AnswerThread::class
             )
         )
-
-            .compactOnLaunch()
+            .compactOnLaunch(callback = { totalBytes, usedBytes ->
+                val thresholdSize = (50 * 1024 * 1024).toLong()
+                print("totalBYTES: $totalBytes usedBytes: $usedBytes")
+                totalBytes > thresholdSize && usedBytes.toDouble() / totalBytes.toDouble() >= 0.5
+            }
+            )
             .name("PCTest1")
             .errorHandler { session: SyncSession,
                             error: SyncException ->

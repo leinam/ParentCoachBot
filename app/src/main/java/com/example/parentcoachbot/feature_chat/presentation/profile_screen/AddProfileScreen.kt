@@ -1,6 +1,8 @@
 package com.example.parentcoachbot.feature_chat.presentation.profile_screen
 
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -50,11 +53,13 @@ import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.model.Sex
 import com.example.parentcoachbot.feature_chat.presentation.Screen
+import com.example.parentcoachbot.ui.theme.BackgroundBeige
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.LightGreen
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
+import com.example.parentcoachbot.ui.theme.TextGrey
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,6 +162,10 @@ fun AddProfileScreen(
         mutableStateOf(null)
     }
 
+    var pin: String? by rememberSaveable {
+        mutableStateOf(null)
+    }
+
     var isGenderDropdownExpanded by remember {
         mutableStateOf(false)
     }
@@ -229,8 +238,7 @@ fun AddProfileScreen(
                             focusedLabelColor = BackgroundWhite
                         ),
 
-                        label = { Text(text = stringResource(id = R.string.child_name_label)) },
-                        placeholder = { Text(text = stringResource(id = R.string.name_placeholder)) },
+                        label = { Text(text = stringResource(id = R.string.profile_name)) },
                         onValueChange = {
                             if (it.length <= 10) name = it.trim() else Toast.makeText(
                                 mContext,
@@ -243,168 +251,6 @@ fun AddProfileScreen(
                     )
 
                     // TODO add date picker
-
-                    ExposedDropdownMenuBox(
-                        expanded = isGenderDropdownExpanded,
-                        onExpandedChange = {
-                            isGenderDropdownExpanded = !isGenderDropdownExpanded
-                        },
-                    ) {
-                        OutlinedTextField(
-                            value = sex ?: "",
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedContainerColor = BackgroundWhite,
-                                focusedContainerColor = BackgroundWhite,
-                                focusedLabelColor = BackgroundWhite
-                            ),
-                            modifier = Modifier.menuAnchor().fillMaxWidth(),
-                            label = { Text(text = stringResource(R.string.child_gender_label)) },
-                            placeholder = { Text(text = stringResource(id = R.string.gender_placeholder)) },
-                            readOnly = true,
-                            onValueChange = {
-                                sex = it
-                                isGenderDropdownExpanded = false
-                            },
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(
-                                    expanded = isGenderDropdownExpanded
-                                )
-                            }
-                        )
-
-                        ExposedDropdownMenu(expanded = isGenderDropdownExpanded,
-                            onDismissRequest = { isGenderDropdownExpanded = false }) {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = Sex.Male.description[currentLanguage]
-                                            ?: Sex.Male.name
-                                    )
-                                },
-                                onClick = {
-                                    sex = Sex.Male.description[currentLanguage]
-                                    isGenderDropdownExpanded = false
-                                }
-                            )
-
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = Sex.Female.description[currentLanguage]
-                                            ?: Sex.Female.name
-                                    )
-                                },
-                                onClick = {
-                                    sex = Sex.Female.description[currentLanguage]
-                                    isGenderDropdownExpanded = false
-                                }
-                            )
-
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = Sex.NotSpecified.description[currentLanguage]
-                                            ?: Sex.NotSpecified.name
-                                    )
-                                },
-                                onClick = {
-                                    sex = Sex.NotSpecified.description[currentLanguage]
-                                    isGenderDropdownExpanded = false
-                                }
-                            )
-
-                        }
-
-                    }
-
-                    ExposedDropdownMenuBox(
-                        expanded = isMobDropdownExpanded,
-                        onExpandedChange = { isMobDropdownExpanded = !isMobDropdownExpanded },
-                    ) {
-                        OutlinedTextField(
-                            value = mob ?: "",
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedContainerColor = BackgroundWhite,
-                                focusedContainerColor = BackgroundWhite,
-                                focusedLabelColor = BackgroundWhite
-                            ),
-                            modifier = Modifier.menuAnchor().fillMaxWidth(),
-                            label = { Text(text = stringResource(R.string.month_placeholder)) },
-                            placeholder = { Text(text = stringResource(id = R.string.month_label)) },
-                            readOnly = true,
-                            onValueChange = {
-                                mob = it
-                                isMobDropdownExpanded = false
-                            },
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(
-                                    expanded = isMobDropdownExpanded
-                                )
-                            }
-                        )
-
-                        ExposedDropdownMenu(expanded = isMobDropdownExpanded,
-                            onDismissRequest = { isMobDropdownExpanded = false }) {
-                            months.forEachIndexed { index, month ->
-                                DropdownMenuItem(
-                                    text = { Text(text = month[currentLanguage] ?: "") },
-                                    onClick = {
-                                        mob = month[currentLanguage]
-                                        mobIndex = index
-                                        isMobDropdownExpanded = false
-                                    })
-
-                            }
-                        }
-                    }
-
-                    ExposedDropdownMenuBox(
-                        expanded = isYobDropdownExpanded,
-                        onExpandedChange = {
-                            isYobDropdownExpanded = !isYobDropdownExpanded
-                        },
-                    ) {
-                        OutlinedTextField(
-                            value = yob ?: "",
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedContainerColor = BackgroundWhite,
-                                focusedContainerColor = BackgroundWhite,
-                                focusedLabelColor = BackgroundWhite
-                            ),
-                            modifier = Modifier
-                                .menuAnchor()
-                                .fillMaxWidth(),
-                            label = { Text(text = stringResource(R.string.year_placeholder)) },
-                            placeholder = { Text(text = stringResource(id = R.string.year_label)) },
-                            readOnly = true,
-                            onValueChange = {
-                                yob = it
-                                isYobDropdownExpanded = false
-                            },
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(
-                                    expanded = isYobDropdownExpanded
-                                )
-                            },
-                        )
-
-                        ExposedDropdownMenu(expanded = isYobDropdownExpanded,
-                            onDismissRequest = { isYobDropdownExpanded = false }) {
-
-                            years.forEach { year ->
-                                DropdownMenuItem(
-                                    text = { Text(text = year) },
-                                    onClick = {
-                                        yob = year
-                                        isYobDropdownExpanded = false
-                                    })
-
-                            }
-                        }
-                    }
-
-
-
 
 
                     Spacer(modifier = Modifier.size(30.dp))
@@ -475,3 +321,251 @@ fun AddProfileScreen(
     }
 
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun AccountSetupScreen(
+    navController: NavController = rememberNavController(),
+    onEvent: (profileEvent: ProfileEvent) -> Unit = {},
+    profileState: State<ProfileStateWrapper> = mutableStateOf(ProfileStateWrapper())
+) {
+
+    val profileStateWrapper = profileState.value
+
+    val parentUser: ParentUser? by profileStateWrapper.parentUserState.collectAsStateWithLifecycle()
+    val currentLanguage: String? by profileStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
+
+    var name: String? by rememberSaveable {
+        mutableStateOf(null)
+    }
+
+    val mContext = LocalContext.current
+    var isExpanded by remember {
+        mutableStateOf(true)
+    }
+
+    val scope = rememberCoroutineScope()
+
+    Scaffold()
+    { contentPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = PrimaryGreen)
+                .padding(contentPadding)
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(vertical = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Box(modifier = Modifier) {
+                    Icon(
+                        tint = Beige, painter =
+                        painterResource(id = R.drawable.pclogo),
+                        contentDescription = "Aurora Logo",
+                        modifier = Modifier.size(130.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.size(30.dp))
+
+                Text(
+                    text = stringResource(id = R.string.account_setup),
+                    textAlign = TextAlign.Center,
+                    fontFamily = PlexSans,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 36.sp,
+                    color = Beige,
+                )
+
+                Spacer(modifier = Modifier.size(30.dp))
+
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                    OutlinedTextField(
+                        value = name ?: "",
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = BackgroundWhite,
+                            focusedContainerColor = BackgroundWhite,
+                            focusedLabelColor = BackgroundWhite
+                        ),
+
+                        label = { Text(text = stringResource(id = R.string.participant_username_label)) },
+                        onValueChange = {
+                            if (it.length <= 4) name = it.trim() else Toast.makeText(
+                                mContext,
+                                R.string.toast_warning_name,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                        textStyle = LocalTextStyle.current.copy(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.size(20.dp))
+
+                    ExposedDropdownMenuBox(
+
+                        expanded = isExpanded,
+                        onExpandedChange = {
+                            isExpanded = !isExpanded
+                        })
+                    {
+
+
+                        TextField(
+                            readOnly = true,
+                            value = stringResource(
+                                id = countryList[0].name
+                            ),
+                            onValueChange = { },
+                            label = {
+                                Text(
+                                    text = stringResource(id = R.string.country_label),
+                                    fontSize = 10.sp
+                                )
+                            },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(
+                                    expanded = isExpanded
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_language_24),
+                                    contentDescription = null
+                                )
+                            },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                unfocusedContainerColor = LightGreen,
+                                focusedContainerColor = LightGreen,
+                                unfocusedTextColor = BackgroundBeige,
+                                focusedTextColor = BackgroundBeige,
+                                focusedLeadingIconColor = BackgroundWhite,
+                                unfocusedLeadingIconColor = BackgroundWhite,
+                                focusedLabelColor = TextGrey
+                            ),
+                            modifier = Modifier.menuAnchor()
+                        )
+
+                        ExposedDropdownMenu(expanded = isExpanded,
+                            onDismissRequest = { isExpanded = false }) {
+
+                            countryList.forEach { language ->
+                                DropdownMenuItem(text = { Text(text = stringResource(language.name)) },
+                                    onClick = {
+
+                                    })
+                            }
+                        }
+
+                    }
+                    Spacer(modifier = Modifier.size(20.dp))
+
+
+
+                    Box(
+                        modifier = Modifier
+                            .width(180.dp)
+                            .padding(10.dp)
+                            .clip(
+                                RoundedCornerShape(30.dp)
+                            )
+                            .clickable {
+
+
+                            }
+                            .background(color = LightGreen)
+                            .padding(10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.create_profile_button_label).uppercase(),
+                            textAlign = TextAlign.Center,
+                            fontFamily = PlexSans,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 18.sp,
+                            color = Beige
+                        )
+                    }
+
+
+                }
+
+
+            }
+        }
+
+
+    }
+
+}
+
+@Preview
+@Composable
+fun PinEntryScreen(
+    navController: NavController = rememberNavController(),
+    state: PinState = PinState(),
+    pinCallbacks: PinCallbacks = PinCallbacksImplementation()
+) {
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = PrimaryGreen)
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Spacer(modifier = Modifier.size(200.dp))
+        Box(modifier = Modifier) {
+            Icon(
+                tint = Beige, painter =
+                painterResource(id = R.drawable.pclogo),
+                contentDescription = "Aurora Logo",
+                modifier = Modifier
+                    .size(100.dp)
+
+            )
+        }
+
+        Spacer(modifier = Modifier.size(15.dp))
+
+        Text(
+            text = stringResource(id = R.string.enter_pin_prompt),
+            color = Beige, fontSize = 30.sp
+        )
+
+        Spacer(modifier = Modifier.size(30.dp))
+
+        PinBOX(navController = navController)
+
+
+    }
+
+
+}
+
+sealed class Country(@StringRes val name: Int, @DrawableRes val icon: Int) {
+    object SouthAfrica : Country(R.string.sa_name, R.drawable.icons8_south_africa_96)
+    object Portugal : Country(R.string.pt_name, R.drawable.icons8_portugal_96)
+}
+
+val countryList = listOf(Country.SouthAfrica, Country.Portugal)
+
+
+

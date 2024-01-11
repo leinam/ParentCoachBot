@@ -224,7 +224,7 @@ fun FirstTimeSplashScreen(
                     .background(color = Beige)
                     .padding(10.dp)
                     .clickable {
-                        navController.navigate(Screen.SelectProfileScreen.route) {
+                        navController.navigate(Screen.PinEntryScreen.route) {
                             popUpTo(Screen.FirstTimeSplashScreen.route) {
                                 inclusive = true
                             }

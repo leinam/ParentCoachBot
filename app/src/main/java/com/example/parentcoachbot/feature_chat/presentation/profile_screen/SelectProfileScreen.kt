@@ -86,6 +86,7 @@ fun SelectProfileScreen(
                     text = stringResource(id = R.string.select_profile_label),
                     textAlign = TextAlign.Center,
                     fontFamily = PlexSans,
+                    lineHeight = 42.sp,
                     fontWeight = FontWeight.Medium,
                     fontSize = 39.sp,
                     color = BackgroundWhite
@@ -103,39 +104,42 @@ fun SelectProfileScreen(
 
                     }
 
-                    items(1) {
+                    if (childProfileList.size < 3){
+                        items(1) {
 
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                            BoxWithConstraints(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .aspectRatio(1f)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(color = LightGreen)
-                                    .clickable {
-                                        navController.navigate(Screen.AddProfileScreen.route)
-                                    }
-                                ,
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.baseline_add_24),
-                                    contentDescription = null, tint = Beige,
-                                    modifier = Modifier.size(100.dp)
+                                BoxWithConstraints(
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .aspectRatio(1f)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(color = LightGreen)
+                                        .clickable {
+                                            navController.navigate(Screen.AddProfileScreen.route)
+                                        }
+                                    ,
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.baseline_add_24),
+                                        contentDescription = null, tint = Beige,
+                                        modifier = Modifier.size(100.dp)
+                                    )
+
+
+
+                                }
+
+                                Text(
+                                    text = stringResource(id = R.string.new_profile_label),
+                                    color = LightBeige,
+                                    fontSize = 18.sp
                                 )
-
-
-
                             }
-
-                            Text(
-                                text = stringResource(id = R.string.new_profile_label),
-                                color = LightBeige,
-                                fontSize = 18.sp
-                            )
                         }
                     }
+
 
                 }
 

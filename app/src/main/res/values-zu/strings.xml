@@ -74,4 +74,10 @@
     <string name="saved_questions_drawer_label">Okugciniwe</string>
     <string name="today">Namuhla</string>
     <string name="yesterday">Izolo</string>
+    <string name="pin_label">iphinikhodi</string>
+    <string name="confirm_pin_label">qinisekisa iphinikhodi</string>
+    <string name="enter_pin_prompt">Faka i-PIN yakho</string>
+    <string name="sa_name">South Africa</string>
+    <string name="pt_name">Portugal</string>
+    <string name="country_label">Izwe</string>
 </resources>

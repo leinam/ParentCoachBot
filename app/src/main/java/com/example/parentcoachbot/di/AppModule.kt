@@ -66,6 +66,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.GetAllTopics
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
+import com.example.parentcoachbot.feature_chat.domain.util.NetworkConnectionMangerImpl
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.database.DatabaseReference
@@ -76,6 +77,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.realm.kotlin.Realm
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 
@@ -83,13 +86,25 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    @Provides
+    @Singleton
+    fun provideConnectivityManager(application: Application,
+                                   coroutineScope: CoroutineScope): NetworkConnectionMangerImpl{
+        return NetworkConnectionMangerImpl(context = application.applicationContext,
+            coroutineScope = coroutineScope)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCoroutineScope(): CoroutineScope {
+        return CoroutineScope(Dispatchers.Default)
+    }
 
     @Provides
     @Singleton
     fun provideFirebaseAnalytics(): FirebaseAnalytics {
         return Firebase.analytics
     }
-
 
     @Provides
     @Singleton

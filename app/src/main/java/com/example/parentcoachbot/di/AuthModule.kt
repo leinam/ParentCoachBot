@@ -1,6 +1,7 @@
 package com.example.parentcoachbot.di
 
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
+import com.example.parentcoachbot.feature_chat.domain.util.NetworkConnectionMangerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,9 +12,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthModule {
+
     @Provides
     @Singleton
-    fun provideAuthManager(app: App): AuthManager {
-        return AuthManager(app)
+    fun provideAuthManager(app: App, networkConnectionMangerImpl: NetworkConnectionMangerImpl): AuthManager {
+        return AuthManager(app, networkConnectionMangerImpl = networkConnectionMangerImpl)
     }
 }

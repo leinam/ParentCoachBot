@@ -8,20 +8,37 @@ import io.realm.kotlin.mongodb.exceptions.ConnectionException
 import io.realm.kotlin.mongodb.exceptions.InvalidCredentialsException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.concurrent.thread
 
-class AuthManager @Inject constructor(val app: App) {
+class AuthManager @Inject constructor(
+    val app: App,
+    val networkConnectionMangerImpl: NetworkConnectionMangerImpl
+) {
     private val _authenticatedRealmUser: MutableStateFlow<User?> =
         MutableStateFlow(app.currentUser) // add to global state rather
 
     val authenticatedRealmUser: StateFlow<User?> = _authenticatedRealmUser
 
     init {
+        networkConnectionMangerImpl.startListenNetworkState()
+
         thread {
             runBlocking {
-                authenticateUser()
+
+                networkConnectionMangerImpl.isNetworkConnectedFlow.onEach { isNetworkConnected ->
+                    println("connection: $isNetworkConnected")
+                    if (isNetworkConnected) {
+                        if (app.currentUser == null) {
+                            println("Attempting Auth")
+                            authenticateUser()
+                        }
+                    }
+                }.collect()
+
             }
         }
     }
@@ -43,6 +60,8 @@ class AuthManager @Inject constructor(val app: App) {
                         "Successful Authentication of User: " +
                                 "${_authenticatedRealmUser.value?.id}"
                     )
+
+                    // networkConnectionMangerImpl.stopListenNetworkState()
                     return AuthResult.Success(app.currentUser!!)
                 }
             }
@@ -54,8 +73,11 @@ class AuthManager @Inject constructor(val app: App) {
                             "Realm",
                             "Failed to login due to invalid credentials: ${exception.message}"
                         )
-                        return AuthResult.Failure(AuthFailure.InvalidCredentials(
-                            "Invalid username or password. Please try again."))
+                        return AuthResult.Failure(
+                            AuthFailure.InvalidCredentials(
+                                "Invalid username or password. Please try again."
+                            )
+                        )
 
                     }
 
@@ -66,23 +88,34 @@ class AuthManager @Inject constructor(val app: App) {
                             "Failed to login due to a connection error: ${exception.message}"
                         )
 
-                        return AuthResult.Failure(AuthFailure.ConnectionError(
-                            "Login failed due to a connection error. " +
-                                    "Check your network connection and try again."))
+                        return AuthResult.Failure(
+                            AuthFailure.ConnectionError(
+                                "Login failed due to a connection error. " +
+                                        "Check your network connection and try again."
+                            )
+                        )
                     }
 
                     else -> {
-                        Log.println(Log.ERROR, "Realm",
-                            "Failed to login: ${exception.message}")
-                        return AuthResult.Failure(AuthFailure.OtherError(
-                            "Login failed please try again."))
+                        Log.println(
+                            Log.ERROR, "Realm",
+                            "Failed to login: ${exception.message}"
+                        )
+                        return AuthResult.Failure(
+                            AuthFailure.OtherError(
+                                "Login failed please try again."
+                            )
+                        )
 
                     }
                 }
 
             }
-        return AuthResult.Failure(AuthFailure.InvalidCredentials(
-            "Login failed please try again."))
+        return AuthResult.Failure(
+            AuthFailure.InvalidCredentials(
+                "Login failed please try again."
+            )
+        )
 
     }
 }

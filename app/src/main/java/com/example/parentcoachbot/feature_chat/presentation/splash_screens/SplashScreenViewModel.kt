@@ -31,7 +31,7 @@ class SplashScreenViewModel @Inject constructor(
         )
     )
 
-    // TODO failing to set the parttion id immediately so first write fails
+    // TODO failing to set the partition id immediately so first write fails
 
     init {
         populateDatabase()

@@ -74,4 +74,10 @@
     <string name="saved_questions_drawer_label">Guardadaos</string>
     <string name="today">Hoje</string>
     <string name="yesterday">Ontem</string>
+    <string name="pin_label">PIN</string>
+    <string name="confirm_pin_label">confirmar PIN</string>
+    <string name="enter_pin_prompt">Insira seu PIN</string>
+    <string name="sa_name">África do Sul</string>
+    <string name="pt_name">Portugal</string>
+    <string name="country_label">País</string>
 </resources>

@@ -86,6 +86,12 @@ val settingsItemList = listOf(
         route = Screen.SettingsHomeScreen.route
     ),
 
+    NavigationItem(
+        R.string.tour_button_text,
+        R.drawable.baseline_tour_24,
+        route = Screen.ExploreOnboardingScreen.route
+    )
+
     )
 
 

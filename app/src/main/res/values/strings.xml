@@ -97,4 +97,13 @@
     <string name="cancel_label" translatable="false">Cancel</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
+    <string name="profile_name" translatable="false">Profile Name</string>
+    <string name="participant_username_label" translatable="false">Username</string>
+    <string name="pin_label">PIN</string>
+    <string name="account_setup" translatable="false">Set Up Your Account</string>
+    <string name="confirm_pin_label">Confirm PIN</string>
+    <string name="enter_pin_prompt">Enter Your PIN</string>
+    <string name="sa_name">South Africa</string>
+    <string name="pt_name">Portugal</string>
+    <string name="country_label">Country</string>
 </resources>

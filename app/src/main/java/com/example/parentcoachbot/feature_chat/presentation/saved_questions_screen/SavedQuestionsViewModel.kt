@@ -122,7 +122,8 @@ class SavedQuestionsViewModel @Inject constructor(
 
             _savedQuestions.onEach { questionSessionList ->
                 val questionSessionListGroupedByDate =
-                    questionSessionList.groupBy { RealmInstantConverter.toLocalDate(it.timeAsked) }
+                    questionSessionList.groupBy { RealmInstantConverter.toLocalDate(it.timeSaved ?: it.timeAsked) }
+                //TODO check grouping logic
 
                 questionSessionWithQuestionAndAnswersListGroupedByDate =
                     questionSessionListGroupedByDate.mapValues {

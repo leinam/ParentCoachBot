@@ -5,7 +5,9 @@ import SavedQuestionsScreen
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,6 +21,7 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatView
 import com.example.parentcoachbot.feature_chat.presentation.emergency_screen.EmergencyInfoScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.AddProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.CreateProfileSplashScreen
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.PinEntryScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileViewModel
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
@@ -42,7 +45,8 @@ fun Navigation() {
     val profileViewModel: ProfileViewModel = hiltViewModel()
 
     val firebaseAnalytics: FirebaseAnalytics = chatViewModel.firebaseAnalytics
-    firebaseAnalytics.setUserId("Leina")
+    val currentParentUser by profileViewModel.profileViewModelState.value.parentUserState.collectAsStateWithLifecycle()
+    firebaseAnalytics.setUserId(currentParentUser?.username ?: "Unknown")
 
     DisposableEffect(Unit) {
         var screenEntryTime: Long = 0L
@@ -56,10 +60,14 @@ fun Navigation() {
             previousScreenRoute?.let {
                 val exitParams = Bundle()
                 val exitTime: Long = destinationChangeTime
+                val parentUsername = currentParentUser?.username
+                val authID = currentParentUser?._partition
 
                 val timeSpentOnScreen =
                     if (screenEntryTime != 0L) screenEntryTime - exitTime else 0L
                 exitParams.putString("SCREEN_NAME", previousScreenRoute)
+                exitParams.putString("USERNAME", parentUsername)
+                exitParams.putString("authID", authID)
                 exitParams.putLong("TIME_ON_SCREEN", timeSpentOnScreen)
 
                 firebaseAnalytics.logEvent("SCREEN_EXIT", exitParams)
@@ -68,8 +76,14 @@ fun Navigation() {
 
             destinationRoute?.let {
                 screenEntryTime = System.currentTimeMillis()
+                val parentUsername = currentParentUser?.username
+                val authID = currentParentUser?._partition
+
+
                 entryParams.putString(FirebaseAnalytics.Param.SCREEN_NAME, destinationRoute)
                 entryParams.putString("PREVIOUS_SCREEN", previousScreenRoute ?: "null")
+                entryParams.putString("USERNAME", parentUsername)
+                entryParams.putString("authID", authID)
 
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, entryParams)
             }
@@ -120,6 +134,10 @@ fun Navigation() {
                 onboardingPageItem = OnboardingPageItem.ExploreTopics,
                 navController = navHostController
             )
+        }
+
+        composable(route = Screen.PinEntryScreen.route ){
+            PinEntryScreen(navController = navHostController)
         }
 
         composable(route = Screen.SearchOnboardingScreen.route) {

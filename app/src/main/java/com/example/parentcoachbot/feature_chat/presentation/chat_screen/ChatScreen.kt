@@ -477,8 +477,12 @@ fun ChatScreen(
                                     modifier = Modifier.padding(bottom = 80.dp)
                                 )
                                 {
+                                    var lastIndex = 0
+                                    lastIndex += questionSessionWithQuestionAndAnswersListGroupedByDate.size
 
                                     questionSessionWithQuestionAndAnswersListGroupedByDate.forEach { (date, questionSessionList) ->
+
+
                                         item {
                                             DateBox(
                                                 date = date,
@@ -486,6 +490,7 @@ fun ChatScreen(
                                             )
                                         }
 
+                                        lastIndex += questionSessionList.size
                                         itemsIndexed(questionSessionList) { index, questionSessionWithQuestionAndAnswer ->
 
                                             questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
@@ -507,6 +512,7 @@ fun ChatScreen(
                                                     )
                                                 }
 
+                                                lastIndex += questionSessionAnswerTriple.third?.size ?: 0
                                                 questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
                                                     // todo check how long ago questions session was loaded
                                                     if ((index == questionSessionWithQuestionAndAnswersList.lastIndex) and (timeDifference < 25) and (answerIndex != 0)) {
@@ -554,6 +560,7 @@ fun ChatScreen(
 
                                             }
 
+
                                         }
 
 
@@ -572,13 +579,16 @@ fun ChatScreen(
                                         }
                                     }
 
+                                    println(lastIndex)
+
                                     if (questionSessionWithQuestionAndAnswersList.isNotEmpty()) {
                                         scope.launch {
                                             scrollState.animateScrollToItem(
-                                                questionSessionWithQuestionAndAnswersList.lastIndex + 1,
+                                                lastIndex + 1
                                             )
                                         }
                                     }
+
                                 }
                             }
 
