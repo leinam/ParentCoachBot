@@ -12,4 +12,8 @@ interface ParentUserRepository {
 
     fun getParentUser(): Flow<ParentUser?>?
 
+    suspend fun updateUsername(id: String, username: String)
+
+    suspend fun updateCountry(id: String, country: String)
+
 }

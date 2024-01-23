@@ -4,8 +4,8 @@
     <string name="app_intro_message">O chatbot que o/a irá ajudar a aprender e clarificar dúvidas sobre cuidados de saúde infantil.</string>
     <string name="get_started_button_text">COMEÇAR</string>
     <string name="saved_questions_title">Guardar Favoritos</string>
-    <string name="switch_profile_drawer_label">Perfil</string>
-    <string name="chats_label">Conversas</string>
+    <string name="switch_profile_drawer_label">"Alterar Perfil "</string>
+    <string name="chats_label">Chats</string>
     <string name="help_label">Ajuda</string>
     <string name="resources_label">Recursos</string>
     <string name="saved_questions_menu_label">Guardadaos</string>
@@ -16,7 +16,7 @@
     <string name="pin_chat_label">Fixar bate-papo</string>
     <string name="unpin_chat_label">Liberar bate-papo</string>
     <string name="subtopics_label">Subtópicos</string>
-    <string name="topics_label">Tópicas</string>
+    <string name="topics_label">Tópicos</string>
     <string name="search_results_label">Procurar Resultados</string>
     <string name="emergency_info_label">Informações de emergência</string>
     <string name="new_profile_label">Novo perfil</string>
@@ -38,10 +38,11 @@
     <string name="save_favourites_description_text">Guarde mensagens ou imagens úteis nos favoritos para as poder consultar mais tarde.</string>
     <string name="continue_label">Continuar</string>
     <string name="skip_label">Saltar</string>
+    <string name="search_bar_placeholder">Procure por uma pergunta</string>
     <string name="language_label">Idiomas</string>
     <string name="data_privacy_label">Privacidade e Segurança dos Dados</string>
     <string name="terms_label">Termos de Uso</string>
-    <string name="no_chats_label">Conversas</string>
+    <string name="no_chats_label">Sem Chats</string>
     <string name="welcome">Bem-vindo/a ao ParentCoach</string>
     <string name="attention_label">Atenção!</string>
     <string name="create_profile_header">Criar Perfil</string>
@@ -72,12 +73,15 @@
     <string name="research_contact_description">"Em caso de dúvidas ou questões relacionadas com a aplicação ou o seu conteúdo. "</string>
     <string name="sa_emergency_contact_description">Contato de serviço de emergência médica e de resgate 24 horas</string>
     <string name="saved_questions_drawer_label">Guardadaos</string>
-    <string name="today">Hoje</string>
-    <string name="yesterday">Ontem</string>
+    <string name="saved_messages_label">Guardados</string>
+    <string name="today_label">Hoje</string>
+    <string name="yesterday_label">Ontem</string>
     <string name="pin_label">PIN</string>
-    <string name="confirm_pin_label">confirmar PIN</string>
+    <string name="confirm_pin_label">Confirmar PIN</string>
     <string name="enter_pin_prompt">Insira seu PIN</string>
     <string name="sa_name">África do Sul</string>
     <string name="pt_name">Portugal</string>
     <string name="country_label">País</string>
+    <string name="change_country">Alterar País</string>
+    <string name="no_matching_questions">Sem perguntas para apresentar</string>
 </resources>

@@ -9,9 +9,12 @@ import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
+import com.example.parentcoachbot.feature_chat.domain.model.SearchQuery
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
+import com.example.parentcoachbot.feature_chat.domain.model.UserPreferences
 import io.realm.kotlin.Realm
+import io.realm.kotlin.ext.query
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.User
 import io.realm.kotlin.mongodb.exceptions.SyncException
@@ -50,16 +53,15 @@ class RealmSyncRepository @Inject constructor(
             realm.close()
         }
 
-
         val config = SyncConfiguration.Builder(
             user = currentUser,
-            partitionValue = currentUser.id,
             schema = setOf(
                 Answer::class,
                 Question::class, Topic::class,
                 ChatSession::class, Subtopic::class,
                 QuestionSession::class, ParentUser::class,
-                ChildProfile::class, AnswerThread::class
+                ChildProfile::class, AnswerThread::class,
+                UserPreferences::class, SearchQuery::class
             )
         )
             .compactOnLaunch(callback = { totalBytes, usedBytes ->
@@ -69,6 +71,19 @@ class RealmSyncRepository @Inject constructor(
             }
             )
             .name("PCTest1")
+            .initialSubscriptions(initialSubscriptionBlock = { realm ->
+                add(realm.query<Question>(), "all-questions")
+                add(realm.query<ChatSession>(), "all-chatsessions")
+                add(realm.query<QuestionSession>(), "all-questionsessions")
+                add(realm.query<SearchQuery>(), "all-searchqueries")
+                add(realm.query<ChildProfile>(), "all-profiles")
+                add(realm.query<ParentUser>(), "all-parentusers")
+                add(realm.query<Question>(), "all-questions")
+                add(realm.query<Answer>(), "all-answers")
+                add(realm.query<Subtopic>(), "all-subtopics")
+                add(realm.query<Topic>(), "all-topics")
+                add(realm.query<AnswerThread>(), "all-answer-threads")
+            })
             .errorHandler { session: SyncSession,
                             error: SyncException ->
                 Log.println(Log.ERROR, "Realm", error.message + session)

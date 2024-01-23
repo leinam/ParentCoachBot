@@ -12,8 +12,6 @@ import com.example.parentcoachbot.feature_chat.data.repository.QuestionRepositor
 import com.example.parentcoachbot.feature_chat.data.repository.QuestionSessionRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.SubtopicRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.TopicRepositoryImpl
-import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcher
-import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcherImplementation
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerThreadRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.ChatSessionRepository
@@ -37,13 +35,18 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCas
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatTimeLastUpdated
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.UpdateChatTitle
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.DeleteAllProfileData
+import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.DeleteChildProfile
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetAllChildProfiles
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileById
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfileTest
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.GetChildProfilesByParentUser
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.NewChildProfile
+import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.UpdateProfileName
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.GetParentUser
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.UpdateCountry
+import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.UpdateUsername
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.DeleteQuestionSession
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.GetLatestQuestionSessionByChat
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.GetQuestionSessionsByChatSession
@@ -67,6 +70,8 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.Get
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
 import com.example.parentcoachbot.feature_chat.domain.util.NetworkConnectionMangerImpl
+import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcher
+import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcherImplementation
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.database.DatabaseReference
@@ -88,10 +93,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideConnectivityManager(application: Application,
-                                   coroutineScope: CoroutineScope): NetworkConnectionMangerImpl{
-        return NetworkConnectionMangerImpl(context = application.applicationContext,
-            coroutineScope = coroutineScope)
+    fun provideConnectivityManager(
+        application: Application,
+        coroutineScope: CoroutineScope
+    ): NetworkConnectionMangerImpl {
+        return NetworkConnectionMangerImpl(
+            context = application.applicationContext,
+            coroutineScope = coroutineScope
+        )
     }
 
     @Provides
@@ -275,20 +284,30 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideChildProfileUseCases(childProfileRepository: ChildProfileRepository): ChildProfileUseCases {
+    fun provideChildProfileUseCases(
+        childProfileRepository: ChildProfileRepository,
+        chatSessionUseCases: ChatSessionUseCases
+    ): ChildProfileUseCases {
         return ChildProfileUseCases(
             getChildProfileById = GetChildProfileById(childProfileRepository),
             getChildProfilesByParentUser = GetChildProfilesByParentUser(childProfileRepository),
             getChildProfileTest = GetChildProfileTest(childProfileRepository),
             newChildProfile = NewChildProfile(childProfileRepository),
-            getAllChildProfiles = GetAllChildProfiles(childProfileRepository)
+            getAllChildProfiles = GetAllChildProfiles(childProfileRepository),
+            deleteChildProfile = DeleteChildProfile(childProfileRepository, chatSessionUseCases),
+            deleteAllProfileData = DeleteAllProfileData(chatSessionUseCases),
+            updateProfileName = UpdateProfileName(childProfileRepository)
         )
     }
 
     @Provides
     @Singleton
     fun provideParentUserUseCases(parentUserRepository: ParentUserRepository): ParentUserUseCases {
-        return ParentUserUseCases(getParentUser = GetParentUser(parentUserRepository))
+        return ParentUserUseCases(
+            getParentUser = GetParentUser(parentUserRepository),
+            updateCountry = UpdateCountry(parentUserRepository),
+            updateUsername = UpdateUsername(parentUserRepository)
+        )
     }
 
     @Provides

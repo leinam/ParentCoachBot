@@ -44,6 +44,24 @@ class ChildProfileRepositoryImpl(private val realm: Realm) : ChildProfileReposit
             }
         }
 
+    override suspend fun updateProfileName(profileId: String, profileName: String): ChildProfile? =
+        withContext(Dispatchers.IO) {
+            val childProfile: ChildProfile? =
+                realm.query<ChildProfile>("_id == $0", profileId).first().find()
+
+            realm.write {
+                childProfile?.let {
+                    findLatest(it)?.let { liveProfile ->
+                        liveProfile.name = profileName
+                    }
+
+                }
+               childProfile
+            }
+
+
+        }
+
     override suspend fun getChildProfileByParentTest(parentId: String): ChildProfile? =
         withContext(
             Dispatchers.IO
@@ -54,11 +72,10 @@ class ChildProfileRepositoryImpl(private val realm: Realm) : ChildProfileReposit
 
     override suspend fun getChildProfileById(id: String): ChildProfile? =
         withContext(Dispatchers.IO) {
-            try{
+            try {
                 realm.query<ChildProfile>(query = "_id == $0", id).find().firstOrNull()
                     ?.copyFromRealm()
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
                 null
             }

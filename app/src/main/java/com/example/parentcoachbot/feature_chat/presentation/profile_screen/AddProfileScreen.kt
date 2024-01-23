@@ -2,7 +2,6 @@ package com.example.parentcoachbot.feature_chat.presentation.profile_screen
 
 import android.widget.Toast
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -336,13 +335,17 @@ fun AccountSetupScreen(
     val parentUser: ParentUser? by profileStateWrapper.parentUserState.collectAsStateWithLifecycle()
     val currentLanguage: String? by profileStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
 
-    var name: String? by rememberSaveable {
-        mutableStateOf(null)
+    var username: String by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var country: String by rememberSaveable {
+        mutableStateOf(countryList[0].name)
     }
 
     val mContext = LocalContext.current
     var isExpanded by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     val scope = rememberCoroutineScope()
@@ -386,7 +389,6 @@ fun AccountSetupScreen(
 
                 Spacer(modifier = Modifier.size(30.dp))
 
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -396,7 +398,7 @@ fun AccountSetupScreen(
                 ) {
 
                     OutlinedTextField(
-                        value = name ?: "",
+                        value = username ?: "",
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = BackgroundWhite,
                             focusedContainerColor = BackgroundWhite,
@@ -405,7 +407,7 @@ fun AccountSetupScreen(
 
                         label = { Text(text = stringResource(id = R.string.participant_username_label)) },
                         onValueChange = {
-                            if (it.length <= 4) name = it.trim() else Toast.makeText(
+                            if (it.length <= 10) username = it.trim() else Toast.makeText(
                                 mContext,
                                 R.string.toast_warning_name,
                                 Toast.LENGTH_SHORT
@@ -425,13 +427,12 @@ fun AccountSetupScreen(
                         })
                     {
 
-
                         TextField(
                             readOnly = true,
-                            value = stringResource(
-                                id = countryList[0].name
-                            ),
-                            onValueChange = { },
+                            value = country,
+                            onValueChange = {
+                                country = it
+                            },
                             label = {
                                 Text(
                                     text = stringResource(id = R.string.country_label),
@@ -464,18 +465,17 @@ fun AccountSetupScreen(
                         ExposedDropdownMenu(expanded = isExpanded,
                             onDismissRequest = { isExpanded = false }) {
 
-                            countryList.forEach { language ->
-                                DropdownMenuItem(text = { Text(text = stringResource(language.name)) },
+                            countryList.forEach { countryItem ->
+                                DropdownMenuItem(text = { Text(text = countryItem.name) },
                                     onClick = {
-
+                                        country = countryItem.name
+                                        isExpanded = false
                                     })
                             }
                         }
 
                     }
                     Spacer(modifier = Modifier.size(20.dp))
-
-
 
                     Box(
                         modifier = Modifier
@@ -485,15 +485,27 @@ fun AccountSetupScreen(
                                 RoundedCornerShape(30.dp)
                             )
                             .clickable {
-
-
+                                parentUser?.let { currentParentUser ->
+                                    onEvent(
+                                        ProfileEvent.UpdateUserAccount(
+                                            username = username,
+                                            country = country,
+                                            parentUser = currentParentUser
+                                        )
+                                    )
+                                }.also {
+                                    username = ""
+                                    isExpanded = false
+                                    Toast.makeText(mContext, "Successfully updated your account details", Toast.LENGTH_LONG ).show()
+                                    navController.navigate(Screen.SelectProfileScreen.route)
+                                }
                             }
                             .background(color = LightGreen)
                             .padding(10.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = stringResource(id = R.string.create_profile_button_label).uppercase(),
+                            text = stringResource(id = R.string.update_profile_button_label).uppercase(),
                             textAlign = TextAlign.Center,
                             fontFamily = PlexSans,
                             fontWeight = FontWeight.SemiBold,
@@ -519,9 +531,12 @@ fun AccountSetupScreen(
 fun PinEntryScreen(
     navController: NavController = rememberNavController(),
     state: PinState = PinState(),
-    pinCallbacks: PinCallbacks = PinCallbacksImplementation()
+    pinCallbacks: PinCallbacks = PinCallbacksImplementation(),
+    profileState: State<ProfileStateWrapper> = mutableStateOf(ProfileStateWrapper())
 ) {
 
+    val profileStateWrapper = profileState.value
+    val appPreferences by profileStateWrapper.appPreferences.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -531,17 +546,30 @@ fun PinEntryScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.size(200.dp))
+        Spacer(modifier = Modifier.size(100.dp))
         Box(modifier = Modifier) {
             Icon(
                 tint = Beige, painter =
                 painterResource(id = R.drawable.pclogo),
                 contentDescription = "Aurora Logo",
                 modifier = Modifier
-                    .size(100.dp)
-
+                    .size(130.dp)
+                    .align(Alignment.Center)
             )
+
         }
+
+        Spacer(modifier = Modifier.size(30.dp))
+
+        Text(
+            text = stringResource(id = R.string.welcome),
+            textAlign = TextAlign.Center,
+            fontFamily = PlexSans,
+            fontWeight = FontWeight.Medium,
+            fontSize = 36.sp,
+            lineHeight = 45.sp,
+            color = Beige
+        )
 
         Spacer(modifier = Modifier.size(15.dp))
 
@@ -552,7 +580,8 @@ fun PinEntryScreen(
 
         Spacer(modifier = Modifier.size(30.dp))
 
-        PinBOX(navController = navController)
+        PinBOX(navController = navController,
+            appPreferences = appPreferences)
 
 
     }
@@ -560,9 +589,9 @@ fun PinEntryScreen(
 
 }
 
-sealed class Country(@StringRes val name: Int, @DrawableRes val icon: Int) {
-    object SouthAfrica : Country(R.string.sa_name, R.drawable.icons8_south_africa_96)
-    object Portugal : Country(R.string.pt_name, R.drawable.icons8_portugal_96)
+sealed class Country(val name: String, @DrawableRes val icon: Int) {
+    object SouthAfrica : Country("South Africa", R.drawable.icons8_south_africa_96)
+    object Portugal : Country("Portugal", R.drawable.icons8_portugal_96)
 }
 
 val countryList = listOf(Country.SouthAfrica, Country.Portugal)

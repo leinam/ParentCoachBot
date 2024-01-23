@@ -13,7 +13,7 @@ data class NavigationItem(
 
 val drawerItemsList = listOf(
     NavigationItem(
-        R.string.current_profile,
+        R.string.switch_profile_drawer_label,
         R.drawable.profile_icon,
         route = Screen.SelectProfileScreen.route
     ),
@@ -37,12 +37,6 @@ val drawerItemsList = listOf(
     ),
 
     NavigationItem(
-        R.string.resources_label,
-        R.drawable.resources_icon,
-        route = Screen.ResourcesHomeScreen.route
-    ),
-
-    NavigationItem(
         R.string.settings_label,
         R.drawable.settings_icon,
         route = Screen.SettingsHomeScreen.route
@@ -57,15 +51,21 @@ val drawerItemsList = listOf(
 
 val settingsItemList = listOf(
     NavigationItem(
-        R.string.account_settings_label,
+        R.string.switch_profile_drawer_label,
         R.drawable.baseline_account_circle_24,
-        route = null
+        route = Screen.SelectProfileScreen.route
     ),
 
     NavigationItem(
         R.string.edit_profile_label,
         R.drawable.baseline_child_care_24,
         route = Screen.UpdateProfileScreen.route
+    ),
+
+    NavigationItem(
+        R.string.change_country,
+        R.drawable.baseline_location_pin_24,
+        route = null
     ),
 
     NavigationItem(
@@ -92,6 +92,7 @@ val settingsItemList = listOf(
         route = Screen.ExploreOnboardingScreen.route
     )
 
-    )
+
+)
 
 

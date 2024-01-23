@@ -5,11 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parentcoachbot.common.GlobalState
+import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
+import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -21,6 +25,7 @@ class ProfileViewModel @Inject constructor(
     private val parentUserUseCases: ParentUserUseCases,
     private val globalState: GlobalState,
     private val authManager: AuthManager,
+    private val appPreferences: AppPreferences
 ) : ViewModel() {
 
     var getChildProfilesJob: Job? = null
@@ -28,6 +33,7 @@ class ProfileViewModel @Inject constructor(
     private val _childProfilesList = globalState.childProfilesListState
     private val _currentChildProfile = globalState.currentChildProfileState
     private val _currentLanguageCode = globalState.currentLanguageCode
+    private val _appPreferences: StateFlow<AppPreferences> = MutableStateFlow(appPreferences)
 
 
     private val _profileViewModelState = mutableStateOf(
@@ -35,7 +41,8 @@ class ProfileViewModel @Inject constructor(
             parentUserState = parentUserState,
             childProfilesListState = _childProfilesList,
             currentChildProfileState = _currentChildProfile,
-            currentLanguageCode = _currentLanguageCode
+            currentLanguageCode = _currentLanguageCode,
+            appPreferences = _appPreferences
         )
     )
 
@@ -63,33 +70,68 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun getFullChildProfilesList() {
-        getChildProfilesJob?.cancel()
+    private suspend fun updateParentAccount(
+        parentUser: ParentUser,
+        username: String,
+        country: String
+    ) {
+        parentUserUseCases.updateUsername(parentUser._id, username)
+        parentUserUseCases.updateCountry(parentUser._id, country)
 
-        getChildProfilesJob = viewModelScope.launch {
-
-            childProfileUseCases.getAllChildProfiles()?.onEach {
-                _childProfilesList.value = it
-            }?.collect()
-
-        }
+        appPreferences.setIsAccountSetUp(true)
     }
+
 
     fun onEvent(profileEvent: ProfileEvent) {
         when (profileEvent) {
             is ProfileEvent.SelectProfile -> {
                 globalState.updateCurrentChildProfile(profileEvent.childProfile)
-                // globalState.currentChildProfileState.value = profileEvent.childProfile
             }
 
             is ProfileEvent.NewProfile -> {
                 viewModelScope.launch {
                     childProfileUseCases.newChildProfile(profileEvent.childProfile.apply {
-                        println(authManager.authenticatedRealmUser.value?.id)
                         this._partition = authManager.authenticatedRealmUser.value?.id
                     })
                 }
 
+            }
+
+            is ProfileEvent.DeleteProfile -> {
+                viewModelScope.launch {
+                    childProfileUseCases.deleteChildProfile(profileEvent.childProfile)
+                }
+
+            }
+
+            is ProfileEvent.DeleteAllProfileData -> {
+                viewModelScope.launch {
+                    childProfileUseCases.deleteAllProfileData(profileEvent.childProfile)
+                }
+
+            }
+
+            is ProfileEvent.UpdateUserAccount -> {
+                viewModelScope.launch {
+                    updateParentAccount(
+                        parentUser = profileEvent.parentUser,
+                        username = profileEvent.username,
+                        country = profileEvent.country
+                    )
+                }
+            }
+
+            is ProfileEvent.UpdateProfileName -> {
+                viewModelScope.launch {
+                    val updatedProfile = childProfileUseCases.updateProfileName(
+                        profileEvent.childProfile,
+                        profileEvent.profileName
+                    )
+
+                    _currentChildProfile.value = globalState.currentChildProfileState.value
+                    _profileViewModelState.value.currentChildProfileState = _currentChildProfile
+
+                }
             }
         }
     }

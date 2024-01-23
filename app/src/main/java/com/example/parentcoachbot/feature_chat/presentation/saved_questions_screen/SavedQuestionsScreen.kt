@@ -1,3 +1,5 @@
+
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -136,9 +138,15 @@ fun SavedQuestionsScreen(
                                         )
                                     }
 
+
+
                                     items(savedQuestionsTriple) { questionSessionWithQuestionAndAnswer ->
 
                                         questionSessionWithQuestionAndAnswer?.let { questionSessionAnswerTriple ->
+
+                                            val isAnswerVisible = rememberSaveable {
+                                                mutableStateOf(false)
+                                            }
 
                                             questionSessionAnswerTriple.second?.let { question ->
                                                 QuestionBox(
@@ -147,20 +155,28 @@ fun SavedQuestionsScreen(
                                                     currentLanguageCode = currentLanguageCode.value
                                                         ?: Language.English.isoCode,
                                                     onSavedScreenEvent = onEvent,
-                                                    screenName = Screen.SavedQuestionsScreen.route
+                                                    screenName = Screen.SavedQuestionsScreen.route,
+                                                    toggleAnswerVisibility = {
+                                                        isAnswerVisible.value = !isAnswerVisible.value
+                                                        println(isAnswerVisible.value)
+                                                    }
                                                 )
                                             }
 
-                                            questionSessionAnswerTriple.third?.forEach { answer ->
-                                                // todo check how long ago questions session was loaded
-                                                AnswerBox(
-                                                    questionAnswer = answer,
-                                                    currentLanguageCode = currentLanguageCode.value
-                                                        ?: Language.English.isoCode
-                                                )
+
+                                                questionSessionAnswerTriple.third?.forEach { answer ->
+                                                    // todo check how long ago questions session was loaded
+                                                    AnimatedVisibility(visible = isAnswerVisible.value) {
+                                                        AnswerBox(
+                                                            questionAnswer = answer,
+                                                            currentLanguageCode = currentLanguageCode.value
+                                                                ?: Language.English.isoCode
+                                                        )
+
+                                                    }
+                                                }
 
 
-                                            }
 
                                         }
 

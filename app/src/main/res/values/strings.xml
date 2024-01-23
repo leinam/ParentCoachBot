@@ -54,7 +54,7 @@
     <string name="create_profile_onboarding_header">Create Profiles for Everyone</string>
     <string name="menu_label">Menu</string>
     <string name="toast_warning_name">Enter a valid name: must use only a-Z and less than 10 Characters long</string>
-    <string name="edit_profile_label">Edit Child Profile</string>
+    <string name="edit_profile_label">Edit Profile</string>
     <string name="current_profile">Profile</string>
     <string name="disclaimer_text">If you consider that something is out of normal with your child, contact your family doctor or paediatrician, or call the emergency services lines.</string>
     <string name="medical_emergency_label">Medical Emergency</string>
@@ -76,9 +76,9 @@
     <string name="pt_medical_emergency_description" translatable="false">Disponível 24h por dia, todos os dias.  O 112 é o número de telefone de emergência único europeu, disponível em toda a União Europeia. As chamadas são gratuitas.</string>
     <string name="pt_medical_emergency_2" translatable="false">Linha Saúde 24 - 808 24 24 24</string>
     <string name="pt_medical_emergency_2_description" translatable="false">Para contacto clínico, disponível 24h por dia, todos os dias.  A Linha Saúde 24 assegura triagem, aconselhamento e encaminhamento em situações de doença. O valor da chamada é o de uma chamada para a rede fixa.</string>
-    <string name="pt_mental_health_contact" translatable="false">Serviço de Aconselhamento Psicológico da Linha SNS24 - 808 24 24 24</string>
+    <string name="pt_mental_health_contact" translatable="false">Serviço de Aconselhamento Psicológico da Linha SNS24 </string>
     <string name="pt_mental_health_contact_description" translatable="false">Fale com um/a Psicólogo/a. Disponível 24h por dia, todos os dias.</string>
-    <string name="pt_mental_health_contact_2" translatable="false">SOS VOZ AMIGA - 213 544 545 | 912 802 669 | 963 524 660</string>
+    <string name="pt_mental_health_contact_2" translatable="false">SOS VOZ AMIGA </string>
     <string name="pt_mental_health_contact_2_description" translatable="false">Horário: Diariamente das 15:30 às 00:30</string>
     <string name="team_contact_label">Reseach Team Contact</string>
     <string name="portugal_team_contact" translatable="false">Beatriz Félix | beatriz.felix@fraunhofer.pt</string>
@@ -95,8 +95,8 @@
     <string name="confirm_delete_chat" translatable="false">Are you sure you want to delete this chat?</string>
     <string name="delete_label" translatable="false">Delete</string>
     <string name="cancel_label" translatable="false">Cancel</string>
-    <string name="today">Today</string>
-    <string name="yesterday">Yesterday</string>
+    <string name="today_label">Today</string>
+    <string name="yesterday_label">Yesterday</string>
     <string name="profile_name" translatable="false">Profile Name</string>
     <string name="participant_username_label" translatable="false">Username</string>
     <string name="pin_label">PIN</string>
@@ -106,4 +106,6 @@
     <string name="sa_name">South Africa</string>
     <string name="pt_name">Portugal</string>
     <string name="country_label">Country</string>
+    <string name="change_country">Change Country</string>
+    <string name="no_matching_questions" translatable="false">No Matching Question</string>
 </resources>

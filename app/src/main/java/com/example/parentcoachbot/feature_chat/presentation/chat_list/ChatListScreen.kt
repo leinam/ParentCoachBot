@@ -166,11 +166,6 @@ fun ChatListScreen(
                                 fontWeight = Normal,
                                 fontSize = 19.sp
                             )
-
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_more_vert_24),
-                                contentDescription = null, tint = PrimaryGreen
-                            )
                         }
 
                         if (chatSessionList.isNotEmpty()) {

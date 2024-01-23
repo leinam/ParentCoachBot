@@ -72,7 +72,7 @@ class SavedQuestionsViewModel @Inject constructor(
                     questionSessionUseCases.getSavedQuestionSessionsByProfile(it._id)
                         ?.onEach { questionSessionList ->
                             _savedQuestions.value = questionSessionList
-                            println(_savedQuestions.value + "saved questions")
+                            // println(_savedQuestions.value + "saved questions")
                         }?.collect()
                 }
             }.collect()
@@ -102,7 +102,7 @@ class SavedQuestionsViewModel @Inject constructor(
                             questionWithAnswer?.second
                         )
                     }
-                println(questionSessionWithQuestionAndAnswersList + "bundle")
+                // println(questionSessionWithQuestionAndAnswersList + "bundle")
                 _questionSessionsWithQuestionAndAnswersListState.value =
                     questionSessionWithQuestionAndAnswersList
 

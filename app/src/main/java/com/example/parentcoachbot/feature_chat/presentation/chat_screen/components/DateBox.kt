@@ -28,9 +28,9 @@ fun DateBox(date: LocalDate = LocalDate.now().minusDays(1),
             currentLanguageCode: String = "en") {
 
     val displayText: String = when (date) {
-        LocalDate.now() -> stringResource(id = R.string.today)
+        LocalDate.now() -> stringResource(id = R.string.today_label)
         LocalDate.now()
-            .minusDays(1) -> stringResource(id = R.string.yesterday)
+            .minusDays(1) -> stringResource(id = R.string.yesterday_label)
         else -> date.format(DateTimeFormatter.ofPattern("MMMM dd", Locale.forLanguageTag(currentLanguageCode)))
     }
 

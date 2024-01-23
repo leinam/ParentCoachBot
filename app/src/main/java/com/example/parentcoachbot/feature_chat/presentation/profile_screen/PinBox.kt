@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
 import com.example.parentcoachbot.feature_chat.presentation.Screen
 import com.example.parentcoachbot.ui.theme.TextGrey
 
@@ -36,7 +37,8 @@ import com.example.parentcoachbot.ui.theme.TextGrey
 @Composable
 fun PinBOX(
     pinCallbacks: PinCallbacks = PinCallbacksImplementation(),
-    navController: NavController = rememberNavController()
+    navController: NavController = rememberNavController(),
+    appPreferences: AppPreferences? = null
 ) {
     var pin by remember {
         mutableStateOf("")
@@ -47,7 +49,7 @@ fun PinBOX(
     }
 
     val context = LocalContext.current
-    
+    val isAccountSetup = appPreferences?.getIsAccountSetUp()
 
     BasicTextField(
         value = pin,
@@ -59,7 +61,10 @@ fun PinBOX(
                 val success = pinCallbacks.onPinUnlockClick(pin)
 
                 if (success) {
-                    navController.navigate(route = Screen.SelectProfileScreen.route)
+                    navController.navigate(
+                        route = if (isAccountSetup == true)
+                            Screen.SelectProfileScreen.route else Screen.AccountSetupScreen.route
+                    )
                 } else {
                     Toast.makeText(context, "Wrong Pin. Try Again", Toast.LENGTH_SHORT).show()
                     pin = ""
@@ -76,8 +81,10 @@ fun PinBOX(
                     }
 
 
-                    DigitBox(char, isFocused = isFocused,
-                        passwordVisible = passwordVisible)
+                    DigitBox(
+                        char, isFocused = isFocused,
+                        passwordVisible = passwordVisible
+                    )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
@@ -100,7 +107,8 @@ fun DigitBox(
     Text(
         text = if (passwordVisible) digit else if (digit.isNotBlank()) "*" else "",
         modifier = Modifier
-            .width(50.dp).height(50.dp)
+            .width(50.dp)
+            .height(50.dp)
             .border(
                 width = 1.dp,
                 color = if (isFocused) Color.Black else TextGrey,

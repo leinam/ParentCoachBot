@@ -44,10 +44,13 @@ fun CustomNavigationDrawer(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet(drawerContainerColor = Beige,
+            ModalDrawerSheet(
+                drawerContainerColor = Beige,
                 modifier =
-                Modifier.width(300.dp)
-                    .padding(contentPadding))
+                Modifier
+                    .width(300.dp)
+                    .padding(contentPadding)
+            )
             {
                 drawerItemsList.forEachIndexed { index, navBarItem ->
                     NavigationDrawerItem(
@@ -56,7 +59,7 @@ fun CustomNavigationDrawer(
                                 Text(
                                     text = stringResource(
                                         id = it
-                                    ) + ": $currentChildProfileName "
+                                    )
                                 )
                             } else navBarItem.title?.let { Text(text = stringResource(id = it)) }
                         },

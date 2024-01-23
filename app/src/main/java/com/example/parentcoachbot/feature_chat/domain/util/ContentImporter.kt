@@ -14,7 +14,7 @@ class ContentImporter(
     private val context: Context,
     private val realm: MutableRealm,
     private val topicId: String,
-    private val userId: String
+    private val partitionName: String
 ) {
     fun importContent() {
         val start = System.currentTimeMillis()
@@ -68,7 +68,7 @@ class ContentImporter(
                         this.questionText = questionTextDict
                         this.answerThread = questionAnswerThread
                         this.subtopic = questionSubtopic
-                        this._partition = userId
+                        this._partition = partitionName
                     })
 
                 }
@@ -113,7 +113,7 @@ class ContentImporter(
                         this.code = subtopicCode
                         this.description = subtopicDescriptionDict
                         this.topic = topicId
-                        this._partition = userId
+                        this._partition = partitionName
                     })
             }
 
@@ -139,7 +139,7 @@ class ContentImporter(
                         this.title = answerThreadTitle
                         this.code = answerThreadCode
                         this.subtopic = answerThreadSubtopic
-                        this._partition = userId
+                        this._partition = partitionName
                     }
 
                     realm.copyToRealm(answerThread)
@@ -203,7 +203,7 @@ class ContentImporter(
                                     this.answerThread = answerThread.code
                                     this.answerThreadPosition = index
                                     this.answerText = answerTextDict
-                                    this._partition = userId
+                                    this._partition = partitionName
                                 })
                             }
                         }

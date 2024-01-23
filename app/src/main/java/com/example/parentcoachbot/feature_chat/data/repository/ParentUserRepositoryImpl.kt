@@ -22,19 +22,46 @@ class ParentUserRepositoryImpl(private val realm: Realm) : ParentUserRepository 
     override suspend fun deleteParentUser(id: String) {
         realm.write {
             val parent = realm.query<ParentUser>(query = "_id == $0", id).find().firstOrNull()
-            parent?.let {user ->
+            parent?.let { user ->
                 findLatest(user)?.also { delete(it) }
             }
 
         }
     }
 
+    override suspend fun updateUsername(id: String, username: String): Unit =
+        withContext(Dispatchers.IO) {
+            val parentUser: ParentUser? =
+                realm.query<ParentUser>("_id == $0", id).first().find()
+            realm.write {
+                parentUser?.let {
+                    findLatest(it)?.let { liveParentUser ->
+                        liveParentUser.username = username
+
+                    }
+                }
+            }
+        }
+
+    override suspend fun updateCountry(id: String, country: String): Unit =
+        withContext(Dispatchers.IO) {
+            val parentUser: ParentUser? =
+                realm.query<ParentUser>("_id == $0", id).first().find()
+            realm.write {
+                parentUser?.let {
+                    findLatest(it)?.let { liveParentUser ->
+                        liveParentUser.country = country
+                    }
+                }
+            }
+        }
+
     override suspend fun getParentUserById(id: String): ParentUser? =
         withContext(Dispatchers.IO) {
-            try{
+            try {
                 realm.query<ParentUser>(query = "id == $0", id).find().firstOrNull()
                     ?.copyFromRealm()
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
                 null
             }
@@ -45,7 +72,7 @@ class ParentUserRepositoryImpl(private val realm: Realm) : ParentUserRepository 
             realm.query<ParentUser>().find().asFlow().map {
                 it.list.firstOrNull()?.copyFromRealm()
             }
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
             null
         }

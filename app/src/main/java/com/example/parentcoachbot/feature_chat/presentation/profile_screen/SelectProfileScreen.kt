@@ -1,8 +1,11 @@
 package com.example.parentcoachbot.feature_chat.presentation.profile_screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,13 +18,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,7 +45,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
+import com.example.parentcoachbot.feature_chat.presentation.ConfirmDeleteDialog
 import com.example.parentcoachbot.feature_chat.presentation.Screen
+import com.example.parentcoachbot.ui.theme.BackgroundBeige
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.LightBeige
@@ -55,14 +65,16 @@ fun SelectProfileScreen(
 
     val profileStateWrapper = profileState.value
     val childProfileList: List<ChildProfile> by profileStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
-    println(childProfileList)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = PrimaryGreen)
     ) {
-        Row (horizontalArrangement = Arrangement.End,
-            modifier = Modifier.fillMaxWidth()){
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth()
+        ) {
 
 
         }
@@ -104,7 +116,7 @@ fun SelectProfileScreen(
 
                     }
 
-                    if (childProfileList.size < 3){
+                    if (childProfileList.size < 3) {
                         items(1) {
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -117,8 +129,7 @@ fun SelectProfileScreen(
                                         .background(color = LightGreen)
                                         .clickable {
                                             navController.navigate(Screen.AddProfileScreen.route)
-                                        }
-                                    ,
+                                        },
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
@@ -126,7 +137,6 @@ fun SelectProfileScreen(
                                         contentDescription = null, tint = Beige,
                                         modifier = Modifier.size(100.dp)
                                     )
-
 
 
                                 }
@@ -153,6 +163,7 @@ fun SelectProfileScreen(
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun ProfileItem(
@@ -160,25 +171,81 @@ fun ProfileItem(
     navController: NavController = rememberNavController(),
     onEvent: (ProfileEvent) -> Unit = {}
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    var isDeleteButtonVisible by remember {
+        mutableStateOf(false)
+    }
 
-        BoxWithConstraints(
-            modifier = Modifier
-                .padding(10.dp)
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(10.dp))
-                .background(color = Beige)
-                .clickable {
-                    onEvent(ProfileEvent.SelectProfile(childProfile))
-                    navController.navigate(Screen.ChatListScreen.route)
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.child_face),
-                contentDescription = null, tint = PrimaryGreen,
-                modifier = Modifier.size(100.dp)
-            )
+    var openAlertDialog = remember {
+        mutableStateOf(false)
+    }
+
+    when {
+        openAlertDialog.value -> {
+            ConfirmDeleteDialog(onConfirmation = {
+
+                openAlertDialog.value = false
+                onEvent(ProfileEvent.DeleteProfile(childProfile))
+
+
+            },
+                onDismissRequest =
+                {
+                    openAlertDialog.value = false
+
+                }, dialogText = "Are you sure you want to delete this profile?",
+                dialogTitle = "Delete Profile")
+        }
+    }
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box {
+            BoxWithConstraints(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(color = Beige)
+                    .combinedClickable(onClick = {
+                        onEvent(ProfileEvent.SelectProfile(childProfile))
+                        navController.navigate(Screen.ChatListScreen.route)
+                    }, onLongClick = {
+                        isDeleteButtonVisible = !isDeleteButtonVisible
+                    })
+
+
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.child_face),
+                    contentDescription = null, tint = PrimaryGreen,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .align(Alignment.Center)
+                )
+            }
+
+            androidx.compose.animation.AnimatedVisibility(visible = isDeleteButtonVisible) {
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(LightGreen)
+                        .align(
+                            Alignment.TopEnd
+                        )
+                        .clickable {
+                            openAlertDialog.value = true
+                            isDeleteButtonVisible = false
+                        }
+                ) {
+                    Icon(
+                        Icons.Default.Clear,
+                        contentDescription = "delete-profile",
+                        modifier = Modifier.padding(5.dp),
+                        tint = BackgroundBeige
+                    )
+                }
+            }
+
+
         }
 
         childProfile.name?.let {

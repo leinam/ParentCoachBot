@@ -3,7 +3,12 @@ package com.example.parentcoachbot.common
 import org.apache.lucene.analysis.CharArraySet
 
 object Constants {
-    const val APP_ID = "pcapptest-golce"
+    const val APP_ID = "devicesync-cxlwi"
+    const val PREFS_NAME = "MyAppPreferences"
+    const val DEFAULT_LANGUAGE_KEY = "default_language"
+    const val FIRST_TIME_USE = "is_first_time"
+    const val IS_TOUR_COMPLETE = "is_tour_complete"
+    const val IS_DB_INIT_KEY = "is_db_initialized"
 }
 
 val portugueseStopWordsSet: Set<String> = setOf(

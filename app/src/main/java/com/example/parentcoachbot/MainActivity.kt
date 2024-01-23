@@ -72,7 +72,7 @@ class MainActivity() : ComponentActivity() {
 
 
         setContent {
-            ParentCoachBotTheme {
+            ParentCoachBotTheme (darkTheme = false){
                 // A surface container using the 'background' color from the theme
                 val authResult: User? by authManager.authenticatedRealmUser.collectAsStateWithLifecycle()
 
@@ -88,6 +88,8 @@ class MainActivity() : ComponentActivity() {
         val appPreferences = newBase.getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
         val language = appPreferences.getString("default_language", Language.English.isoCode)
             ?: Language.English.isoCode
+
+
 
         val context = MyContextWrapper.wrap(
             newBase,

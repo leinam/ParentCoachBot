@@ -19,6 +19,7 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListVi
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatScreen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatViewModel
 import com.example.parentcoachbot.feature_chat.presentation.emergency_screen.EmergencyInfoScreen
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.AccountSetupScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.AddProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.CreateProfileSplashScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.PinEntryScreen
@@ -43,9 +44,9 @@ fun Navigation() {
     val savedQuestionsViewModel: SavedQuestionsViewModel = hiltViewModel()
     val splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
     val profileViewModel: ProfileViewModel = hiltViewModel()
-
     val firebaseAnalytics: FirebaseAnalytics = chatViewModel.firebaseAnalytics
     val currentParentUser by profileViewModel.profileViewModelState.value.parentUserState.collectAsStateWithLifecycle()
+    val isTourCompleted by splashScreenViewModel.splashScreenViewModelState.value.isTourComplete.collectAsStateWithLifecycle()
     firebaseAnalytics.setUserId(currentParentUser?.username ?: "Unknown")
 
     DisposableEffect(Unit) {
@@ -106,9 +107,11 @@ fun Navigation() {
         }
     }
 
+
+
     NavHost(
         navController = navHostController,
-        startDestination = Screen.FirstTimeSplashScreen.route
+        startDestination = if (isTourCompleted) Screen.PinEntryScreen.route else Screen.FirstTimeSplashScreen.route
     ) {
         composable(route = Screen.FirstTimeSplashScreen.route) {
             FirstTimeSplashScreen(navController = navHostController,
@@ -129,15 +132,27 @@ fun Navigation() {
                 })
         }
 
-        composable(route = Screen.ExploreOnboardingScreen.route) {
-            OnboardingScreen(
-                onboardingPageItem = OnboardingPageItem.ExploreTopics,
-                navController = navHostController
+        composable(route = Screen.AccountSetupScreen.route) {
+            AccountSetupScreen(
+                navController = navHostController,
+                onEvent = { profileEvent -> profileViewModel.onEvent(profileEvent) },
+                profileState = profileViewModel.profileViewModelState
             )
         }
 
-        composable(route = Screen.PinEntryScreen.route ){
-            PinEntryScreen(navController = navHostController)
+        composable(route = Screen.ExploreOnboardingScreen.route) {
+            OnboardingScreen(
+                onboardingPageItem = OnboardingPageItem.ExploreTopics,
+                navController = navHostController,
+                onEvent = { splashScreenEvent -> splashScreenViewModel.onEvent(splashScreenEvent) }
+            )
+        }
+
+        composable(route = Screen.PinEntryScreen.route) {
+            PinEntryScreen(
+                navController = navHostController,
+                profileState = profileViewModel.profileViewModelState
+            )
         }
 
         composable(route = Screen.SearchOnboardingScreen.route) {
@@ -171,12 +186,19 @@ fun Navigation() {
         }
 
         composable(route = Screen.CreateProfileSplashScreen.route) {
-            CreateProfileSplashScreen(navController = navHostController)
+            CreateProfileSplashScreen(
+                navController = navHostController,
+                onEvent = { splashScreenEvent -> splashScreenViewModel.onEvent(splashScreenEvent) })
         }
 
         composable(route = Screen.UpdateProfileScreen.route) {
-            UpdateProfileScreen(navController = navHostController,
-                profileViewModel.profileViewModelState)
+            UpdateProfileScreen(
+                navController = navHostController,
+                profileViewModel.profileViewModelState,
+                onEvent = { profileEvent ->
+                    profileViewModel.onEvent(profileEvent)
+                }
+            )
 
         }
 
@@ -209,7 +231,10 @@ fun Navigation() {
             ResourcesHomeScreen(navController = navHostController)
         }
         composable(route = Screen.EmergencyInfoScreen.route) {
-            EmergencyInfoScreen(navController = navHostController)
+            EmergencyInfoScreen(
+                navController = navHostController,
+                profileState = profileViewModel.profileViewModelState
+            )
         }
 
     }

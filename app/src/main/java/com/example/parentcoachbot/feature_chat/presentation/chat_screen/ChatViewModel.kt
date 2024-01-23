@@ -343,12 +343,6 @@ class ChatViewModel @Inject constructor(
                         ?.onEach { questionSessionList ->
                             _questionSessionListState.value = questionSessionList
 
-                            println(questionSessionList.groupBy {
-                                RealmInstantConverter.toLocalDate(
-                                    it.timeAsked
-                                )
-                            })
-
                             // println("c${_currentChatState.value?._id}: ${_questionSessionListState.value}")
                         }?.collect()
                 }

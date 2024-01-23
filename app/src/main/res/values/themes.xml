@@ -5,8 +5,11 @@
         <item name="android:colorPrimary">@color/primary_green</item>
         <item name="android:colorPrimaryDark">@color/primary_green</item>
     </style>
-    <style name="Theme.SplashScreen" parent="android:Theme.Material.Light.NoActionBar"/>
+
+
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/Theme.ParentCoachBot</item>
+        <item name="android:icon">@mipmap/ic_launcher_pc_round</item>
+        <item name="android:background">@color/primary_green</item>
     </style>
 </resources>

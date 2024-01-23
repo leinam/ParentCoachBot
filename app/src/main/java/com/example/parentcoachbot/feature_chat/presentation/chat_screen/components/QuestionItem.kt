@@ -1,7 +1,8 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_screen.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -24,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +49,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun QuestionBox(
@@ -59,6 +60,7 @@ fun QuestionBox(
     screenName: String = Screen.ChatScreen.route,
     onSavedScreenEvent: (savedQuestionsScreenEvent: SavedQuestionsScreenEvent) -> Unit = {},
     currentLanguageCode: String = Language.English.isoCode,
+    toggleAnswerVisibility: () -> Unit = {},
     openAlertDialogState: MutableState<Boolean> = mutableStateOf(false)
 ) {
     var isContextMenuVisible by rememberSaveable {
@@ -115,11 +117,10 @@ fun QuestionBox(
                         bottomEnd = 20.dp
                     )
                 )
-                .pointerInput(true) {
-                    detectTapGestures(onLongPress = {
-                        isContextMenuVisible = true
-                    })
-                }
+
+                .combinedClickable(
+                    onLongClick = { isContextMenuVisible = true },
+                    onClick = { toggleAnswerVisibility() })
                 .background(color = LighterOrange)
                 .padding(16.dp)
                 .align(Alignment.Center)
@@ -155,7 +156,7 @@ fun QuestionBox(
 
                 Text(
                     text = timeAsked,
-                    fontSize = 7.sp, modifier = Modifier.padding(start = 5.dp, top = 10.dp),
+                    fontSize = 11.sp, modifier = Modifier.padding(start = 5.dp, top = 10.dp),
                     color = TextGrey
                 )
             }

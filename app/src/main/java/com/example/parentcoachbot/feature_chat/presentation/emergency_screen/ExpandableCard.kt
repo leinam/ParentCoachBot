@@ -35,16 +35,17 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.parentcoachbot.R
-import com.example.parentcoachbot.ui.theme.Beige
-import com.example.parentcoachbot.ui.theme.ChatListGreen
+import com.example.parentcoachbot.ui.theme.TextGrey
+import com.example.parentcoachbot.ui.theme.ThinGreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun ExpandableCard(@StringRes cardHeaderStringId: Int = R.string.medical_emergency_label,
-                   content: @Composable () -> Unit = { }, headerFontSize: TextUnit = 27.sp)
-{
+fun ExpandableCard(
+    @StringRes cardHeaderStringId: Int = R.string.medical_emergency_label,
+    content: @Composable () -> Unit = { }, headerFontSize: TextUnit = 27.sp
+) {
     var isExpanded by remember {
         mutableStateOf(false)
     }
@@ -60,18 +61,19 @@ fun ExpandableCard(@StringRes cardHeaderStringId: Int = R.string.medical_emergen
             )
             .padding(10.dp)
             .fillMaxWidth()
-            .background(color = ChatListGreen)
-            .clip(RoundedCornerShape(20.dp)),
+            .clip(RoundedCornerShape(20.dp))
+            .background(color = ThinGreen),
         onClick = {
             isExpanded = !isExpanded
         }, shape = Shapes().medium
     ) {
 
-        Column(modifier = Modifier
-            .background(color = ChatListGreen)
-            .fillMaxWidth()
-            .padding(8.dp)
-            ) {
+        Column(
+            modifier = Modifier
+                .background(color = ThinGreen)
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -79,27 +81,26 @@ fun ExpandableCard(@StringRes cardHeaderStringId: Int = R.string.medical_emergen
                 Text(
                     text = stringResource(id = cardHeaderStringId),
                     fontSize = headerFontSize,
-                    color = Beige,
+                    color = TextGrey,
                     modifier = Modifier
                         .padding(10.dp)
                         .weight(6f),
                     maxLines = 1,
                     overflow = TextOverflow.Visible
-                    )
+                )
 
                 IconButton(modifier = Modifier.weight(1f), onClick = {
                     isExpanded = !isExpanded
                 }) {
                     Icon(
                         imageVector = if (!isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                        contentDescription = null, tint = Beige
+                        contentDescription = null, tint = TextGrey
                     )
                 }
             }
-                if (isExpanded) {
-                    content()
-                }
-
+            if (isExpanded) {
+                content()
+            }
 
 
         }

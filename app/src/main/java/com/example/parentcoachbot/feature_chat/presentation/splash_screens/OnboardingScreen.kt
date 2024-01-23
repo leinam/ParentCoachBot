@@ -41,7 +41,8 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 @Composable
 fun OnboardingScreen(
     onboardingPageItem: OnboardingPageItem = OnboardingPageItem.ExploreTopics,
-    navController: NavController = rememberNavController()
+    navController: NavController = rememberNavController(),
+    onEvent: (SplashScreenEvent) -> Unit = {}
 ) {
 
     val headerText: String = stringResource(onboardingPageItem.headerText)
