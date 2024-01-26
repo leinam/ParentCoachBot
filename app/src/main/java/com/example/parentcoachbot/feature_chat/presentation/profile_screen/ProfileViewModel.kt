@@ -81,6 +81,13 @@ class ProfileViewModel @Inject constructor(
         appPreferences.setIsAccountSetUp(true)
     }
 
+    private suspend fun updateParentUserAccountCountry(
+        parentUser: ParentUser,
+        country: String
+    ) {
+        parentUserUseCases.updateCountry(parentUser._id, country)
+    }
+
 
     fun onEvent(profileEvent: ProfileEvent) {
         when (profileEvent) {
@@ -130,6 +137,17 @@ class ProfileViewModel @Inject constructor(
 
                     _currentChildProfile.value = globalState.currentChildProfileState.value
                     _profileViewModelState.value.currentChildProfileState = _currentChildProfile
+
+                }
+            }
+
+            is ProfileEvent.UpdateCountry -> {
+                viewModelScope.launch {
+                    updateParentUserAccountCountry(
+                        parentUser = profileEvent.parentUser,
+                        country = profileEvent.country
+                    )
+
 
                 }
             }

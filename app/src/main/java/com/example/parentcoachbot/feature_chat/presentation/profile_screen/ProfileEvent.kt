@@ -10,4 +10,5 @@ sealed class ProfileEvent {
     data class DeleteProfile(val childProfile: ChildProfile) : ProfileEvent()
     data class DeleteAllProfileData(val childProfile: ChildProfile) : ProfileEvent()
     data class UpdateUserAccount(val parentUser: ParentUser, val username: String, val country: String): ProfileEvent()
+    data class UpdateCountry(val parentUser: ParentUser, val country: String): ProfileEvent()
 }

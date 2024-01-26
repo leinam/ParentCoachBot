@@ -381,6 +381,7 @@ fun AccountSetupScreen(
                 Text(
                     text = stringResource(id = R.string.account_setup),
                     textAlign = TextAlign.Center,
+                    lineHeight = 42.sp,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.Medium,
                     fontSize = 36.sp,

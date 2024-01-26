@@ -181,7 +181,8 @@ fun EmergencyInfoScreen(
                                                 fontWeight = FontWeight.Bold,
                                                 color = TextGrey,
                                                 textDecoration = TextDecoration.Underline,
-                                                modifier = Modifier.padding(10.dp)
+                                                modifier = Modifier
+                                                    .padding(10.dp)
                                                     .clickable {
                                                         PhoneDialerManager.openDialPad(
                                                             context = context,
@@ -216,12 +217,14 @@ fun EmergencyInfoScreen(
                                                 fontWeight = FontWeight.Bold,
                                                 color = TextGrey,
                                                 textDecoration = TextDecoration.Underline,
-                                                modifier = Modifier.padding(10.dp).clickable {
-                                                    PhoneDialerManager.openDialPad(
-                                                        context = context,
-                                                        phoneNum = "0800567567"
-                                                    )
-                                                }
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                                    .clickable {
+                                                        PhoneDialerManager.openDialPad(
+                                                            context = context,
+                                                            phoneNum = "0800567567"
+                                                        )
+                                                    }
                                             )
                                             Text(
                                                 text = stringResource(id = R.string.sadag_info),
@@ -246,17 +249,19 @@ fun EmergencyInfoScreen(
                                             )
 
                                             Text(
-                                                text ="808 24 24 24",
+                                                text = "808 24 24 24",
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = TextGrey,
                                                 textDecoration = TextDecoration.Underline,
-                                                modifier = Modifier.padding(10.dp).clickable {
-                                                    PhoneDialerManager.openDialPad(
-                                                        context = context,
-                                                        phoneNum = "808242424"
-                                                    )
-                                                }
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                                    .clickable {
+                                                        PhoneDialerManager.openDialPad(
+                                                            context = context,
+                                                            phoneNum = "808242424"
+                                                        )
+                                                    }
                                             )
 
 
@@ -274,45 +279,51 @@ fun EmergencyInfoScreen(
                                                 modifier = Modifier.padding(10.dp)
                                             )
                                             Text(
-                                                text ="213 544 545",
+                                                text = "213 544 545",
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = TextGrey,
                                                 textDecoration = TextDecoration.Underline,
-                                                modifier = Modifier.padding(10.dp).clickable {
-                                                    PhoneDialerManager.openDialPad(
-                                                        context = context,
-                                                        phoneNum = "213544545"
-                                                    )
-                                                }
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                                    .clickable {
+                                                        PhoneDialerManager.openDialPad(
+                                                            context = context,
+                                                            phoneNum = "213544545"
+                                                        )
+                                                    }
                                             )
 
                                             Text(
-                                                text ="912 802 669",
+                                                text = "912 802 669",
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = TextGrey,
                                                 textDecoration = TextDecoration.Underline,
-                                                modifier = Modifier.padding(10.dp).clickable {
-                                                    PhoneDialerManager.openDialPad(
-                                                        context = context,
-                                                        phoneNum = "912 802 669"
-                                                    )
-                                                }
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                                    .clickable {
+                                                        PhoneDialerManager.openDialPad(
+                                                            context = context,
+                                                            phoneNum = "912 802 669"
+                                                        )
+                                                    }
                                             )
 
                                             Text(
-                                                text ="963 524 660",
+                                                text = "963 524 660",
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = TextGrey,
                                                 textDecoration = TextDecoration.Underline,
-                                                modifier = Modifier.padding(10.dp).clickable {
-                                                    PhoneDialerManager.openDialPad(
-                                                        context = context,
-                                                        phoneNum = "963 524 660"
-                                                    )
-                                                }
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                                    .clickable {
+                                                        PhoneDialerManager.openDialPad(
+                                                            context = context,
+                                                            phoneNum = "963 524 660"
+                                                        )
+                                                    }
                                             )
 
                                             Text(
@@ -320,6 +331,60 @@ fun EmergencyInfoScreen(
                                                 fontSize = 15.sp,
                                                 color = TextGrey,
                                                 modifier = Modifier.padding(10.dp)
+                                            )
+                                        }
+                                    })
+                            }
+
+                            item {
+                                ExpandableCard(
+                                    cardHeaderStringId = R.string.team_contact_label,
+                                    content = {
+                                        if (parentUser?.country == "South Africa") {
+                                            Text(
+                                                text = "South Africa",
+                                                fontSize = 20.sp,
+                                                color = PrimaryGreen,
+                                                modifier = Modifier.padding(10.dp)
+                                            )
+
+                                            Text(
+                                                text = stringResource(id = R.string.research_contact_description),
+                                                fontSize = 15.sp,
+                                                color = TextGrey,
+                                                modifier = Modifier.padding(10.dp)
+                                            )
+
+                                            Text(
+                                                text = stringResource(id = R.string.sa_team_contact),
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = TextGrey,
+                                                modifier = Modifier.padding(10.dp)
+                                            )
+
+                                        } else {
+                                            Text(
+                                                text = "Portugal",
+                                                fontSize = 20.sp,
+                                                color = PrimaryGreen,
+                                                modifier = Modifier.padding(10.dp)
+                                            )
+
+                                            Text(
+                                                text = stringResource(id = R.string.research_contact_description),
+                                                fontSize = 15.sp,
+                                                color = TextGrey,
+                                                modifier = Modifier.padding(10.dp)
+                                            )
+
+                                            Text(
+                                                text = stringResource(id = R.string.pt_team_contact),
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = TextGrey,
+                                                modifier = Modifier.padding(10.dp)
+
                                             )
                                         }
                                     })

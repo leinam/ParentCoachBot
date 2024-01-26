@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.presentation.profile_screen
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +34,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -65,6 +68,7 @@ fun SelectProfileScreen(
 
     val profileStateWrapper = profileState.value
     val childProfileList: List<ChildProfile> by profileStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -116,37 +120,46 @@ fun SelectProfileScreen(
 
                     }
 
-                    if (childProfileList.size < 3) {
-                        items(1) {
 
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    items(1) {
 
-                                BoxWithConstraints(
-                                    modifier = Modifier
-                                        .padding(10.dp)
-                                        .aspectRatio(1f)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(color = LightGreen)
-                                        .clickable {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                            BoxWithConstraints(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(color = if (childProfileList.size < 3) LightGreen else Color.LightGray)
+                                    .clickable {
+                                        if (childProfileList.size < 3) {
                                             navController.navigate(Screen.AddProfileScreen.route)
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.baseline_add_24),
-                                        contentDescription = null, tint = Beige,
-                                        modifier = Modifier.size(100.dp)
-                                    )
-
-
-                                }
-
-                                Text(
-                                    text = stringResource(id = R.string.new_profile_label),
-                                    color = LightBeige,
-                                    fontSize = 18.sp
+                                        } else {
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    "You cannot have more than three profiles at once. Long Press on a profile to delete.",
+                                                    Toast.LENGTH_LONG
+                                                )
+                                                .show()
+                                        }
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_add_24),
+                                    contentDescription = null, tint = Beige,
+                                    modifier = Modifier.size(100.dp)
                                 )
+
+
                             }
+
+                            Text(
+                                text = stringResource(id = R.string.new_profile_label),
+                                color = LightBeige,
+                                fontSize = 18.sp
+                            )
                         }
                     }
 
@@ -181,19 +194,21 @@ fun ProfileItem(
 
     when {
         openAlertDialog.value -> {
-            ConfirmDeleteDialog(onConfirmation = {
+            ConfirmDeleteDialog(
+                onConfirmation = {
 
-                openAlertDialog.value = false
-                onEvent(ProfileEvent.DeleteProfile(childProfile))
+                    openAlertDialog.value = false
+                    onEvent(ProfileEvent.DeleteProfile(childProfile))
 
 
-            },
+                },
                 onDismissRequest =
                 {
                     openAlertDialog.value = false
 
                 }, dialogText = "Are you sure you want to delete this profile?",
-                dialogTitle = "Delete Profile")
+                dialogTitle = "Delete Profile"
+            )
         }
     }
 

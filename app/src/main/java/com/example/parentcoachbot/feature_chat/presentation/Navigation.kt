@@ -28,8 +28,11 @@ import com.example.parentcoachbot.feature_chat.presentation.profile_screen.Selec
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsScreenEvent
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsViewModel
+import com.example.parentcoachbot.feature_chat.presentation.settings_screen.ChangeCountryScreen
+import com.example.parentcoachbot.feature_chat.presentation.settings_screen.DataPrivacyScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SelectLanguageScreen
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.SettingsHomeScreen
+import com.example.parentcoachbot.feature_chat.presentation.settings_screen.TermsOfUseScreen
 import com.example.parentcoachbot.feature_chat.presentation.splash_screens.FirstTimeSplashScreen
 import com.example.parentcoachbot.feature_chat.presentation.splash_screens.OnboardingScreen
 import com.example.parentcoachbot.feature_chat.presentation.splash_screens.SplashScreenViewModel
@@ -212,14 +215,24 @@ fun Navigation() {
                     // todo trigger list update on saved screen - must do this for all things depending on global state
                 })
         }
+
         composable(route = Screen.SettingsHomeScreen.route) {
             SettingsHomeScreen(navController = navHostController)
         }
+
+        composable(route = Screen.ChangeCountryScreen.route) {
+            ChangeCountryScreen(
+                navController = navHostController,
+                onEvent = { profileEvent -> profileViewModel.onEvent(profileEvent) },
+                profileState = profileViewModel.profileViewModelState)
+        }
+
         composable(route = Screen.SelectLanguageScreen.route) {
             SelectLanguageScreen(navController = navHostController,
                 chatViewModelState = chatViewModel.chatViewModelState,
                 onEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) })
         }
+
         composable(route = Screen.SavedQuestionsScreen.route) {
             SavedQuestionsScreen(
                 navController = navHostController,
@@ -232,6 +245,20 @@ fun Navigation() {
         }
         composable(route = Screen.EmergencyInfoScreen.route) {
             EmergencyInfoScreen(
+                navController = navHostController,
+                profileState = profileViewModel.profileViewModelState
+            )
+        }
+
+        composable(route = Screen.DataPrivacyScreen.route) {
+            DataPrivacyScreen(
+                navController = navHostController,
+                profileState = profileViewModel.profileViewModelState
+            )
+        }
+
+        composable(route = Screen.TermsOfUseScreen.route) {
+            TermsOfUseScreen(
                 navController = navHostController,
                 profileState = profileViewModel.profileViewModelState
             )

@@ -30,14 +30,14 @@
     <string name="create_profile_button_label">Create</string>
     <string name="update_profile_button_label">Save</string>
     <string name="explore_topics_header_text">Explore  Themes</string>
-    <string name="explore_topics_description_text">Learn more about different themes around Breastfeeding 🤱🏽 and Sleep 💤</string>
+    <string name="explore_topics_description_text">Learn more about different themes around Breastfeeding 🤱🏽</string>
     <string name="search_questions_header_text">Search Questions</string>
     <string name="search_questions_description_text">Search 🔍 from  different queries the ones that best fit your doubts 🤔</string>
     <string name="save_favourites_header_text">Save Favourites</string>
     <string name="save_favourites_description_text">Save useful messages  or images as favourites ⭐️ to look for them in  the future.</string>
     <string name="continue_label">Continue</string>
     <string name="skip_label">Skip</string>
-    <string name="search_bar_placeholder" translatable="false">Search for a question</string>
+    <string name="search_bar_placeholder">Search for a question</string>
     <string name="language_label">Languages</string>
     <string name="data_privacy_label">Data Privacy And Security</string>
     <string name="terms_label">Terms of Use</string>
@@ -59,10 +59,10 @@
     <string name="disclaimer_text">If you consider that something is out of normal with your child, contact your family doctor or paediatrician, or call the emergency services lines.</string>
     <string name="medical_emergency_label">Medical Emergency</string>
     <string name="sa_emergency_contact">Ambulance: 10177</string>
-    <string name="contacts_header" translatable="false">Helpful Contacts</string>
-    <string name="save_question_label" translatable="false">Save Question</string>
-    <string name="unsave_question_label" translatable="false">Unsave Question</string>
-    <string name="delete_question_label" translatable="false">Delete Question</string>
+    <string name="contacts_header">Helpful Contacts</string>
+    <string name="save_question_label">Save Question</string>
+    <string name="unsave_question_label">Unsave Question</string>
+    <string name="delete_question_label">Delete Question</string>
     <string name="zulu_lang">isiZulu</string>
     <string name="english_lang">English</string>
     <string name="portuguese_lang">Portuguese</string>
@@ -81,31 +81,49 @@
     <string name="pt_mental_health_contact_2" translatable="false">SOS VOZ AMIGA </string>
     <string name="pt_mental_health_contact_2_description" translatable="false">Horário: Diariamente das 15:30 às 00:30</string>
     <string name="team_contact_label">Reseach Team Contact</string>
-    <string name="portugal_team_contact" translatable="false">Beatriz Félix | beatriz.felix@fraunhofer.pt</string>
-    <string name="sa_team_contact" translatable="false">Leina Meoli | mlxlei001@myuct.ac.za</string>
+    <string name="helpful_contacts_header">Helpful Contacts</string>
+    <string name="sa_team_contact">Leina Meoli | mlxlei001@myuct.ac.za</string>
     <string name="research_contact_description">In case of doubts or questions related to the application or its content.</string>
     <string name="sa_emergency_contact_description">24-hour emergency medical and rescue service contact</string>
-    <string name="account_settings_label" translatable="false">My Account</string>
-    <string name="no_chats_prompt" translatable="false">Click on the button below to start a new chat</string>
+    <string name="account_settings_label">My Account</string>
+    <string name="no_chats_prompt">Click on the button below to start a new chat</string>
     <string name="saved_questions_drawer_label">Saved Questions</string>
-    <string name="saved_messages_label" translatable="false">Saved Messages</string>
-    <string name="no_saved_messages_label" translatable="false">No Saved Messages</string>
-    <string name="no_saved_messages_prompt" translatable="false">Long Press a question in a chat to save it for later.</string>
-    <string name="confirm_delete_question" translatable="false">Are you sure you want to delete this question?</string>
-    <string name="confirm_delete_chat" translatable="false">Are you sure you want to delete this chat?</string>
-    <string name="delete_label" translatable="false">Delete</string>
-    <string name="cancel_label" translatable="false">Cancel</string>
+    <string name="saved_messages_label">Saved Messages</string>
+    <string name="no_saved_messages_label">No Saved Messages</string>
+    <string name="no_saved_messages_prompt">Long Press a question in a chat to save it for later.</string>
+    <string name="confirm_delete_question">Are you sure you want to delete this question?</string>
+    <string name="confirm_delete_chat">Are you sure you want to delete this chat?</string>
+    <string name="delete_label">Delete</string>
+    <string name="cancel_label">Cancel</string>
     <string name="today_label">Today</string>
     <string name="yesterday_label">Yesterday</string>
-    <string name="profile_name" translatable="false">Profile Name</string>
-    <string name="participant_username_label" translatable="false">Username</string>
+    <string name="profile_name">Profile Name</string>
+    <string name="participant_username_label">Username</string>
     <string name="pin_label">PIN</string>
-    <string name="account_setup" translatable="false">Set Up Your Account</string>
+    <string name="account_setup">Set Up Your ParentCoach Account</string>
     <string name="confirm_pin_label">Confirm PIN</string>
     <string name="enter_pin_prompt">Enter Your PIN</string>
     <string name="sa_name">South Africa</string>
     <string name="pt_name">Portugal</string>
     <string name="country_label">Country</string>
     <string name="change_country">Change Country</string>
-    <string name="no_matching_questions" translatable="false">No Matching Question</string>
+    <string name="no_matching_questions">No Matching Question</string>
+    <string name="toast_successful_account_update">Successfully updated your account details.</string>
+    <string name="toast_pin_error">Wrong Pin. Try Again</string>
+    <string name="toast_warning_profiles">You cannot have more than three profiles at once. Long Press on a profile to delete.</string>
+    <string name="pt_team_contact" translatable="false">Beatriz Félix | beatriz.felix@fraunhofer.pt</string>
+    <string name="data_privacy_introduction_sa">The ParentCoach app needs to gather and use certain information about its users. Thus, this policy describes how this personal data must be collected, handled and stored to meet the company’s data protection standards — and to comply with the law.</string>
+    <string name="data_privacy_why_description">This data protection policy ensures that the chatbot ParentCoach:   Complies with data protection law and follow good practice.   Protects the rights of collaborators, users and partners.   Is transparent about how it stores and processes users’ data.   Protects itself from the risks of data breach.</string>
+    <string name="data_privacy_introduction_header">Introduction</string>
+    <string name="data_protection_law_text">The General Data Protection Regulation 2016/679 describes how organizations — including the app ParentCoach — must collect, handle and store personal information. POPIA ACT SA     These rules apply regardless of whether data is stored electronically, on paper or on other materials.      To comply with the law, personal information must be collected and used fairly, stored safely and not disclosed unlawfully.</string>
+    <string name="data_privacy_why_header">Why this policy exists</string>
+    <string name="data_protection_law_header">Data Protection Law</string>
+    <string name="data_privacy_introduction_pt">The ParentCoach app needs to gather and use certain information about its users. Thus, this policy describes how this personal data must be collected, handled and stored to meet the company’s data protection standards — and to comply with the law.</string>
+    <string name="data_privacy_why_pt">This data protection policy guarantees that the ParentCoach chatbot:      Complies with data protection law and follows good practice.      Protects the rights of collaborators, users and partners.      Is transparent about how it stores and processes user data.      Protects itself from the risks of data breaches.</string>
+    <string name="data_protection_law_pt">The General Data Protection Regulation 2016/679 describes how organisations - including the chatbot ParentCoach, led by Fraunhofer AICOS - must collect, process and store personal information.         These rules apply regardless of whether the data is stored electronically, on paper or on other materials.          To comply with the law, personal information must be collected and used fairly, stored securely and not disclosed unlawfully.</string>
+    <string name="terms_of_use_description_sa">At ParentCoach, we collect and manage user data according to the following Privacy Policy.</string>
+    <string name="terms_of_use_text_Sa">We collect information you provide directly to us. For example, we collect information when you create an account, subscribe, participate in any interactive features of our services, fill out a form, request support or otherwise communicate with us. The types of information we may collect include your name, email address and other contact or identifying information you choose to provide.     We collect anonymous data from every visitor that logs to the app to monitor traffic and fix bugs. For example, we collect information like web requests, the data sent in response to such requests, the Internet Protocol address, the browser type, the browser language, and a timestamp for the request.     We also use various technologies to collect information, and this may include sending cookies to your computer. Cookies are small data files stored on your hard drive or in your device memory that helps us to improve our services and your experience, see which areas and features of our services are popular and count visits. We may also collect information using web beacons (also known as \"tracking pixels\"). Web beacons are electronic images that may be used in our services or emails and to track count visits or understand usage and campaign effectiveness. Our Privacy Policy was created with the help of the Privacy Policy Template Generator.</string>
+    <string name="terms_ofuse_description_pt">At ParentCoach, we collect and manage user data in accordance with the following Privacy Policy.</string>
+    <string name="terms_of_use_text_pt">We collect information that the user provides to us directly. For example, we collect information when you create an account, subscribe, participate in any interactive features of our services, fill in a form, request support or communicate with us in any other way. The types of information we may collect include your name, email address and other contact or identification information you choose to provide.</string>
+    <string name="data_collected_header">Data Collected</string>
 </resources>

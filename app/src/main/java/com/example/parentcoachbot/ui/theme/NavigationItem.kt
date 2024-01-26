@@ -65,7 +65,7 @@ val settingsItemList = listOf(
     NavigationItem(
         R.string.change_country,
         R.drawable.baseline_location_pin_24,
-        route = null
+        route = Screen.ChangeCountryScreen.route
     ),
 
     NavigationItem(
@@ -77,13 +77,13 @@ val settingsItemList = listOf(
     NavigationItem(
         R.string.data_privacy_label,
         R.drawable.baseline_security_24,
-        route = Screen.SettingsHomeScreen.route
+        route = Screen.DataPrivacyScreen.route
     ),
 
     NavigationItem(
         R.string.terms_label,
         R.drawable.baseline_insert_drive_file_24,
-        route = Screen.SettingsHomeScreen.route
+        route = Screen.TermsOfUseScreen.route
     ),
 
     NavigationItem(

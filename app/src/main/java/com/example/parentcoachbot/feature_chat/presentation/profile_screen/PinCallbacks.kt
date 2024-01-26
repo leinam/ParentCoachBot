@@ -13,7 +13,7 @@ class PinCallbacksImplementation(): PinCallbacks{
     }
 
     override fun onPinUnlockClick(pin: String): Boolean {
-        return pin == "1234"
+        return pin == "4785"
 
     }
 

@@ -141,7 +141,7 @@ fun CreateProfileSplashScreen(
                     .clickable {
                         onEvent(SplashScreenEvent.TourCompleted(true))
 
-                        navController.navigate(Screen.SelectProfileScreen.route) {
+                        navController.navigate(Screen.PinEntryScreen.route) {
                             popUpTo(Screen.FirstTimeSplashScreen.route) {
                                 inclusive = true
                             }
@@ -152,7 +152,7 @@ fun CreateProfileSplashScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(id = R.string.create_profile_button_label).uppercase(),
+                    text = stringResource(id = R.string.continue_label).uppercase(),
                     textAlign = TextAlign.Center,
                     fontFamily = PlexSans,
                     fontWeight = FontWeight.SemiBold,
