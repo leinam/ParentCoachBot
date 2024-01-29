@@ -28,7 +28,7 @@ class ContentImporter(
             workbook.close()
         }
 
-        println((System.currentTimeMillis() - start))
+        println("db setup time" + (System.currentTimeMillis() - start))
     }
 
     private fun importWorkbook(): XSSFWorkbook? {

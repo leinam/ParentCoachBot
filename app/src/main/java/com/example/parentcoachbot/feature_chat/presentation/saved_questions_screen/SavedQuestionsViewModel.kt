@@ -162,7 +162,7 @@ class SavedQuestionsViewModel @Inject constructor(
             }
 
             is SavedQuestionsScreenEvent.DeleteQuestionSession -> {
-                eventLogger.logComposableLoad("")
+
                 viewModelScope.launch {
                     questionSessionUseCases.deleteQuestionSession(event.questionSession._id)
                 }

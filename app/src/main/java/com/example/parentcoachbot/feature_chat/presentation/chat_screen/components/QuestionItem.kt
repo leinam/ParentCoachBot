@@ -205,7 +205,7 @@ fun QuestionBox(
                 onClick = {
                     questionSession?.let {
                         if (screenName == Screen.ChatScreen.route) {
-                            onEvent(ChatEvent.SaveQuestionSession(questionSession._id))
+                            onEvent(ChatEvent.SaveQuestionSession(questionSession))
                         } else if (screenName == Screen.SavedQuestionsScreen.route) {
                             onSavedScreenEvent(
                                 SavedQuestionsScreenEvent.SaveQuestionSession(

@@ -21,7 +21,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -33,11 +36,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileStateWrapper
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
@@ -47,9 +52,15 @@ import com.example.parentcoachbot.ui.theme.settingsItemList
 
 @Preview
 @Composable
-fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
+fun SettingsHomeScreen(
+    navController: NavController = rememberNavController(),
+    profileState: State<ProfileStateWrapper> = mutableStateOf(
+        ProfileStateWrapper()
+    )
+) {
 
-
+    val profileStateWrapper:ProfileStateWrapper = profileState.value
+    val parentUser by profileStateWrapper.parentUserState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(5) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -102,6 +113,15 @@ fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
                             )
                         }
 
+                        Text(
+                            text = stringResource(id = R.string.participant_username_label) + ": ${parentUser?.username}",
+                            color = PrimaryGreen,
+                            fontFamily = PlexSans,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 19.sp,
+                            modifier = Modifier.padding(10.dp)
+                        )
+
                         LazyColumn {
                             items(settingsItemList) { item ->
                                 Box(modifier = Modifier
@@ -128,7 +148,7 @@ fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
                                     ) {
 
 
-                                        Row (verticalAlignment = Alignment.CenterVertically){
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
                                             Icon(
                                                 painter = painterResource(id = item.icon),
                                                 contentDescription = null,
@@ -144,13 +164,14 @@ fun SettingsHomeScreen(navController: NavController = rememberNavController()) {
                                                     fontWeight = FontWeight.SemiBold,
                                                     color = TextGrey,
 
-                                                )
-                                            }}
+                                                    )
+                                            }
+                                        }
 
-                                            Icon(
-                                                imageVector = Icons.Default.KeyboardArrowRight,
-                                                contentDescription = null,
-                                                tint = TextGrey,
+                                        Icon(
+                                            imageVector = Icons.Default.KeyboardArrowRight,
+                                            contentDescription = null,
+                                            tint = TextGrey,
 
                                             )
 

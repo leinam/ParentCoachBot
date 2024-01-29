@@ -64,8 +64,8 @@ fun Navigation() {
             previousScreenRoute?.let {
                 val exitParams = Bundle()
                 val exitTime: Long = destinationChangeTime
-                val parentUsername = currentParentUser?.username
-                val authID = currentParentUser?._partition
+                val parentUsername = currentParentUser?.username ?: "null"
+                val authID = currentParentUser?._partition  ?: "null"
 
                 val timeSpentOnScreen =
                     if (screenEntryTime != 0L) screenEntryTime - exitTime else 0L
@@ -80,8 +80,8 @@ fun Navigation() {
 
             destinationRoute?.let {
                 screenEntryTime = System.currentTimeMillis()
-                val parentUsername = currentParentUser?.username
-                val authID = currentParentUser?._partition
+                val parentUsername = currentParentUser?.username  ?: "null"
+                val authID = currentParentUser?._partition  ?: "null"
 
 
                 entryParams.putString(FirebaseAnalytics.Param.SCREEN_NAME, destinationRoute)
@@ -217,14 +217,18 @@ fun Navigation() {
         }
 
         composable(route = Screen.SettingsHomeScreen.route) {
-            SettingsHomeScreen(navController = navHostController)
+            SettingsHomeScreen(
+                navController = navHostController,
+                profileViewModel.profileViewModelState
+            )
         }
 
         composable(route = Screen.ChangeCountryScreen.route) {
             ChangeCountryScreen(
                 navController = navHostController,
                 onEvent = { profileEvent -> profileViewModel.onEvent(profileEvent) },
-                profileState = profileViewModel.profileViewModelState)
+                profileState = profileViewModel.profileViewModelState
+            )
         }
 
         composable(route = Screen.SelectLanguageScreen.route) {

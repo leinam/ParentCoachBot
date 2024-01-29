@@ -4,7 +4,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.parentcoachbot.common.EventLogger
 import com.example.parentcoachbot.common.GlobalState
+import com.example.parentcoachbot.common.LoggingEvent
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
@@ -25,7 +27,8 @@ class ProfileViewModel @Inject constructor(
     private val parentUserUseCases: ParentUserUseCases,
     private val globalState: GlobalState,
     private val authManager: AuthManager,
-    private val appPreferences: AppPreferences
+    private val appPreferences: AppPreferences,
+    private val eventLogger: EventLogger
 ) : ViewModel() {
 
     var getChildProfilesJob: Job? = null
@@ -93,6 +96,14 @@ class ProfileViewModel @Inject constructor(
         when (profileEvent) {
             is ProfileEvent.SelectProfile -> {
                 globalState.updateCurrentChildProfile(profileEvent.childProfile)
+
+                parentUserState.value?.let { parentUser ->
+                    eventLogger.logProfileEvent(
+                        loggingEvent = LoggingEvent.SelectProfile,
+                        parentUser = parentUser,
+                        profile = profileEvent.childProfile
+                    )
+                }
             }
 
             is ProfileEvent.NewProfile -> {
@@ -102,11 +113,27 @@ class ProfileViewModel @Inject constructor(
                     })
                 }
 
+                parentUserState.value?.let { parentUser ->
+                    eventLogger.logProfileEvent(
+                        loggingEvent = LoggingEvent.NewProfile,
+                        parentUser = parentUser,
+                        profile = profileEvent.childProfile
+                    )
+                }
+
             }
 
             is ProfileEvent.DeleteProfile -> {
                 viewModelScope.launch {
                     childProfileUseCases.deleteChildProfile(profileEvent.childProfile)
+                }
+
+                parentUserState.value?.let { parentUser ->
+                    eventLogger.logProfileEvent(
+                        loggingEvent = LoggingEvent.DeleteProfile,
+                        parentUser = parentUser,
+                        profile = profileEvent.childProfile
+                    )
                 }
 
             }
@@ -143,10 +170,20 @@ class ProfileViewModel @Inject constructor(
 
             is ProfileEvent.UpdateCountry -> {
                 viewModelScope.launch {
+
                     updateParentUserAccountCountry(
                         parentUser = profileEvent.parentUser,
                         country = profileEvent.country
                     )
+
+                    parentUserState.value?.let { parentUser ->
+                        eventLogger.logChangeCountryEvent(
+                            country = profileEvent.country,
+                            parentUser = parentUser,
+                            loggingEvent = LoggingEvent.ChangeCountry,
+                            profile = _currentChildProfile.value
+                        )
+                    }
 
 
                 }

@@ -57,6 +57,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUs
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.AddQuestion
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.DeleteQuestion
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetAllQuestions
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionById
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionWithAnswers
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsBySubtopic
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsFromIdList
@@ -215,7 +216,8 @@ object AppModule {
                 answerThreadRepository
             ),
             getQuestionBySubtopic = GetQuestionsBySubtopic(questionRepository),
-            getQuestionsFromIdList = GetQuestionsFromIdList(questionRepository = questionRepository)
+            getQuestionsFromIdList = GetQuestionsFromIdList(questionRepository = questionRepository),
+            getQuestionById = GetQuestionById(repository = questionRepository)
         )
     }
 

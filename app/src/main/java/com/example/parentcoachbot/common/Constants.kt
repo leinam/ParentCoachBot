@@ -3,7 +3,7 @@ package com.example.parentcoachbot.common
 import org.apache.lucene.analysis.CharArraySet
 
 object Constants {
-    const val APP_ID = "devicesync-cxlwi"
+    const val APP_ID = "parentcoachapptrialpilot-fwsck"
     const val PREFS_NAME = "MyAppPreferences"
     const val DEFAULT_LANGUAGE_KEY = "default_language"
     const val FIRST_TIME_USE = "is_first_time"

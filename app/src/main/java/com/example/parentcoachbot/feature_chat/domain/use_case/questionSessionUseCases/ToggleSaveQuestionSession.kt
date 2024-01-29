@@ -3,7 +3,7 @@ package com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionU
 import com.example.parentcoachbot.feature_chat.domain.repository.QuestionSessionRepository
 
 class ToggleSaveQuestionSession(private val questionSessionRepository: QuestionSessionRepository) {
-    suspend operator fun invoke(questionSessionId: String){
-        questionSessionRepository.toggleSaveQuestionSession(questionSessionId)
+    suspend operator fun invoke(questionSessionId: String): Boolean?{
+        return questionSessionRepository.toggleSaveQuestionSession(questionSessionId)
     }
 }

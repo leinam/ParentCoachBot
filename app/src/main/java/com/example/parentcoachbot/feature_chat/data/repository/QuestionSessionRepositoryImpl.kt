@@ -116,17 +116,21 @@ class QuestionSessionRepositoryImpl(private val realm: Realm) : QuestionSessionR
             realm.query<QuestionSession>(query = "_id == $0", id).find()
                 .firstOrNull()
 
+        var isSaved: Boolean = true
+
         realm.write {
             questionSession?.let {
                 findLatest(it)?.let { liveQuestionSession ->
-                    val isSaved = !liveQuestionSession.isSaved
+                    isSaved = !liveQuestionSession.isSaved
                     liveQuestionSession.isSaved = isSaved
                     liveQuestionSession.timeSaved = if (isSaved) RealmInstant.now() else null
+
+
                 }
             }
 
         }
-
+         isSaved
     }
 
     override suspend fun deleteQuestionSession(id: String) {

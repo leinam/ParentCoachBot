@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "292795835110",
-    "project_id": "pctest-140b7",
-    "storage_bucket": "pctest-140b7.appspot.com"
+    "project_number": "370217384875",
+    "project_id": "parentcoach-app-trial-pilot-1",
+    "storage_bucket": "parentcoach-app-trial-pilot-1.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:292795835110:android:63e44c251beace79965127",
+        "mobilesdk_app_id": "1:370217384875:android:1a8e2c82fa84eb850270ee",
         "android_client_info": {
           "package_name": "com.example.parentcoachbot"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC52uhnKFhL7fb5L8WmvbbEMSh_-OEAduc"
+          "current_key": "AIzaSyDqeMuVlAyUGT5SP49RF3HLwbSUlHZJdMw"
         }
       ],
       "services": {

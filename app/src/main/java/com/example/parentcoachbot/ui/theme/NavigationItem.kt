@@ -57,12 +57,6 @@ val settingsItemList = listOf(
     ),
 
     NavigationItem(
-        R.string.edit_profile_label,
-        R.drawable.baseline_child_care_24,
-        route = Screen.UpdateProfileScreen.route
-    ),
-
-    NavigationItem(
         R.string.change_country,
         R.drawable.baseline_location_pin_24,
         route = Screen.ChangeCountryScreen.route

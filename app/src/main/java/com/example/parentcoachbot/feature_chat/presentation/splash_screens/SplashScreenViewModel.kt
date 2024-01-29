@@ -54,7 +54,6 @@ class SplashScreenViewModel @Inject constructor(
     fun onEvent(splashScreenEvent: SplashScreenEvent) {
         when (splashScreenEvent) {
             is SplashScreenEvent.TourCompleted -> {
-                println("event")
                 _isTourComplete.value = splashScreenEvent.isCompleted
                 appPreferences.setIsTourComplete(splashScreenEvent.isCompleted)
             }

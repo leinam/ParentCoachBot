@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parentcoachbot.common.EventLogger
 import com.example.parentcoachbot.common.GlobalState
+import com.example.parentcoachbot.common.LoggingEvent
 import com.example.parentcoachbot.feature_chat.domain.model.Answer
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
@@ -59,6 +60,7 @@ class ChatViewModel @Inject constructor(
     private val authManager: AuthManager,
     private val questionSearcher: QuestionSearcher
 ) : ViewModel() {
+    private val parentUserState = globalState.parentUserState
     private val _topicsListState = MutableStateFlow<List<Topic>>(emptyList())
     private val _currentChatState = MutableStateFlow<ChatSession?>(null)
     private val _childProfilesListState = MutableStateFlow<List<ChildProfile>>(emptyList())
@@ -159,6 +161,18 @@ class ChatViewModel @Inject constructor(
         listenForSearchQueryJob = viewModelScope.launch {
             _typedQueryText.debounce(1000).onEach {
                 searchQuestions(it.trim())
+
+
+                parentUserState.value?.let { parentUser ->
+                    eventLogger.logSearchEvent(
+                        loggingEvent = LoggingEvent.NewSearchQuery,
+                        searchQueryText = it,
+                        chatSession = _currentChatState.value,
+                        parentUser = parentUser,
+                        profile = _currentChildProfile.value
+                    )
+                }
+
             }.collect()
         }
     }
@@ -193,7 +207,7 @@ class ChatViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (searchResult.isNotEmpty()) {
-                println("Search result for query: $queryText is $searchResult")
+                // println("Search result for query: $queryText is $searchResult")
                 questionUseCases.getQuestionsFromIdList(searchResult)?.let {
                     _searchResultsQuestionsListState.value = it
                 }
@@ -210,14 +224,57 @@ class ChatViewModel @Inject constructor(
         when (event) {
             is ChatEvent.SaveQuestionSession -> {
                 viewModelScope.launch {
-                    questionSessionUseCases.toggleSaveQuestionSession(event.questionSessionId)
+                    val isSaved =
+                        questionSessionUseCases.toggleSaveQuestionSession(event.questionSession._id)
+
+                    event.questionSession.question?.let { questionId ->
+
+                        val question: Question? =
+                            questionUseCases.getQuestionById(questionId = questionId)
+
+                        if (isSaved == true) {
+                            eventLogger.logQuestionEvent(
+                                loggingEvent = LoggingEvent.SaveQuestion,
+                                question = question,
+                                questionSession = event.questionSession,
+                                parentUser = parentUserState.value!!,
+                                profile = _currentChildProfile.value!!
+                            )
+                        } else {
+                            eventLogger.logQuestionEvent(
+                                loggingEvent = LoggingEvent.UnsaveQuestion,
+                                question = question,
+                                questionSession = event.questionSession,
+                                parentUser = parentUserState.value!!,
+                                profile = _currentChildProfile.value!!
+                            )
+                        }
+
+
+                    }
                 }
+
+
             }
 
             is ChatEvent.DeleteQuestionSession -> {
                 viewModelScope.launch {
                     lastDeletedQuestion = event.questionSession
                     questionSessionUseCases.deleteQuestionSession(event.questionSession._id)
+
+                    event.questionSession.question?.let { questionId ->
+                        val question: Question? =
+                            questionUseCases.getQuestionById(questionId = questionId)
+
+                        eventLogger.logQuestionEvent(
+                            loggingEvent = LoggingEvent.DeleteQuestion,
+                            question = question,
+                            questionSession = event.questionSession,
+                            parentUser = parentUserState.value!!,
+                            profile = _currentChildProfile.value!!
+                        )
+                    }
+
 
                 }
             }
@@ -258,6 +315,14 @@ class ChatViewModel @Inject constructor(
 
                             chatSessionUseCases.updateChatTimeLastUpdated(chatSession._id)
 
+                            eventLogger.logQuestionEvent(
+                                loggingEvent = LoggingEvent.AddQuestion,
+                                question = event.question,
+                                questionSession = null,
+                                parentUser = parentUserState.value!!,
+                                profile = _currentChildProfile.value!!
+                            )
+
                         }
                     }
                 }
@@ -273,6 +338,15 @@ class ChatViewModel @Inject constructor(
                 getQuestionSessionsWithQuestionAndAnswers()
                 getQuestionSessionsWithQuestionAndAnswersGroupedByDate()
 
+                parentUserState.value?.let { parentUser ->
+                    eventLogger.logChatEvent(
+                        loggingEvent = LoggingEvent.LoadChat,
+                        chatSession = event.chatSession,
+                        parentUser = parentUser,
+                        profile = _currentChildProfile.value
+                    )
+                }
+
                 //todo why do i need to call this each time
                 // todo for new chat not reflecting the change of current chat
             }
@@ -284,6 +358,17 @@ class ChatViewModel @Inject constructor(
             is ChatEvent.SelectSubtopic -> {
                 _currentSubtopic.value = event.subtopic
                 getSubtopicQuestions()
+
+                parentUserState.value?.let { parentUser ->
+                    eventLogger.logSubtopicEvent(
+                        loggingEvent = LoggingEvent.SubtopicView,
+                        chatSession = _currentChatState.value,
+                        subtopic = event.subtopic,
+                        parentUser = parentUser,
+                        profile = _currentChildProfile.value
+                    )
+
+                }
             }
 
             is ChatEvent.SelectTopic -> {
@@ -299,6 +384,15 @@ class ChatViewModel @Inject constructor(
             is ChatEvent.ChangeLanguage -> {
                 _currentLanguageCode.value = event.language
                 getCurrentLanguage()
+
+                parentUserState.value?.let { parentUser ->
+                    eventLogger.logChangeLanguageEvent(
+                        language = event.language,
+                        parentUser = parentUser,
+                        loggingEvent = LoggingEvent.ChangeLanguage,
+                        profile = _currentChildProfile.value
+                    )
+                }
             }
         }
     }

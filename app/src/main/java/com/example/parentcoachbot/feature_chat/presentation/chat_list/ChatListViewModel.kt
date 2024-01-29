@@ -5,7 +5,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.parentcoachbot.common.EventLogger
 import com.example.parentcoachbot.common.GlobalState
+import com.example.parentcoachbot.common.LoggingEvent
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
@@ -23,7 +25,8 @@ class ChatListViewModel @Inject constructor(
     private val application: Application,
     private val chatSessionUseCases: ChatSessionUseCases,
     private val globalState: GlobalState,
-    private val authManager: AuthManager
+    private val authManager: AuthManager,
+    private val eventLogger: EventLogger
 ) : ViewModel() {
 
     private val _chatSessionsListState = MutableStateFlow<List<ChatSession>>(emptyList())
@@ -69,6 +72,17 @@ class ChatListViewModel @Inject constructor(
                 viewModelScope.launch {
                     chatSessionUseCases.deleteChatSession(chatListEvent.chatSession._id)
                 }
+
+                parentUserState.value?.let { parentUser ->
+                    eventLogger.logChatEvent(
+                        loggingEvent = LoggingEvent.DeleteChat,
+                        chatSession = chatListEvent.chatSession,
+                        parentUser = parentUser,
+                        profile = _currentChildProfile.value
+                    )
+                }
+
+
             }
 
             ChatListEvent.NewChat -> {
@@ -83,10 +97,22 @@ class ChatListViewModel @Inject constructor(
 
                             _newChatState.value?.let { chatSession ->
                                 chatSessionUseCases.newChatSession(chatSession)
+
+                                parentUserState.value?.let { parentUser ->
+                                    eventLogger.logChatEvent(
+                                        loggingEvent = LoggingEvent.NewChat,
+                                        chatSession = chatSession,
+                                        parentUser = parentUser,
+                                        profile = _currentChildProfile.value
+                                    )
+                                }
+
                             }
                         }
                     }
                 }
+
+
             }
 
 
@@ -94,13 +120,23 @@ class ChatListViewModel @Inject constructor(
                 viewModelScope.launch {
                     chatSessionUseCases.togglePinChatSession(chatListEvent.chatSession._id)
                 }
+
+                parentUserState.value?.let { parentUser ->
+                    eventLogger.logChatEvent(
+                        loggingEvent = LoggingEvent.PinChat,
+                        chatSession = chatListEvent.chatSession,
+                        parentUser = parentUser,
+                        profile = _currentChildProfile.value
+                    )
+                }
+
+
             }
 
             is ChatListEvent.UpdateChildProfile -> {
                 getProfileChatSessions()
                 // have to call this every time or the list isn't current
             }
-
 
         }
 
@@ -113,7 +149,7 @@ class ChatListViewModel @Inject constructor(
         getChildProfileChatSessionsJob = viewModelScope.launch {
 
             _currentChildProfile.onEach { childProfile ->
-                println(childProfile?.name)
+                // println(childProfile?.name)
                 childProfile?.let {
                     chatSessionUseCases.getProfileChatSessions(it._id)?.onEach { chatSessionList ->
                         // on each emission we set the state again

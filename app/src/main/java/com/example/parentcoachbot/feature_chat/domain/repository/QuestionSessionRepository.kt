@@ -11,7 +11,7 @@ interface QuestionSessionRepository {
     suspend fun getQuestionSessionById(id: String): QuestionSession?
     suspend fun getQuestionSessionsByChatSession(chatSessionId: String): Flow<List<QuestionSession>>?
     suspend fun getLatestQuestionSessionByChatSession(chatSessionId: String): QuestionSession?
-    suspend fun toggleSaveQuestionSession(id: String): Unit?
+    suspend fun toggleSaveQuestionSession(id: String): Boolean?
     suspend fun deleteQuestionSession(id: String)
     suspend fun deleteQuestionSessionsByChatSession(chatSessionId: String)
 }
