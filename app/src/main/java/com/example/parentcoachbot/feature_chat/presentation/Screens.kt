@@ -17,6 +17,7 @@ sealed class Screen(val route: String) {
     object SelectLanguageScreen: Screen("select_language")
     object SettingsHomeScreen: Screen("settings_screen")
     object ResourcesHomeScreen: Screen("resources_screen")
+    object PDFResourceScreen: Screen("pdf_resource_screen")
     object SavedQuestionsScreen: Screen("saved_questions_screen")
     object EmergencyInfoScreen: Screen("emergency_info_screen")
     object ChangeCountryScreen: Screen("change_country_screen")

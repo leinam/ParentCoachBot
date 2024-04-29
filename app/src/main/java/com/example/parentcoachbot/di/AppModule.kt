@@ -323,12 +323,12 @@ object AppModule {
     fun provideGlobalState(
         parentUserUseCases: ParentUserUseCases,
         childProfileUseCases: ChildProfileUseCases,
-        application: Application
+        application: Application,
+        appPreferences: AppPreferences
     ): GlobalState {
         return GlobalState(
             parentUserUseCases = parentUserUseCases,
-            childProfileUseCases = childProfileUseCases,
-            application = application
+            appPreferences = appPreferences
         )
     }
 

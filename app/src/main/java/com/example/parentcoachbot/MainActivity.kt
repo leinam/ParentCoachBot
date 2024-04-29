@@ -87,13 +87,10 @@ class MainActivity() : ComponentActivity() {
     override fun attachBaseContext(newBase: Context) {
         val appPreferences = newBase.getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
         val language = appPreferences.getString("default_language", Language.English.isoCode)
-            ?: Language.English.isoCode
-
-
 
         val context = MyContextWrapper.wrap(
             newBase,
-            language = language
+            language = language ?: Language.Portuguese.isoCode
         )
         super.attachBaseContext(context)
     }

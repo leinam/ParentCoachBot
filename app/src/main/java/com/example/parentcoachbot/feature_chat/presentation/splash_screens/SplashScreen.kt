@@ -78,6 +78,7 @@ fun FirstTimeSplashScreen(
         splashScreenStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
 
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()

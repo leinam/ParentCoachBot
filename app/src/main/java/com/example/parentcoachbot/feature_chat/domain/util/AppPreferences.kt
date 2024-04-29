@@ -18,6 +18,9 @@ class AppPreferences(context: Context) {
     fun getDefaultLanguage(): String {
         return sharedPrefs.getString(DEFAULT_LANGUAGE_KEY, Language.English.isoCode) ?: Language.English.isoCode
     }
+    fun setDefaultLanguage(languageCode: String) {
+        sharedPrefs.edit().putString(DEFAULT_LANGUAGE_KEY, languageCode).apply()
+    }
 
     fun getIsDbInitialized(): Boolean {
         return sharedPrefs.getBoolean(IS_DB_INIT_KEY, false)
@@ -34,10 +37,6 @@ class AppPreferences(context: Context) {
 
     fun setIsDbInitialized(isInit: Boolean)  {
         sharedPrefs.edit().putBoolean(IS_DB_INIT_KEY, isInit).apply()
-    }
-
-    fun setDefaultLanguage(language: String) {
-        sharedPrefs.edit().putString(DEFAULT_LANGUAGE_KEY, language).apply()
     }
 
     fun setIsFirstTimeLogin(isFirstTime: Boolean) {

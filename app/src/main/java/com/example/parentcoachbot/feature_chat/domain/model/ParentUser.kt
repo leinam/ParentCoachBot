@@ -1,7 +1,7 @@
 package com.example.parentcoachbot.feature_chat.domain.model
 
-import io.realm.kotlin.types.annotations.PrimaryKey
 import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.PrimaryKey
 import java.util.UUID
 
 open class ParentUser: RealmObject {
@@ -12,5 +12,6 @@ open class ParentUser: RealmObject {
     var username: String? = null
     var gender: String = Sex.NotSpecified.name
     var country: String? = null
+    var language: String? = null
 }
 

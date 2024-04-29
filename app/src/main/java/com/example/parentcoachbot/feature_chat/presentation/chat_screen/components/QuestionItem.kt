@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -125,15 +127,37 @@ fun QuestionBox(
                 .padding(16.dp)
                 .align(Alignment.Center)
         ) {
-            questionText?.let {
-                Text(
-                    text = it,
-                    textAlign = TextAlign.Start,
-                    fontFamily = PlexSans,
-                    fontWeight = FontWeight.Normal,
-                    color = TextGrey
-                )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopStart),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                questionText?.let {
+                    Text(
+                        text = it,
+                        textAlign = TextAlign.Start,
+                        fontFamily = PlexSans,
+                        fontWeight = FontWeight.Normal,
+                        color = TextGrey
+                    )
+
+                    Box(){
+                        Icon(imageVector = Icons.Default.MoreVert,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(16.dp),
+                            tint = TextGrey)
+                    }
+                }
+
+
+
+
+                
             }
+
 
             Row(
                 modifier = Modifier

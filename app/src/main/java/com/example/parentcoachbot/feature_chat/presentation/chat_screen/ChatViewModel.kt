@@ -25,6 +25,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUs
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
+import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.domain.util.QuestionSearcher
@@ -46,6 +47,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val application: Application,
+    private val appPreferences: AppPreferences,
     val firebaseAnalytics: FirebaseAnalytics,
     private val eventLogger: EventLogger,
     private val questionUseCases: QuestionUseCases,
@@ -123,11 +125,6 @@ class ChatViewModel @Inject constructor(
     private var getQuestionSessionWithQuestionAndAnswersGroupedByDateJob: Job? = null
     private var getChatQuestionSessionsGroupedByDateJob: Job? = null
 
-    private val appPreferences: SharedPreferences =
-        application.applicationContext.getSharedPreferences(
-            "MyAppPreferences",
-            Context.MODE_PRIVATE
-        )
 
     init {
         getChatQuestionSessions()
@@ -160,7 +157,8 @@ class ChatViewModel @Inject constructor(
 
         listenForSearchQueryJob = viewModelScope.launch {
             _typedQueryText.debounce(1000).onEach {
-                searchQuestions(it.trim())
+
+                searchQuestions(it.trim(), _currentLanguageCode.value)
 
 
                 parentUserState.value?.let { parentUser ->
@@ -182,7 +180,6 @@ class ChatViewModel @Inject constructor(
 
         getCurrentLanguageJob = viewModelScope.launch {
             _currentLanguageCode.onEach {
-                appPreferences.edit().putString("default_language", it).apply()
                 populateQuestionIndex(currentLanguage = it)
             }.collect()
         }
@@ -383,6 +380,8 @@ class ChatViewModel @Inject constructor(
 
             is ChatEvent.ChangeLanguage -> {
                 _currentLanguageCode.value = event.language
+                appPreferences.setDefaultLanguage(event.language)
+
                 getCurrentLanguage()
 
                 parentUserState.value?.let { parentUser ->

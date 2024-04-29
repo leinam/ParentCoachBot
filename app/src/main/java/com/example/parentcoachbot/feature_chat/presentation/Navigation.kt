@@ -1,6 +1,5 @@
 package com.example.parentcoachbot.feature_chat.presentation
 
-import ResourcesHomeScreen
 import SavedQuestionsScreen
 import android.os.Bundle
 import androidx.compose.runtime.Composable
@@ -26,6 +25,8 @@ import com.example.parentcoachbot.feature_chat.presentation.profile_screen.PinEn
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileViewModel
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
+import com.example.parentcoachbot.feature_chat.presentation.resources_screens.PDFReader
+import com.example.parentcoachbot.feature_chat.presentation.resources_screens.ResourcesHomeScreen
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsScreenEvent
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsViewModel
 import com.example.parentcoachbot.feature_chat.presentation.settings_screen.ChangeCountryScreen
@@ -244,9 +245,15 @@ fun Navigation() {
                 onEvent = { savedScreenEvent -> savedQuestionsViewModel.onEvent(savedScreenEvent) }
             )
         }
+
         composable(route = Screen.ResourcesHomeScreen.route) {
             ResourcesHomeScreen(navController = navHostController)
         }
+
+        composable(route = Screen.PDFResourceScreen.route) {
+            PDFReader(navController = navHostController)
+        }
+
         composable(route = Screen.EmergencyInfoScreen.route) {
             EmergencyInfoScreen(
                 navController = navHostController,

@@ -8,7 +8,7 @@ import java.util.Locale
 
 class MyContextWrapper(base: Context) : ContextWrapper(base) {
     companion object {
-        fun wrap(context: Context, language: String = Language.English.isoCode): ContextWrapper {
+        fun wrap(context: Context, language: String): ContextWrapper {
             val config = Configuration()
             config.setToDefaults()
             config.setLocale(Locale(language))

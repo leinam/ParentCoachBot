@@ -46,7 +46,13 @@ val drawerItemsList = listOf(
         R.string.language_label,
         R.drawable.baseline_language_24,
         route = Screen.SelectLanguageScreen.route
-    )
+    ),
+
+    NavigationItem(
+            R.string.resources_label,
+    R.drawable.resources_icon,
+    route = Screen.ResourcesHomeScreen.route
+)
 )
 
 val settingsItemList = listOf(

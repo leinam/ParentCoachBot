@@ -12,10 +12,8 @@ class MyApp: Application(){
         super.onCreate()
 
         val config = applicationContext.resources.configuration
-
-
         appPreferences = AppPreferences(applicationContext)
-        appPreferences.setDefaultLanguage(config.locales.get(0).language)
+        // appPreferences.setDefaultLanguage(config.locales.get(0).language)
     }
 
 }
