@@ -1,6 +1,5 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_list
 
-import android.app.Application
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,6 +10,7 @@ import com.example.parentcoachbot.common.LoggingEvent
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.QuestionSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -22,8 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatListViewModel @Inject constructor(
-    private val application: Application,
     private val chatSessionUseCases: ChatSessionUseCases,
+    private val questionSesionUseCases: QuestionSessionUseCases,
     private val globalState: GlobalState,
     private val authManager: AuthManager,
     private val eventLogger: EventLogger
@@ -36,6 +36,8 @@ class ChatListViewModel @Inject constructor(
     private val _currentChildProfile = globalState.currentChildProfileState
     private val parentUserState = globalState.parentUserState
     private val _currentLanguageCode = globalState.currentLanguageCode
+    private val _currentResourceFilename = MutableStateFlow<String>("rthb_booklet.pdf")
+    private val _currentImageResourceId = MutableStateFlow<Int?>(null)
 
     private var getChildProfileChatSessionsJob: Job? = null
     private var getCurrentLanguageJob: Job? = null
@@ -47,7 +49,9 @@ class ChatListViewModel @Inject constructor(
             childProfileListState = childProfileListState,
             newChatState = _newChatState,
             currentChildProfile = globalState.currentChildProfileState,
-            currentLanguageCode = _currentLanguageCode
+            currentLanguageCode = _currentLanguageCode,
+            currentResourceFileName = _currentResourceFilename,
+            currentImageResourceId = _currentImageResourceId
         )
     )
 
@@ -63,6 +67,7 @@ class ChatListViewModel @Inject constructor(
 
     init {
         getProfileChatSessions()
+        trimChats()
         // getCurrentLanguage()
     }
 
@@ -81,8 +86,14 @@ class ChatListViewModel @Inject constructor(
                         profile = _currentChildProfile.value
                     )
                 }
+            }
 
+            is ChatListEvent.SelectPDFResource -> {
+                _currentResourceFilename.value = chatListEvent.fileName
+            }
 
+            is ChatListEvent.SelectImageResource -> {
+                _currentImageResourceId.value = chatListEvent.imageId
             }
 
             ChatListEvent.NewChat -> {
@@ -142,6 +153,24 @@ class ChatListViewModel @Inject constructor(
 
     }
 
+    fun trimChats() {
+        viewModelScope.launch {
+            _chatSessionsListState.onEach { chatSessions ->
+                chatSessions.forEach { chatSession ->
+                    questionSesionUseCases.getChatQuestionSessions(chatSessionId = chatSession._id)
+                        ?.onEach {
+                            println(it)
+                            if (it.isEmpty()) {
+                                chatSessionUseCases.deleteChatSession(chatSession._id)
+                            }
+                        }?.collect()
+                }
+
+            }.collect()
+        }
+
+    }
+
     private fun getProfileChatSessions() {
         getChildProfileChatSessionsJob?.cancel()
         // every time a chat session changes entire updated list is emitted and
@@ -158,7 +187,10 @@ class ChatListViewModel @Inject constructor(
                 }
             }.collect()
         }
+
+
     }
+
 
 }
 

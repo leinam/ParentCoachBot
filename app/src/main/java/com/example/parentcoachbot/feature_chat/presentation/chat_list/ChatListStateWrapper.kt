@@ -14,5 +14,7 @@ data class ChatListStateWrapper(
     val childProfileListState: StateFlow<List<ChildProfile>> = MutableStateFlow(
         emptyList()
     ),
+    val currentResourceFileName: StateFlow<String> = MutableStateFlow("rthb_booklet.pdf"),
+    val currentImageResourceId: StateFlow<Int?> = MutableStateFlow(null),
     val newChatState: StateFlow<ChatSession?> = MutableStateFlow(null)
 )

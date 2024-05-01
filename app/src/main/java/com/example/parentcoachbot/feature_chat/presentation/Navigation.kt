@@ -25,6 +25,7 @@ import com.example.parentcoachbot.feature_chat.presentation.profile_screen.PinEn
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileViewModel
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
+import com.example.parentcoachbot.feature_chat.presentation.resources_screens.ImageResourceScreen
 import com.example.parentcoachbot.feature_chat.presentation.resources_screens.PDFReader
 import com.example.parentcoachbot.feature_chat.presentation.resources_screens.ResourcesHomeScreen
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsScreenEvent
@@ -54,7 +55,7 @@ fun Navigation() {
     firebaseAnalytics.setUserId(currentParentUser?.username ?: "Unknown")
 
     DisposableEffect(Unit) {
-        var screenEntryTime: Long = 0L
+        var screenEntryTime = 0L
 
         val listener = NavController.OnDestinationChangedListener { controller, destination, _ ->
             val entryParams = Bundle()
@@ -175,11 +176,13 @@ fun Navigation() {
 
         composable(route = Screen.ChatListScreen.route) {
 
+
             ChatListScreen(navController = navHostController,
                 chatListViewModelState = chatListViewModel.chatListViewModelState,
                 onChatListEvent = { chatListEvent -> chatListViewModel.onEvent(chatListEvent) },
                 onChatEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) }
             )
+            chatListViewModel.trimChats()
         }
 
         composable(route = Screen.ChatScreen.route) {
@@ -247,11 +250,18 @@ fun Navigation() {
         }
 
         composable(route = Screen.ResourcesHomeScreen.route) {
-            ResourcesHomeScreen(navController = navHostController)
+            ResourcesHomeScreen(navController = navHostController, onEvent = {
+                chatListEvent ->  chatListViewModel.onEvent(chatListEvent)
+            })
         }
 
         composable(route = Screen.PDFResourceScreen.route) {
-            PDFReader(navController = navHostController)
+            PDFReader(navController = navHostController, chatListViewModelState = chatListViewModel.chatListViewModelState)
+        }
+
+        composable(route = Screen.ImageResourceScreen.route) {
+            ImageResourceScreen(navController = navHostController,
+                chatListViewModelState = chatListViewModel.chatListViewModelState)
         }
 
         composable(route = Screen.EmergencyInfoScreen.route) {

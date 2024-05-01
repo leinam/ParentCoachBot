@@ -40,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.presentation.Screen
+import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListEvent
 import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListStateWrapper
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
@@ -49,10 +50,27 @@ import com.example.parentcoachbot.ui.theme.PrimaryGreen
 import com.example.parentcoachbot.ui.theme.TextGrey
 import com.example.parentcoachbot.ui.theme.ThinGreen
 
-sealed class ResourceItem(val title: Map<String,String>, @DrawableRes val icon: Int){
-    object RoadToHealth: ResourceItem (title = mapOf("en" to "Road To Health"), icon = R.drawable.resources_icon)
+sealed class ResourceItem(
+    val title: Map<String, String>,
+    @DrawableRes val icon: Int,
+    val filename: String? = null,
+    val contentType: String,
+    @DrawableRes val imageId: Int? = null
+) {
+    object RoadToHealth : ResourceItem(
+        title = mapOf("en" to "Road To Health - SA"),
+        icon = R.drawable.resources_icon,
+        filename = "rthb_booklet.pdf", contentType = "PDF"
+    )
 
-
+    object DangerSignsPT : ResourceItem(
+        title = mapOf(
+            "en" to "Quando levar o seu filho à Urgencia",
+            "pt" to "Quando levar o seu filho à Urgencia"
+        ), icon = R.drawable.resources_icon,
+        contentType = "Image",
+        imageId = R.drawable.dangersignpt
+    )
 }
 
 @Preview
@@ -60,17 +78,18 @@ sealed class ResourceItem(val title: Map<String,String>, @DrawableRes val icon: 
 fun ResourcesHomeScreen(
     navController: NavController = rememberNavController(),
     chatListViewModelState: State<ChatListStateWrapper> = mutableStateOf(ChatListStateWrapper()),
+    onEvent: (ChatListEvent) -> Unit = {}
 
-    ) {
+) {
 
-    val resourceList = listOf(ResourceItem.RoadToHealth)
+    val resourceList = listOf(ResourceItem.RoadToHealth, ResourceItem.DangerSignsPT)
 
 
     val chatListStateWrapper = chatListViewModelState.value
     val currentLanguageCode = chatListStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
 
     val scope = rememberCoroutineScope()
-    var drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(4) }
+    val drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(4) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
 
@@ -124,6 +143,8 @@ fun ResourcesHomeScreen(
 
                         }
 
+
+
                         LazyColumn {
                             items(resourceList) { resource ->
                                 Box(modifier = Modifier
@@ -135,7 +156,27 @@ fun ResourcesHomeScreen(
                                     .padding(10.dp)
                                     .clickable {
 
-                                        navController.navigate(Screen.PDFResourceScreen.route)
+                                        if (resource.contentType == "PDF") {
+                                            onEvent(
+                                                ChatListEvent.SelectPDFResource(
+                                                    fileName = resource.filename
+                                                        ?: "rthb_booklet.pdf"
+                                                )
+                                            )
+                                            navController.navigate(Screen.PDFResourceScreen.route)
+                                        } else if (resource.contentType == "Image") {
+                                            resource.imageId?.let {
+                                                onEvent(
+                                                    ChatListEvent.SelectImageResource(
+                                                        imageId = resource.imageId
+                                                    )
+                                                )
+
+
+                                                navController.navigate(Screen.ImageResourceScreen.route)
+                                            }
+                                        }
+
 
                                     }
                                 )
@@ -151,14 +192,12 @@ fun ResourcesHomeScreen(
 
 
                                         Row(verticalAlignment = Alignment.CenterVertically) {
-                                            resource.icon?.let {
-                                                Icon(
-                                                    painter = painterResource(id = it),
-                                                    contentDescription = null,
-                                                    tint = TextGrey,
-                                                    modifier = Modifier.padding(end = 12.dp)
-                                                )
-                                            }
+                                            Icon(
+                                                painter = painterResource(id = resource.icon),
+                                                contentDescription = null,
+                                                tint = TextGrey,
+                                                modifier = Modifier.padding(end = 12.dp)
+                                            )
 
                                             (resource.title[currentLanguageCode.value]
                                                 ?: resource.title["en"])?.let {
