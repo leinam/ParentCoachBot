@@ -68,10 +68,10 @@
     <string name="portuguese_lang">Português</string>
     <string name="emergency_message_1">Para atendimento médico de emergência</string>
     <string name="mental_health_header">Saúde mental</string>
-    <string name="sadag_info">Apoio 24 horas por dia a pessoas na África do Sul que correm risco de suicídio</string>
-    <string name="sadag_contact">SADAG: 0800 567 567</string>
+    <string name="sadag_description">Apoio 24 horas por dia a pessoas na África do Sul que correm risco de suicídio</string>
+    <string name="sadag_contact_title">SADAG: 0800 567 567</string>
     <string name="toll_free_lines">Linhas de apoio gratuitas 24 horas por dia</string>
-    <string name="sa_police">Serviço de Polícia da África do Sul - 10111</string>
+    <string name="sa_police_title">Serviço de Polícia da África do Sul - 10111</string>
     <string name="team_contact_label">Contato da equipe de pesquisa</string>
     <string name="research_contact_description">"Em caso de dúvidas ou questões relacionadas com a aplicação ou o seu conteúdo. "</string>
     <string name="sa_emergency_contact_description">Contato de serviço de emergência médica e de resgate 24 horas</string>
@@ -118,4 +118,8 @@
     <string name="terms_ofuse_description_pt">"Na ParentCoach, recolhemos e gerimos os dados dos utilizadores de acordo com a seguinte Política de Privacidade.  "</string>
     <string name="terms_of_use_text_pt">"Recolhemos as informações que o utlizador nos fornece diretamente. Por exemplo, recolhemos informações quando o utilizador cria uma conta, subscreve, participa em quaisquer funcionalidades interactivas dos nossos serviços, preenche um formulário, solicita apoio ou comunica connosco de qualquer outra forma. Os tipos de informações que podemos recolher incluem o seu nome, endereço de correio eletrónico e outras informações de contacto ou de identificação que decida fornecer. "</string>
     <string name="data_collected_header">"Dados recolhidos  "</string>
+    <string name="source_label">Fonte:</string>
+    <string name="adcock_contact_description">A Linha Direta de Depressão e Ansiedade da Adcock Ingram oferece apoio emocional a pessoas na África do Sul que estão em perigo ou em risco de suicídio.</string>
+    <string name="sa_crisis_hotline_description">A Linha de Apoio à Crise de Suicídio na África do Sul oferece apoio 24 horas por dia a pessoas na África do Sul que estão em perigo ou em risco de suicídio.</string>
+    <string name="related_questions_label">Perguntas relacionadas:</string>
 </resources>

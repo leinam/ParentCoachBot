@@ -11,7 +11,10 @@ class SearchQuery: RealmObject {
     var _id: String = UUID.randomUUID().toString()
     var chatSession: String? = null
     var questionSelected: String? = null
-    var _partition: String? = null
+    var owner_id: String? = null
+    var parentUsername: String? = null
+    var profile: String? = null
+    var currentLanguage: String? = null
     @Index
     var queryText: String? = null
     var timeQueried: RealmInstant = RealmInstant.now()

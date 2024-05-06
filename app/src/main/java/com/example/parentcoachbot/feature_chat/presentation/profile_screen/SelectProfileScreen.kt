@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.presentation.profile_screen
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.parentcoachbot.MainActivity
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.presentation.ConfirmDeleteDialog
@@ -66,9 +68,20 @@ fun SelectProfileScreen(
     onEvent: (ProfileEvent) -> Unit = {}
 ) {
 
-    val profileStateWrapper = profileState.value
-    val childProfileList: List<ChildProfile> by profileStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val profileStateWrapper = profileState.value
+    val parentUser by profileStateWrapper.parentUserState.collectAsStateWithLifecycle()
+    val childProfileList: List<ChildProfile> by profileStateWrapper.childProfilesListState.collectAsStateWithLifecycle()
+
+    if (parentUser == null){
+        // Toast.makeText(context, "Session Timed Out! Start Again Here", Toast.LENGTH_SHORT).show()
+
+        val intent =
+            Intent(context, MainActivity::class.java)
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        context.startActivity(intent)
+    }
 
     Column(
         modifier = Modifier

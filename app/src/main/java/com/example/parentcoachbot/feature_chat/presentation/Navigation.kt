@@ -17,7 +17,8 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListSc
 import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListViewModel
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatScreen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatViewModel
-import com.example.parentcoachbot.feature_chat.presentation.emergency_screen.EmergencyInfoScreen
+import com.example.parentcoachbot.feature_chat.presentation.contact_screen.ContactScreenViewModel
+import com.example.parentcoachbot.feature_chat.presentation.contact_screen.EmergencyInfoScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.AccountSetupScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.AddProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.CreateProfileSplashScreen
@@ -46,6 +47,7 @@ fun Navigation() {
     val navHostController: NavHostController = rememberNavController()
     val chatListViewModel = hiltViewModel<ChatListViewModel>()
     val chatViewModel: ChatViewModel = hiltViewModel()
+    val contactScreenViewModel: ContactScreenViewModel = hiltViewModel()
     val savedQuestionsViewModel: SavedQuestionsViewModel = hiltViewModel()
     val splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
     val profileViewModel: ProfileViewModel = hiltViewModel()
@@ -67,13 +69,14 @@ fun Navigation() {
                 val exitParams = Bundle()
                 val exitTime: Long = destinationChangeTime
                 val parentUsername = currentParentUser?.username ?: "null"
-                val authID = currentParentUser?._partition  ?: "null"
+                val authID = currentParentUser?.owner_id ?: "null"
 
                 val timeSpentOnScreen =
-                    if (screenEntryTime != 0L) screenEntryTime - exitTime else 0L
+                    if (screenEntryTime != 0L) exitTime - screenEntryTime else 0L
                 exitParams.putString("SCREEN_NAME", previousScreenRoute)
                 exitParams.putString("USERNAME", parentUsername)
                 exitParams.putString("authID", authID)
+                exitParams.putBoolean("Backgrounded", false)
                 exitParams.putLong("TIME_ON_SCREEN", timeSpentOnScreen)
 
                 firebaseAnalytics.logEvent("SCREEN_EXIT", exitParams)
@@ -82,8 +85,8 @@ fun Navigation() {
 
             destinationRoute?.let {
                 screenEntryTime = System.currentTimeMillis()
-                val parentUsername = currentParentUser?.username  ?: "null"
-                val authID = currentParentUser?._partition  ?: "null"
+                val parentUsername = currentParentUser?.username ?: "null"
+                val authID = currentParentUser?.owner_id ?: "null"
 
 
                 entryParams.putString(FirebaseAnalytics.Param.SCREEN_NAME, destinationRoute)
@@ -100,6 +103,23 @@ fun Navigation() {
 
         // Dispose of the listener when the composable is no longer in the composition
         onDispose {
+
+            val previousScreenRoute = navHostController.previousBackStackEntry?.destination?.route
+            val backgroundedTime = System.currentTimeMillis()
+
+            val exitParams = Bundle()
+            val parentUsername = currentParentUser?.username ?: "null"
+            val authID = currentParentUser?.owner_id ?: "null"
+
+            val timeSpentOnScreen =
+                if (screenEntryTime != 0L) backgroundedTime - screenEntryTime else 0L
+            exitParams.putString("SCREEN_NAME", previousScreenRoute)
+            exitParams.putString("USERNAME", parentUsername)
+            exitParams.putString("authID", authID)
+            exitParams.putBoolean("Backgrounded", true)
+            exitParams.putLong("TIME_ON_SCREEN", timeSpentOnScreen)
+
+            firebaseAnalytics.logEvent("SCREEN_EXIT", exitParams)
 
             firebaseAnalytics.logEvent("EXITED_FROM", Bundle().apply {
                 this.putString(
@@ -182,7 +202,6 @@ fun Navigation() {
                 onChatListEvent = { chatListEvent -> chatListViewModel.onEvent(chatListEvent) },
                 onChatEvent = { chatEvent -> chatViewModel.onEvent(chatEvent) }
             )
-            chatListViewModel.trimChats()
         }
 
         composable(route = Screen.ChatScreen.route) {
@@ -250,24 +269,32 @@ fun Navigation() {
         }
 
         composable(route = Screen.ResourcesHomeScreen.route) {
-            ResourcesHomeScreen(navController = navHostController, onEvent = {
-                chatListEvent ->  chatListViewModel.onEvent(chatListEvent)
-            })
+            ResourcesHomeScreen(navController = navHostController,
+                chatListViewModelState = chatListViewModel.chatListViewModelState,
+                onEvent = { chatListEvent ->
+                    chatListViewModel.onEvent(chatListEvent)
+                })
         }
 
         composable(route = Screen.PDFResourceScreen.route) {
-            PDFReader(navController = navHostController, chatListViewModelState = chatListViewModel.chatListViewModelState)
+            PDFReader(
+                navController = navHostController,
+                chatListViewModelState = chatListViewModel.chatListViewModelState
+            )
         }
 
         composable(route = Screen.ImageResourceScreen.route) {
-            ImageResourceScreen(navController = navHostController,
-                chatListViewModelState = chatListViewModel.chatListViewModelState)
+            ImageResourceScreen(
+                navController = navHostController,
+                chatListViewModelState = chatListViewModel.chatListViewModelState
+            )
         }
 
         composable(route = Screen.EmergencyInfoScreen.route) {
             EmergencyInfoScreen(
                 navController = navHostController,
-                profileState = profileViewModel.profileViewModelState
+                profileState = profileViewModel.profileViewModelState,
+                onEvent = {contactScreenEvent -> contactScreenViewModel.onEvent(contactScreenEvent)  }
             )
         }
 

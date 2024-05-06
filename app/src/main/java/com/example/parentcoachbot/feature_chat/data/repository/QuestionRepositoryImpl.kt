@@ -26,8 +26,17 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
     override suspend fun getQuestionById(id: String): Question? = withContext(Dispatchers.IO) {
         try {
             realm.query<Question>(query = "_id == $0", id).find().firstOrNull()?.copyFromRealm()
+        } catch (e: Exception) {
+            Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
+            null
         }
-        catch (e: Exception){
+    }
+
+    override suspend fun getQuestionByCode(code: String): Question? = withContext(Dispatchers.IO) {
+        try {
+            realm.query<Question>(query = "questionCode == $0", code).find().firstOrNull()
+                ?.copyFromRealm()
+        } catch (e: Exception) {
             Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
             null
         }
@@ -35,7 +44,7 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
 
     override suspend fun getQuestionsFromIdList(idList: List<String>): List<Question>? =
         withContext(Dispatchers.IO) {
-            try{
+            try {
                 realm.query<Question>().find().copyFromRealm().filter {
                     it._id in idList
                 }
@@ -65,12 +74,11 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
 
     override suspend fun getQuestionsBySubtopic(subtopicCode: String): Flow<List<Question>>? =
         withContext(Dispatchers.IO) {
-            try{
+            try {
                 realm.query<Question>(query = "subtopic == $0", subtopicCode).find().asFlow().map {
                     it.list
                 }
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
                 null
             }
@@ -84,9 +92,7 @@ class QuestionRepositoryImpl(val realm: Realm) : QuestionRepository {
                         question.subtopics.contains(subtopicId)
                     }
                 }
-            }
-
-            catch (e: Exception){
+            } catch (e: Exception) {
                 Log.println(Log.ERROR, "Realm", "An error occurred: ${e.message}}")
                 null
             }

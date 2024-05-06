@@ -10,7 +10,7 @@ import java.util.UUID
 class Topic: RealmObject {
     @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
-    var _partition: String? = null
+    var owner_id: String? = null
     var title: RealmDictionary<String> = realmDictionaryOf()
     @DrawableRes var icon: Int? = null
     var description: String? = null

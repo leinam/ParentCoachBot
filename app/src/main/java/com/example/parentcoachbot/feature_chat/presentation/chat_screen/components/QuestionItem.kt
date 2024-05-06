@@ -2,6 +2,7 @@ package com.example.parentcoachbot.feature_chat.presentation.chat_screen.compone
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,7 +57,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun QuestionBox(
     question: Question =
-        Question().apply { this.questionText["en"] = "Do I have enough milk?" },
+        Question().apply { this.questionText["en"] = "Do I have enough milk? aaaaaaa bbbbbbbbbbbbbbbbbbbbbbbb nnnnnnnnnnnnnnnnn" },
     questionSession: QuestionSession? = QuestionSession().apply { isSaved = true },
     onEvent: (chatEvent: ChatEvent) -> Unit = {},
     screenName: String = Screen.ChatScreen.route,
@@ -131,25 +132,29 @@ fun QuestionBox(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopStart),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.SpaceBetween
             ){
                 questionText?.let {
+
                     Text(
                         text = it,
                         textAlign = TextAlign.Start,
                         fontFamily = PlexSans,
                         fontWeight = FontWeight.Normal,
-                        color = TextGrey
+                        color = TextGrey,
+                        modifier = Modifier.weight(6f)
                     )
 
-                    Box(){
-                        Icon(imageVector = Icons.Default.MoreVert,
+
+                    Icon(imageVector = Icons.Default.MoreVert,
                             contentDescription = null,
-                            modifier = Modifier
-                                .size(16.dp),
+                            modifier =
+                                Modifier.size(18.dp)
+                                .padding(top = 2.dp).clickable {
+                                        isContextMenuVisible = !isContextMenuVisible
+                                    },
                             tint = TextGrey)
-                    }
+
                 }
 
 

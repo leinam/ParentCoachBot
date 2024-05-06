@@ -8,7 +8,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
 
 sealed class ChatEvent{
-    data class AddQuestionSession(val question: Question): ChatEvent()
+    data class AddQuestionSession(val question: Question, val previousQuestion: Question? = null): ChatEvent()
     data class DeleteQuestionSession(val questionSession: QuestionSession) : ChatEvent()
     data class SaveQuestionSession(val questionSession: QuestionSession): ChatEvent()
     data class SelectChat(val chatSession: ChatSession): ChatEvent()
@@ -17,6 +17,6 @@ sealed class ChatEvent{
     data class SelectProfile(val childProfile: ChildProfile): ChatEvent()
     data class ChangeLanguage(val language: String): ChatEvent()
     data class UpdateSearchQueryText(val searchQueryText: String): ChatEvent()
-    object RestoreQuestion: ChatEvent()
+    object GetParent: ChatEvent()
 
 }

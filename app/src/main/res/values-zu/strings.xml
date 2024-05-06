@@ -65,10 +65,10 @@
     <string name="portuguese_lang">IsiPutukezi</string>
     <string name="emergency_message_1">Ngokunakekelwa kwezempilo okuphuthumayo</string>
     <string name="mental_health_header">Impilo yengqondo</string>
-    <string name="sadag_info">Ukwesekwa kwamahora angu-24 kubantu baseNingizimu Afrika abasengozini yokuzibulala.</string>
-    <string name="sadag_contact">SADAG: 0800 567 567</string>
+    <string name="sadag_description">Ukwesekwa kwamahora angu-24 kubantu baseNingizimu Afrika abasengozini yokuzibulala.</string>
+    <string name="sadag_contact_title">SADAG: 0800 567 567</string>
     <string name="toll_free_lines">Izinombolo Zosizo Zamahhala Zamahora angu-24</string>
-    <string name="sa_police">Amaphoyisa aseNingizimu Afrika - 10111</string>
+    <string name="sa_police_title">Amaphoyisa aseNingizimu Afrika - 10111</string>
     <string name="team_contact_label">Othintana Nethimba Locwaningo</string>
     <string name="research_contact_description">Esimeni sokungabaza noma imibuzo ehlobene nesicelo noma okuqukethwe kwayo.</string>
     <string name="sa_emergency_contact_description">Amahora angama-24 othintana naye wesevisi yezimo eziphuthumayo nesevisi yokuhlenga</string>
@@ -118,4 +118,8 @@
     <string name="terms_ofuse_description_pt">Kwa ParentCoach, siqoqa futhi siphatha i-data ngokuhambisana nemigomo elandelalo.</string>
     <string name="terms_of_use_text_pt">"Siqoqa imininingwane osinikeza yona ngokuqondile. Isibonelo, siqoqa ulwazi uma uvula i-account, ubhalisa, ukubamba iqhaza kunoma yiziphi izici ezisebenzisanayo nezinsiza zethu, ukugcwalisa iphepha, ucela ukwesekwa kwamakhasimende noma uxhumana nathi ngenye indlela. Izinhlobo zemininingwane esingayiqoqa zihlanganisa igama lakho, ikheli le-email, ikheli leposi, imininingwane yekhadi lesikweletu kanye neminye imininingwane yokuxhumana noma yokuhlonza ozikhethele wena ukuyinikeza.  Siqoqa imininingwane eyimfihlo evela kuzo zonke izivakashi ze-Website ukuqapha i-traffic  nokulungisa ama-bugs. Isibonelo, siqoqa ulwazi olufana nezicelo ze-web, i-data ethunyelwe ekuphenduleni lezo zicelo, ikheli le-Internet Protocol, uhlobo lwe-browser, ulimi lwe-browser, nesitembu sesikhathi sesicelo.  Siphinda sisebenzise nobuchwepheshe obuhlukahlukene ukuze siqoqe imininingwane, futhi lokhu kungahlanganisa ukuthumela ama-cookies kwi-computer yakho. Ama-cookies ama-file amancane e-data agcinwe kwi-hard drive yakho noma kwi-memory ydevice yakho asisiza ukuba sithuthukise izinsiza zethu kanye nokuhlangabenzane nakho , sibone ukuthi yiziphi izindawo nezici zezinsiza zethu ezithandwayo futhi sibale ukuvakashelwa. Singase futhi siqoqe ulwazi ngokusebenzisa ama-web beacons (aziwa ngokuthi \"ama-Pixels okulandelela\"). Ama-web beacons ayizithombe ze-eletronic ezingasetshenziswa kwizinsiza zethu noma kuma-email futhi ukulandelela inani lokuvakashelwa noma ukuqonda ukusetshenziswa nokusebenza ngempumelelo komkhankaso. Inqubomgomo yethu Yobumfihlo yakhiwe ngosizo lwe- Generator yethemulethi ye-Privacy Policy.  "</string>
     <string name="data_collected_header">Imininigwano Eqoqiwe</string>
+    <string name="source_label">Umthombo:</string>
+    <string name="adcock_contact_description">I-Adcock Ingram Helpline Yosizo Lokucindezeleka Nokukhathazeka inikeza ukusekelwa ngokomzwelo kubantu baseNingizimu Afrika abacindezelekile noma abasengozini yokuzibulala.</string>
+    <string name="sa_crisis_hotline_description">I-South Africa Suicide Crisis Helpline inikeza ukwesekwa kwamahora angu-24 kubantu baseNingizimu Afrika abacindezelekile noma abasengozini yokuzibulala.</string>
+    <string name="related_questions_label">Imibuzo Ehlobene:</string>
 </resources>

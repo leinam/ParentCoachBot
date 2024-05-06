@@ -1,6 +1,7 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_list
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -42,8 +43,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight.Companion.Normal
-import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.parentcoachbot.MainActivity
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
@@ -72,6 +73,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+
 @Preview
 @Composable
 fun ChatListScreen(
@@ -80,6 +82,8 @@ fun ChatListScreen(
     onChatListEvent: (ChatListEvent) -> Unit = {},
     onChatEvent: (ChatEvent) -> Unit = {}
 ) {
+
+    onChatListEvent(ChatListEvent.TrimChats)
 
     val chatListStateWrapper = chatListViewModelState.value
     val appPreferences: SharedPreferences = LocalContext.current.getSharedPreferences(
@@ -95,12 +99,17 @@ fun ChatListScreen(
     val chatSessionList: List<ChatSession> by chatListStateWrapper.chatSessionListState.collectAsStateWithLifecycle()
     val currentChildProfile: ChildProfile? by chatListStateWrapper.currentChildProfile.collectAsStateWithLifecycle()
 
+    if (currentChildProfile == null){
+        val intent =
+            Intent(LocalContext.current, MainActivity::class.java)
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        LocalContext.current.startActivity(intent)
+    }
 
     val scope = rememberCoroutineScope()
-    var drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(1) }
+    val drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(1) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
-
 
 
     Scaffold(
@@ -139,7 +148,7 @@ fun ChatListScreen(
             navController = navController,
             currentChildProfileName = currentChildProfile?.name ?: "",
             contentPadding = contentPadding,
-            content ={
+            content = {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -163,7 +172,7 @@ fun ChatListScreen(
                                 text = stringResource(id = R.string.chats_label),
                                 color = PrimaryGreen,
                                 fontFamily = PlexSans,
-                                fontWeight = Normal,
+                                fontWeight = FontWeight.Normal,
                                 fontSize = 19.sp
                             )
                         }
@@ -227,7 +236,7 @@ fun ChatListScreen(
                                                 fontSize = 16.sp,
                                                 color = TextGrey,
                                                 fontFamily = PlexSans,
-                                                fontWeight = SemiBold,
+                                                fontWeight = FontWeight.SemiBold,
                                                 modifier = Modifier.align(
                                                     Alignment.TopStart
                                                 )
@@ -240,7 +249,12 @@ fun ChatListScreen(
                                                     it.epochSeconds,
                                                     it.nanosecondsOfSecond,
                                                     ZoneOffset.UTC
-                                                ).format(DateTimeFormatter.ofPattern("E H:mm", Locale.forLanguageTag(currentLanguageCode)))
+                                                ).format(
+                                                    DateTimeFormatter.ofPattern(
+                                                        "E H:mm",
+                                                        Locale.forLanguageTag(currentLanguageCode)
+                                                    )
+                                                )
                                             }
 
                                             Row(
@@ -265,7 +279,7 @@ fun ChatListScreen(
                                                     text = lastUpdated,
                                                     fontSize = 10.sp,
                                                     fontFamily = PlexSans,
-                                                    fontWeight = SemiBold,
+                                                    fontWeight = FontWeight.SemiBold,
 
                                                     )
                                             }
@@ -287,12 +301,13 @@ fun ChatListScreen(
                                                             }",
                                                             fontSize = 12.sp,
                                                             fontFamily = PlexSans,
-                                                            fontWeight = Normal
+                                                            fontWeight = FontWeight.Normal
                                                         )
 
                                                         Icon(
                                                             painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                                                            contentDescription = null, tint = TextGrey
+                                                            contentDescription = null,
+                                                            tint = TextGrey
                                                         )
 
                                                     }
@@ -382,6 +397,8 @@ fun ChatListScreen(
             })
 
     }
+
+
 }
 
 

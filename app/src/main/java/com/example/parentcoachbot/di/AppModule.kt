@@ -10,6 +10,7 @@ import com.example.parentcoachbot.feature_chat.data.repository.ChildProfileRepos
 import com.example.parentcoachbot.feature_chat.data.repository.ParentUserRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.QuestionRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.QuestionSessionRepositoryImpl
+import com.example.parentcoachbot.feature_chat.data.repository.SearchQueryRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.SubtopicRepositoryImpl
 import com.example.parentcoachbot.feature_chat.data.repository.TopicRepositoryImpl
 import com.example.parentcoachbot.feature_chat.domain.repository.AnswerRepository
@@ -19,8 +20,12 @@ import com.example.parentcoachbot.feature_chat.domain.repository.ChildProfileRep
 import com.example.parentcoachbot.feature_chat.domain.repository.ParentUserRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.QuestionRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.QuestionSessionRepository
+import com.example.parentcoachbot.feature_chat.domain.repository.SearchQueryRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.SubtopicRepository
 import com.example.parentcoachbot.feature_chat.domain.repository.TopicRepository
+import com.example.parentcoachbot.feature_chat.domain.use_case.answerThreadUseCases.AnswerThreadUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.answerThreadUseCases.GetAnswerThreadByCode
+import com.example.parentcoachbot.feature_chat.domain.use_case.answerThreadUseCases.GetAnswerThreadById
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.AnswerUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.GetAnswer
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.GetAnswerThreadLastAnswer
@@ -57,12 +62,15 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUs
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.AddQuestion
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.DeleteQuestion
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetAllQuestions
+import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionByCode
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionById
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionWithAnswers
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsBySubtopic
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsFromIdList
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.GetQuestionsWithAnswers
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.searchQueryUseCases.NewSearchQuery
+import com.example.parentcoachbot.feature_chat.domain.use_case.searchQueryUseCases.SearchQueryUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicByCode
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicById
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.GetSubtopicsByTopic
@@ -196,6 +204,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideSearchQueryRepository(realm: Realm): SearchQueryRepository {
+        return SearchQueryRepositoryImpl(realm = realm)
+    }
+
+    @Provides
+    @Singleton
     fun provideQuestionUseCases(
         questionRepository: QuestionRepository,
         answerRepository: AnswerRepository,
@@ -217,7 +231,8 @@ object AppModule {
             ),
             getQuestionBySubtopic = GetQuestionsBySubtopic(questionRepository),
             getQuestionsFromIdList = GetQuestionsFromIdList(questionRepository = questionRepository),
-            getQuestionById = GetQuestionById(repository = questionRepository)
+            getQuestionById = GetQuestionById(repository = questionRepository),
+            getQuestionByCode = GetQuestionByCode(repository = questionRepository)
         )
     }
 
@@ -228,6 +243,16 @@ object AppModule {
             GetAnswer(answerRepository),
             GetAnswersByIdList(answerRepository),
             GetAnswerThreadLastAnswer(answerRepository)
+        )
+
+    }
+
+    @Provides
+    @Singleton
+    fun provideAnswerThreadUseCases(answerThreadRepository: AnswerThreadRepository): AnswerThreadUseCases {
+        return AnswerThreadUseCases(
+            getAnswerThreadByCode = GetAnswerThreadByCode(answerThreadRepository),
+            getAnswerThreadById = GetAnswerThreadById(answerThreadRepository)
         )
 
     }
@@ -310,6 +335,12 @@ object AppModule {
             updateCountry = UpdateCountry(parentUserRepository),
             updateUsername = UpdateUsername(parentUserRepository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchQueryUserUseCases(searchQueryRepository: SearchQueryRepository): SearchQueryUseCases {
+        return SearchQueryUseCases(NewSearchQuery(searchQueryRepository))
     }
 
     @Provides

@@ -8,7 +8,14 @@ class GetAnswerThreadLastAnswer(private val answerRepository: AnswerRepository) 
         val answerThread = answerRepository.getAnswersByAnswerThreadCode(answerThreadCode)
 
         answerThread?.let {
-            return it.last()
+            if (it.isNotEmpty()){
+                return it.last()
+            } else{
+                return null
+            }
+
+
+
         }
 
         return null

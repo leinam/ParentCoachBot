@@ -14,7 +14,7 @@ import java.time.LocalDate
 data class ChatStateWrapper(
     val subtopicQuestionsListState: StateFlow<List<Question>> = MutableStateFlow(emptyList()),
     var questionSessionListState: StateFlow<List<QuestionSession>> = MutableStateFlow(emptyList()),
-    var questionSessionListGroupedByDateState: StateFlow<Map<LocalDate,List<QuestionSession>>> = MutableStateFlow(
+    var questionSessionListGroupedByDateState: StateFlow<Map<LocalDate, List<QuestionSession>>> = MutableStateFlow(
         emptyMap()
     ),
     val questionsWithAnswersState: StateFlow<MutableList<Pair<Question,
@@ -28,7 +28,7 @@ data class ChatStateWrapper(
             Question?, List<Answer>?>?>> = MutableStateFlow(
         emptyList()
     ),
-    val questionSessionsWithQuestionAndAnswersGroupedByDateState: StateFlow<Map<LocalDate, List<Triple<QuestionSession, Question?, List<Answer>?>?>>> =
+    val questionSessionsWithQuestionAndAnswersGroupedByDateState: StateFlow<Map<LocalDate, List<Triple<QuestionSession, Pair<Question?, List<Question?>?>, List<Answer>?>?>>> =
         MutableStateFlow(emptyMap()),
     val searchQueryText: StateFlow<String> = MutableStateFlow(""),
     val searchResultsQuestionsListState: StateFlow<List<Question>> = MutableStateFlow(emptyList()),

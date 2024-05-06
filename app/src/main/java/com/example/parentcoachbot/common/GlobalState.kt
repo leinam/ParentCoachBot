@@ -17,18 +17,15 @@ class GlobalState(private val parentUserUseCases: ParentUserUseCases,
     val currentChildProfileState = MutableStateFlow<ChildProfile?>(null)
     val newChatState = MutableStateFlow<ChatSession?>(null)
     // val realmUserState = MutableStateFlow<User?>(null)
-
-    val currentLanguageCode = MutableStateFlow<String>(appPreferences.getDefaultLanguage())
-
-    init {
-
-    }
-
+    val currentLanguageCode: MutableStateFlow<String> = MutableStateFlow(appPreferences.getDefaultLanguage())
+    val currentCountry: MutableStateFlow<String?> = MutableStateFlow(null)
 
     suspend fun getParentUser() {
         parentUserUseCases.getParentUser()?.onEach {
             parentUserState.value = it
-            println("The global parent state is ${parentUserState.value?._id}")
+            println("The global parent state is ${parentUserState.value?._id} and country ${it?.country}")
+            currentCountry.value = it?.country
+
         }?.collect()
     }
 

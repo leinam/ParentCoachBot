@@ -7,14 +7,16 @@ import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import io.realm.kotlin.MutableRealm
 import io.realm.kotlin.ext.realmDictionaryOf
+import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmDictionary
+import io.realm.kotlin.types.RealmList
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 class ContentImporter(
     private val context: Context,
     private val realm: MutableRealm,
     private val topicId: String,
-    private val partitionName: String
+    private val owner_id: String
 ) {
     fun importContent() {
         val start = System.currentTimeMillis()
@@ -28,7 +30,7 @@ class ContentImporter(
             workbook.close()
         }
 
-        println("db setup time" + (System.currentTimeMillis() - start))
+        println("db setup time: " + (System.currentTimeMillis() - start) + " ms")
     }
 
     private fun importWorkbook(): XSSFWorkbook? {
@@ -54,13 +56,15 @@ class ContentImporter(
             val questionTextZu = row.getCell(5)?.stringCellValue?.trim()
             val questionAnswerThread = row.getCell(2)?.stringCellValue?.trim()
             val questionSubtopic = row.getCell(3)?.stringCellValue?.trim()
+            val questionCode = row.getCell(6)?.stringCellValue?.trim()
+
             // println("$questionTextEn: $questionTextPt : $questionTextZu")
 
             questionTextEn?.let {
                 val questionTextDict = realmDictionaryOf(
                     Pair(Language.English.isoCode, questionTextEn),
                     Pair(Language.Portuguese.isoCode, questionTextPt ?: ""),
-                    Pair(Language.Zulu.isoCode, questionTextZu?: "")
+                    Pair(Language.Zulu.isoCode, questionTextZu ?: "")
                 )
 
                 if (it.isNotBlank()) {
@@ -68,7 +72,8 @@ class ContentImporter(
                         this.questionText = questionTextDict
                         this.answerThread = questionAnswerThread
                         this.subtopic = questionSubtopic
-                        this._partition = partitionName
+                        this.questionCode = questionCode
+                        this.owner_id = this@ContentImporter.owner_id
                     })
 
                 }
@@ -83,8 +88,6 @@ class ContentImporter(
         val subtopicsSheet = workbook.getSheet("subtopics")
 
         for (row in subtopicsSheet) {
-
-
             val subtopicCode = row.getCell(0)?.stringCellValue?.trim()
             val subtopicTitleEn = row.getCell(1)?.stringCellValue?.trim()
             val subtopicTitlePt = row.getCell(2)?.stringCellValue?.trim()
@@ -98,13 +101,13 @@ class ContentImporter(
                 val subtopicTitleDict = realmDictionaryOf(
                     Pair(Language.English.isoCode, subtopicTitleEn ?: ""),
                     Pair(Language.Portuguese.isoCode, subtopicTitlePt ?: ""),
-                    Pair(Language.Zulu.isoCode, subtopicTitleZu  ?: "")
+                    Pair(Language.Zulu.isoCode, subtopicTitleZu ?: "")
                 )
 
                 val subtopicDescriptionDict = realmDictionaryOf(
-                    Pair(Language.English.isoCode, subtopicDescriptionEn  ?: ""),
-                    Pair(Language.Portuguese.isoCode, subtopicDescriptionPt  ?: ""),
-                    Pair(Language.Zulu.isoCode, subtopicDescriptionZu  ?: "")
+                    Pair(Language.English.isoCode, subtopicDescriptionEn ?: ""),
+                    Pair(Language.Portuguese.isoCode, subtopicDescriptionPt ?: ""),
+                    Pair(Language.Zulu.isoCode, subtopicDescriptionZu ?: "")
                 )
 
                 realm.copyToRealm(
@@ -113,7 +116,7 @@ class ContentImporter(
                         this.code = subtopicCode
                         this.description = subtopicDescriptionDict
                         this.topic = topicId
-                        this._partition = partitionName
+                        this.owner_id = this@ContentImporter.owner_id
                     })
             }
 
@@ -128,8 +131,28 @@ class ContentImporter(
         for (row in answerThreadSheet) {
 
             val answerThreadCode = row.getCell(0)?.stringCellValue?.trim()
+            val defaultQuestion = row.getCell(62)?.stringCellValue?.trim()
+            val externalWebsitelink = row.getCell(41)?.stringCellValue?.trim()
             val answerThreadTitle = row.getCell(2)?.stringCellValue?.trim()
             val answerThreadSubtopic = row.getCell(1)?.stringCellValue?.trim()
+            val relatedAnswerThreads: RealmList<String> = realmListOf()
+            val relatedThreadOne = row.getCell(38)?.stringCellValue?.trim()
+            val relatedThreadTwo = row.getCell(39)?.stringCellValue?.trim()
+            val relatedThreadThree = row.getCell(40)?.stringCellValue?.trim()
+
+
+
+            if (!relatedThreadOne.isNullOrBlank()) {
+                relatedAnswerThreads.add(relatedThreadOne)
+            }
+
+            if (!relatedThreadTwo.isNullOrBlank()) {
+                relatedAnswerThreads.add(relatedThreadTwo)
+            }
+
+            if (!relatedThreadThree.isNullOrBlank()) {
+                relatedAnswerThreads.add(relatedThreadThree)
+            }
 
             // println("$answerThreadCode: $answerThreadTitle: $answerThreadSubtopic")
 
@@ -139,7 +162,10 @@ class ContentImporter(
                         this.title = answerThreadTitle
                         this.code = answerThreadCode
                         this.subtopic = answerThreadSubtopic
-                        this._partition = partitionName
+                        this.relatedAnswerThreads = relatedAnswerThreads
+                        this.owner_id = this@ContentImporter.owner_id
+                        this.defaultQuestionCode = defaultQuestion
+                        this.externalWebsiteLink = externalWebsitelink
                     }
 
                     realm.copyToRealm(answerThread)
@@ -203,7 +229,7 @@ class ContentImporter(
                                     this.answerThread = answerThread.code
                                     this.answerThreadPosition = index
                                     this.answerText = answerTextDict
-                                    this._partition = partitionName
+                                    this.owner_id = this@ContentImporter.owner_id
                                 })
                             }
                         }

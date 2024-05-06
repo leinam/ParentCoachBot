@@ -9,9 +9,11 @@ class QuestionSession: RealmObject {
     @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
     var chatSession: String? = null
-    var _partition: String? = null
+    var parentUsername: String? = null
+    var owner_id: String? = null
     var childProfile: String? = null
     var question: String? = null
+    var questionCode: String? = null
     var timeAsked: RealmInstant = RealmInstant.now()
     var isSaved: Boolean = false
     var timeSaved: RealmInstant? = null

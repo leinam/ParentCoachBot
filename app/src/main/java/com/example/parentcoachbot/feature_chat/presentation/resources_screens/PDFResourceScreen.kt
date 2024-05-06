@@ -71,11 +71,12 @@ fun PDFReader(
         }
 
         val assetManager: AssetManager = LocalContext.current.assets
-        val fileName by chatListViewModelState.value.currentResourceFileName.collectAsStateWithLifecycle()
+        val currentPdfResource by chatListViewModelState.value.currentPdfResource.collectAsStateWithLifecycle()
+        val fileName = currentPdfResource?.filename
 
 
         val pdfRender = PdfRender(
-            inputStream = assetManager.open(fileName),
+            inputStream = assetManager.open(fileName!!),
             context = LocalContext.current,
             fileName = fileName
         )

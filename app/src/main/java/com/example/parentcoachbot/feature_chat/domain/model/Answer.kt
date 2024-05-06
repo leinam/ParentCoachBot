@@ -11,7 +11,7 @@ import java.util.UUID
 class Answer: RealmObject {
     @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
-    var _partition: String? = null
+    var owner_id: String? = null
     var supportingImagePath: String? = null
     var answerText: RealmDictionary<String> = realmDictionaryOf()
     @Index

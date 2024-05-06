@@ -11,31 +11,30 @@ import io.realm.kotlin.types.RealmDictionary
 class PopulateDb(
     private val realm: MutableRealm,
     private val application: Application,
-    private val partitionName: String = "all-users",
+    private val globalOwnerId: String = "all-users",
     private val userId: String
 ) {
 
     operator fun invoke() {
         println("Attempting to pre-populate database")
 
-        val defaultParentUser = ParentUser().apply { this._partition = userId }
+        val defaultParentUser = ParentUser().apply { this.owner_id = userId }
         val titleDict: RealmDictionary<String> = realmDictionaryOf(
-            Pair(Language.English.isoCode, "Breastfeeding" ),
-            Pair(Language.Portuguese.isoCode, "Amamentação"),
-            Pair(Language.Zulu.isoCode, "Ukuncelisa")
+            Pair(Language.English.isoCode, "Child Care"),
+            Pair(Language.Portuguese.isoCode, "Cuidados Infantis"),
+            Pair(Language.Zulu.isoCode, "Ukunakekelwa Kwengane")
         )
 
-        val breastfeedingTopic: Topic = Topic().apply {
+        val childCareTopic: Topic = Topic().apply {
             this.title = titleDict
             this.icon = R.drawable.breastfeeding
-            this._partition = partitionName
+            this.owner_id = globalOwnerId
         }
 
-        // realm.copyToRealm(breastfeedingTopic)
+        // realm.copyToRealm(childCareTopic)
         realm.copyToRealm(defaultParentUser)
 
-        // ContentImporter(application.applicationContext, realm = realm, topicId = breastfeedingTopic._id, partitionName = partitionName).importContent()
-
+        // ContentImporter(application.applicationContext, realm = realm, topicId = childCareTopic._id, owner_id = globalOwnerId).importContent()
 
         println("Done pre-populating database")
 

@@ -34,7 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
-import com.example.parentcoachbot.feature_chat.presentation.emergency_screen.ExpandableCard
+import com.example.parentcoachbot.feature_chat.presentation.contact_screen.ExpandableCard
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.ProfileStateWrapper
 import com.example.parentcoachbot.ui.theme.Beige
 import com.example.parentcoachbot.ui.theme.PlexSans

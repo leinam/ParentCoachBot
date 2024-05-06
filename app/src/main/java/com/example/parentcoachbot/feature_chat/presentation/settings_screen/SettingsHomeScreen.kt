@@ -62,7 +62,7 @@ fun SettingsHomeScreen(
     val profileStateWrapper:ProfileStateWrapper = profileState.value
     val parentUser by profileStateWrapper.parentUserState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    var drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(5) }
+    var drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(4) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
 

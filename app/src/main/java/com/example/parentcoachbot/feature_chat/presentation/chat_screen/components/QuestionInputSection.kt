@@ -30,6 +30,7 @@ import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.BottomSheetContent
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.ChatEvent
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
+import com.example.parentcoachbot.ui.theme.ParentCoachBotTheme
 import com.example.parentcoachbot.ui.theme.TextGrey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,7 +49,7 @@ fun QuestionInputSection(
     bottomSheetScaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
-
+ParentCoachBotTheme (darkTheme = false){
     var searchQueryText by remember { mutableStateOf(TextFieldValue("")) }
 
     Row(
@@ -85,10 +86,16 @@ fun QuestionInputSection(
                 unfocusedContainerColor = BackgroundWhite,
                 disabledContainerColor = BackgroundWhite,
                 focusedTextColor = Color.Black,
-                unfocusedTextColor = TextGrey
+                unfocusedTextColor = TextGrey,
+                focusedSupportingTextColor = Color.Black,
+                unfocusedSupportingTextColor = TextGrey,
+                focusedPlaceholderColor = Color.Black,
+                unfocusedPlaceholderColor = TextGrey
             ),
             trailingIcon = { Icon(painter = painterResource(id = R.drawable.baseline_search_24), contentDescription = null)},
 
             placeholder = { Text(text = stringResource (placeholderText)) })
     }
+}
+
 }

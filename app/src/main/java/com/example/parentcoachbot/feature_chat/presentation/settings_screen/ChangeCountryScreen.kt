@@ -26,7 +26,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -69,7 +68,7 @@ fun ChangeCountryScreen(
     val profileStateWrapper = profileState.value
 
     val parentUser: ParentUser? by profileStateWrapper.parentUserState.collectAsStateWithLifecycle()
-    val currentLanguage: String? by profileStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
+    val currentCountry by profileStateWrapper.currentCountry.collectAsStateWithLifecycle()
 
 
     var country: String by rememberSaveable {
@@ -81,7 +80,6 @@ fun ChangeCountryScreen(
         mutableStateOf(false)
     }
 
-    val scope = rememberCoroutineScope()
 
     Scaffold()
     { contentPadding ->
@@ -144,7 +142,7 @@ fun ChangeCountryScreen(
 
                         TextField(
                             readOnly = true,
-                            value = country,
+                            value = currentCountry ?: country,
                             onValueChange = {
                                 country = it
                             },
@@ -200,15 +198,23 @@ fun ChangeCountryScreen(
                                 RoundedCornerShape(30.dp)
                             )
                             .clickable {
-                                parentUser?.let { currentParentUser ->
-                                    onEvent(
-                                        ProfileEvent.UpdateCountry(currentParentUser, country)
-                                    )
-                                }.also {
-                                    isExpanded = false
-                                    Toast.makeText(mContext, "Successfully updated Country", Toast.LENGTH_LONG ).show()
-                                    navController.navigate(Screen.SettingsHomeScreen.route)
-                                }
+                                parentUser
+                                    ?.let { currentParentUser ->
+                                        onEvent(
+                                            ProfileEvent.UpdateCountry(currentParentUser, country)
+                                        )
+                                    }
+                                    .also {
+                                        isExpanded = false
+                                        Toast
+                                            .makeText(
+                                                mContext,
+                                                "Successfully updated Country",
+                                                Toast.LENGTH_LONG
+                                            )
+                                            .show()
+                                        navController.navigate(Screen.SettingsHomeScreen.route)
+                                    }
                             }
                             .background(color = LightGreen)
                             .padding(10.dp),

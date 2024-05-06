@@ -10,14 +10,17 @@ class NewQuestionSession (private val questionSessionRepository: QuestionSession
         chatSessionId: String,
         question: Question,
         childProfile: String?,
-        userId: String?
+        userId: String?,
+        parentUsername: String?
     ){
 
             val questionSession = QuestionSession().apply {
                 this.question = question._id
+                this.questionCode = question.questionCode
                 this.chatSession = chatSessionId
                 this.childProfile = childProfile
-                this._partition = userId
+                this.owner_id = userId
+                this.parentUsername = parentUsername
             }
 
             questionSessionRepository.newQuestionSession(questionSession = questionSession)

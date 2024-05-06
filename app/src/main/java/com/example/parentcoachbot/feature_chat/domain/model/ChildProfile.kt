@@ -7,8 +7,9 @@ import java.util.UUID
 class ChildProfile : RealmObject {
     @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
-    var _partition: String? = null
+    var owner_id: String? = null
     var parentUser: String? = null
+    var parentUsername: String? = null
     var name: String? = null
     var gender: String = Sex.NotSpecified.name
     var yearOfBirth: Int? = null

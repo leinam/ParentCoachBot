@@ -11,7 +11,8 @@ import java.util.UUID
 class ChatSession: RealmObject {
     @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
-    var _partition: String? = null
+    var owner_id: String? = null
+    var parentUsername: String? = null
     var chatTitle: RealmDictionary<String> = realmDictionaryOf()
     var childProfile: String? = null
     var timeStarted: RealmInstant = RealmInstant.now()

@@ -75,7 +75,6 @@ class MainActivity() : ComponentActivity() {
             ParentCoachBotTheme (darkTheme = false){
                 // A surface container using the 'background' color from the theme
                 val authResult: User? by authManager.authenticatedRealmUser.collectAsStateWithLifecycle()
-
                 authResult?.let {
                     Navigation()
                 }

@@ -10,10 +10,11 @@ import java.util.UUID
 class Subtopic: RealmObject {
     @PrimaryKey
     var _id: String = UUID.randomUUID().toString()
-    var _partition: String? = null
+    var owner_id: String? = null
     var title: RealmDictionary<String> = realmDictionaryOf()
     var code: String? = null
     var topic: String? = null
     var description: RealmDictionary<String> = realmDictionaryOf()
+    var defaultQuestionCode: String? = null
     @DrawableRes var icon:Int? = null
 }

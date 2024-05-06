@@ -9,7 +9,8 @@ data class QuestionUseCases(
     val getQuestionWithAnswers: GetQuestionWithAnswers,
     val getQuestionBySubtopic: GetQuestionsBySubtopic,
     val getQuestionsFromIdList: GetQuestionsFromIdList,
-    val getQuestionById: GetQuestionById
+    val getQuestionById: GetQuestionById,
+    val getQuestionByCode: GetQuestionByCode
 ) {
 
 }

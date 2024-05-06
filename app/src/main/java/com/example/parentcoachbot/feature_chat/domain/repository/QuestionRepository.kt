@@ -10,6 +10,8 @@ interface QuestionRepository {
 
     suspend fun getQuestionById(id: String): Question?
 
+    suspend fun getQuestionByCode(code: String): Question?
+
     suspend fun insertQuestion(question: Question)
 
     suspend fun deleteQuestion(id: String)

@@ -12,6 +12,7 @@ import com.example.parentcoachbot.feature_chat.domain.model.Topic
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.QuestionSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
+import com.example.parentcoachbot.feature_chat.presentation.resources_screens.ResourceItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatListViewModel @Inject constructor(
     private val chatSessionUseCases: ChatSessionUseCases,
-    private val questionSesionUseCases: QuestionSessionUseCases,
+    private val questionSessionUseCases: QuestionSessionUseCases,
     private val globalState: GlobalState,
     private val authManager: AuthManager,
     private val eventLogger: EventLogger
@@ -36,11 +37,15 @@ class ChatListViewModel @Inject constructor(
     private val _currentChildProfile = globalState.currentChildProfileState
     private val parentUserState = globalState.parentUserState
     private val _currentLanguageCode = globalState.currentLanguageCode
-    private val _currentResourceFilename = MutableStateFlow<String>("rthb_booklet.pdf")
-    private val _currentImageResourceId = MutableStateFlow<Int?>(null)
+    private val _currentPDFResource: MutableStateFlow<ResourceItem?> = MutableStateFlow(null)
+    private val _currentImageResource = MutableStateFlow<ResourceItem?>(null)
+    private val _currentCountry = globalState.currentCountry
+    private val _parentUserState = globalState.parentUserState
 
     private var getChildProfileChatSessionsJob: Job? = null
+    private var getCurrentCountryJob: Job? = null
     private var getCurrentLanguageJob: Job? = null
+
 
     private val _chatListStateWrapper = mutableStateOf(
         ChatListStateWrapper(
@@ -50,12 +55,23 @@ class ChatListViewModel @Inject constructor(
             newChatState = _newChatState,
             currentChildProfile = globalState.currentChildProfileState,
             currentLanguageCode = _currentLanguageCode,
-            currentResourceFileName = _currentResourceFilename,
-            currentImageResourceId = _currentImageResourceId
+            currentPdfResource = _currentPDFResource,
+            currentImageResource = _currentImageResource,
+            currentCountry = _currentCountry
         )
     )
 
     var chatListViewModelState: State<ChatListStateWrapper> = _chatListStateWrapper
+
+    private fun getCountry() {
+        getCurrentCountryJob?.cancel()
+
+        getCurrentCountryJob = viewModelScope.launch {
+            _parentUserState.onEach {
+                println("country ${_currentCountry.value}")
+            }.collect()
+        }
+    }
 
     private fun getCurrentLanguage() {
         getCurrentLanguageJob?.cancel()
@@ -67,7 +83,7 @@ class ChatListViewModel @Inject constructor(
 
     init {
         getProfileChatSessions()
-        trimChats()
+        // getCountry()
         // getCurrentLanguage()
     }
 
@@ -89,11 +105,32 @@ class ChatListViewModel @Inject constructor(
             }
 
             is ChatListEvent.SelectPDFResource -> {
-                _currentResourceFilename.value = chatListEvent.fileName
+                _currentPDFResource.value = chatListEvent.resourceItem
+
+                parentUserState.value?.let {
+                    eventLogger.logResourceEvent(
+                        language = _currentLanguageCode.value,
+                        loggingEvent = LoggingEvent.ViewResourceItem,
+                        profile = _currentChildProfile.value,
+                        resourceItem = chatListEvent.resourceItem,
+                        parentUser = it
+                    )
+                }
             }
 
             is ChatListEvent.SelectImageResource -> {
-                _currentImageResourceId.value = chatListEvent.imageId
+                _currentImageResource.value = chatListEvent.resourceItem
+
+                parentUserState.value?.let {
+                    eventLogger.logResourceEvent(
+                        language = _currentLanguageCode.value,
+                        loggingEvent = LoggingEvent.ViewResourceItem,
+                        profile = _currentChildProfile.value,
+                        resourceItem = chatListEvent.resourceItem,
+                        parentUser = it
+
+                    )
+                }
             }
 
             ChatListEvent.NewChat -> {
@@ -102,7 +139,9 @@ class ChatListViewModel @Inject constructor(
 
                         ChatSession().apply {
                             this.childProfile = currentChildProfile._id
-                            this._partition = authManager.authenticatedRealmUser.value?.id
+                            this.parentUsername = parentUserState.value?.username
+                            this.owner_id = authManager.authenticatedRealmUser.value?.id
+                            this.parentUsername = parentUserState.value?.username
                         }.let {
                             _newChatState.value = it
 
@@ -149,24 +188,24 @@ class ChatListViewModel @Inject constructor(
                 // have to call this every time or the list isn't current
             }
 
+            is ChatListEvent.TrimChats -> {
+                trimChats()
+            }
+
         }
 
     }
 
-    fun trimChats() {
+    private fun trimChats() {
         viewModelScope.launch {
-            _chatSessionsListState.onEach { chatSessions ->
-                chatSessions.forEach { chatSession ->
-                    questionSesionUseCases.getChatQuestionSessions(chatSessionId = chatSession._id)
-                        ?.onEach {
-                            println(it)
-                            if (it.isEmpty()) {
-                                chatSessionUseCases.deleteChatSession(chatSession._id)
-                            }
-                        }?.collect()
-                }
-
-            }.collect()
+            _chatSessionsListState.value.forEach { chatSession ->
+                questionSessionUseCases.getChatQuestionSessions(chatSessionId = chatSession._id)
+                    ?.onEach {
+                        if (it.isEmpty()) {
+                            chatSessionUseCases.deleteChatSession(chatSession._id)
+                        }
+                    }?.collect()
+            }
         }
 
     }

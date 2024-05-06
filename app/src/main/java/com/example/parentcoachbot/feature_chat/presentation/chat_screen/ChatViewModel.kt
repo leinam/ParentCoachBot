@@ -1,8 +1,6 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_screen
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -15,14 +13,17 @@ import com.example.parentcoachbot.feature_chat.domain.model.ChatSession
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.Question
 import com.example.parentcoachbot.feature_chat.domain.model.QuestionSession
+import com.example.parentcoachbot.feature_chat.domain.model.SearchQuery
 import com.example.parentcoachbot.feature_chat.domain.model.Subtopic
 import com.example.parentcoachbot.feature_chat.domain.model.Topic
+import com.example.parentcoachbot.feature_chat.domain.use_case.answerThreadUseCases.AnswerThreadUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.answerUseCases.AnswerUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.chatSessionUseCases.ChatSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCases.ChildProfileUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionSessionUseCases.QuestionSessionUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.questionUseCases.QuestionUseCases
+import com.example.parentcoachbot.feature_chat.domain.use_case.searchQueryUseCases.SearchQueryUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.subtopicUseCases.SubtopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.use_case.topicUseCases.TopicUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
@@ -57,7 +58,9 @@ class ChatViewModel @Inject constructor(
     private val childProfileUseCases: ChildProfileUseCases,
     private val parentUserUseCases: ParentUserUseCases,
     private val answerUseCases: AnswerUseCases,
+    private val answerThreadUseCases: AnswerThreadUseCases,
     private val chatSessionUseCases: ChatSessionUseCases,
+    private val searchQueryUseCases: SearchQueryUseCases,
     private val globalState: GlobalState,
     private val authManager: AuthManager,
     private val questionSearcher: QuestionSearcher
@@ -79,7 +82,7 @@ class ChatViewModel @Inject constructor(
         MutableStateFlow(
             emptyList()
         )
-    private val _questionSessionsWithQuestionAndAnswersListGroupedByDateState: MutableStateFlow<Map<LocalDate, List<Triple<QuestionSession, Question?, List<Answer>?>?>>> =
+    private val _questionSessionsWithQuestionAndAnswersListGroupedByDateState: MutableStateFlow<Map<LocalDate, List<Triple<QuestionSession, Pair<Question?, List<Question?>?>, List<Answer>?>?>>> =
         MutableStateFlow(emptyMap())
     private val _currentTopic: MutableStateFlow<Topic?> = MutableStateFlow(null)
     private val _currentSubtopic: MutableStateFlow<Subtopic?> = MutableStateFlow(null)
@@ -158,18 +161,35 @@ class ChatViewModel @Inject constructor(
         listenForSearchQueryJob = viewModelScope.launch {
             _typedQueryText.debounce(1000).onEach {
 
-                searchQuestions(it.trim(), _currentLanguageCode.value)
+                val trimmedQuery = it.trim()
+                searchQuestions(trimmedQuery, _currentLanguageCode.value)
 
 
-                parentUserState.value?.let { parentUser ->
-                    eventLogger.logSearchEvent(
-                        loggingEvent = LoggingEvent.NewSearchQuery,
-                        searchQueryText = it,
-                        chatSession = _currentChatState.value,
-                        parentUser = parentUser,
-                        profile = _currentChildProfile.value
-                    )
+                if (!trimmedQuery.isNullOrBlank() && trimmedQuery.length > 2) {
+                    parentUserState.value?.let { parentUser ->
+                        eventLogger.logSearchEvent(
+                            loggingEvent = LoggingEvent.NewSearchQuery,
+                            searchQueryText = it,
+                            chatSession = _currentChatState.value,
+                            parentUser = parentUser,
+                            profile = _currentChildProfile.value,
+                            currentLanguage = _currentLanguageCode.value
+                        )
+
+
+                        searchQueryUseCases.newSearchQuery(
+                            searchQuery = SearchQuery().apply {
+                                this.owner_id = authManager.authenticatedRealmUser.value?.id
+                                chatSession = _currentChatState.value?._id
+                                queryText = it
+                                parentUsername = parentUser.username
+                                profile = _currentChildProfile.value?.name
+                                currentLanguage = _currentLanguageCode.value
+                            })
+
+                    }
                 }
+
 
             }.collect()
         }
@@ -194,6 +214,7 @@ class ChatViewModel @Inject constructor(
             }.collect()
         }
     }
+
 
     private fun searchQuestions(
         queryText: String,
@@ -276,10 +297,9 @@ class ChatViewModel @Inject constructor(
                 }
             }
 
-            is ChatEvent.RestoreQuestion -> {
+            is ChatEvent.GetParent -> {
                 viewModelScope.launch {
-                    // TODO()
-                    lastDeletedQuestion = null
+                    globalState.getParentUser()
                 }
             }
 
@@ -291,7 +311,8 @@ class ChatViewModel @Inject constructor(
                             question =
                             event.question,
                             userId = authManager.authenticatedRealmUser.value?.id,
-                            childProfile = _currentChildProfile.value?._id
+                            childProfile = _currentChildProfile.value?._id,
+                            parentUsername = parentUserState.value?.username
                         ).also {
                             event.question.subtopic?.let {
                                 subtopicUseCases.getSubtopicByCode(it)?.let { subtopic ->
@@ -301,7 +322,9 @@ class ChatViewModel @Inject constructor(
                                     )
                                 }
                             }
+
                             event.question.answerThread?.let { answerThreadCode ->
+
                                 answerUseCases.getAnswerThreadLastAnswer(answerThreadCode = answerThreadCode)
                                     ?.let { answer ->
                                         chatSessionUseCases.updateChatLastAnswerText(
@@ -312,13 +335,25 @@ class ChatViewModel @Inject constructor(
 
                             chatSessionUseCases.updateChatTimeLastUpdated(chatSession._id)
 
-                            eventLogger.logQuestionEvent(
-                                loggingEvent = LoggingEvent.AddQuestion,
-                                question = event.question,
-                                questionSession = null,
-                                parentUser = parentUserState.value!!,
-                                profile = _currentChildProfile.value!!
-                            )
+                            if (event.previousQuestion != null) {
+                                eventLogger.logQuestionEvent(
+                                    loggingEvent = LoggingEvent.AddRelatedQuestion,
+                                    question = event.question,
+                                    previousQuestion = event.previousQuestion,
+                                    questionSession = null,
+                                    parentUser = parentUserState.value!!,
+                                    profile = _currentChildProfile.value!!
+                                )
+                            } else {
+                                eventLogger.logQuestionEvent(
+                                    loggingEvent = LoggingEvent.AddQuestion,
+                                    question = event.question,
+                                    questionSession = null,
+                                    parentUser = parentUserState.value!!,
+                                    profile = _currentChildProfile.value!!
+                                )
+                            }
+
 
                         }
                     }
@@ -541,7 +576,8 @@ class ChatViewModel @Inject constructor(
     private fun getQuestionSessionsWithQuestionAndAnswersGroupedByDate() {
         getQuestionSessionWithQuestionAndAnswersGroupedByDateJob?.cancel()
         var questionWithAnswer: Pair<Question, List<Answer>>? = null
-        var questionSessionWithQuestionAndAnswersListGroupedByDate: Map<LocalDate, List<Triple<QuestionSession, Question?, List<Answer>?>?>>
+        var relatedQuestionsList: List<Question?>? = null
+        var questionSessionWithQuestionAndAnswersListGroupedByDate: Map<LocalDate, List<Triple<QuestionSession, Pair<Question?, List<Question?>?>, List<Answer>?>?>>
 
         getQuestionSessionWithQuestionAndAnswersGroupedByDateJob = viewModelScope.launch {
 
@@ -560,11 +596,49 @@ class ChatViewModel @Inject constructor(
                                         questionSession.question?.let { questionId ->
                                             questionWithAnswer =
                                                 questionUseCases.getQuestionWithAnswers(questionId)
+
+                                            val answerThreadCode =
+                                                questionWithAnswer?.first?.answerThread
+
+                                            answerThreadCode?.let {
+                                                answerThreadCode.let { code ->
+                                                    val answerThread =
+                                                        answerThreadUseCases.getAnswerThreadByCode(
+                                                            code
+                                                        )
+                                                    println(answerThread?.relatedAnswerThreads?.size)
+
+
+                                                    relatedQuestionsList =
+                                                        answerThread?.relatedAnswerThreads?.map { answerThreadCode ->
+                                                            answerThreadUseCases.getAnswerThreadByCode(
+                                                                answerThreadCode
+                                                            )?.let {
+
+                                                                it.defaultQuestionCode?.let { questionCode ->
+                                                                    questionUseCases.getQuestionByCode(
+                                                                        questionCode
+                                                                    )
+                                                                }
+
+                                                            }
+
+                                                        }
+
+
+                                                }
+
+                                            }
+
                                         }
+
+
+
+
 
                                         Triple(
                                             questionSession,
-                                            questionWithAnswer?.first,
+                                            Pair(questionWithAnswer?.first, relatedQuestionsList),
                                             questionWithAnswer?.second
                                         )
                                     }
@@ -581,6 +655,39 @@ class ChatViewModel @Inject constructor(
             }.collect()
 
         }
+    }
+
+    private fun getRelatedQuestionsList(answerThreadCode: String): List<Question?>? {
+
+        var relatedQuestionsList: List<Question?>? = null
+
+        viewModelScope.launch {
+            answerThreadCode.let { code ->
+                val answerThread =
+                    answerThreadUseCases.getAnswerThreadByCode(code)
+                println(answerThread?.relatedAnswerThreads?.size)
+
+                relatedQuestionsList =
+                    answerThread?.relatedAnswerThreads?.map { answerThreadCode ->
+                        answerThreadUseCases.getAnswerThreadByCode(
+                            answerThreadCode
+                        )?.let {
+
+                            it.defaultQuestionCode?.let { questionCode ->
+                                questionUseCases.getQuestionByCode(questionCode)
+                            }
+
+                        }
+
+                    }
+
+
+            }
+
+
+        }
+
+        return relatedQuestionsList
     }
 
     private fun getTopics() {

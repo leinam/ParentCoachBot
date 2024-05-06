@@ -11,6 +11,7 @@ data class ProfileStateWrapper(
     var currentChildProfileState: StateFlow<ChildProfile?> = MutableStateFlow(null),
     val childProfilesListState: StateFlow<List<ChildProfile>> = MutableStateFlow(emptyList()),
     val currentLanguageCode: StateFlow<String?> = MutableStateFlow(null),
+    val currentCountry: StateFlow<String?> = MutableStateFlow(null),
     val appPreferences: StateFlow<AppPreferences?> = MutableStateFlow(null)
 ) {
 }

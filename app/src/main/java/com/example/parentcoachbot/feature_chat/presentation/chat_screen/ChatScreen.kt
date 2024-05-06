@@ -1,5 +1,6 @@
 package com.example.parentcoachbot.feature_chat.presentation.chat_screen
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.InfiniteTransition
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.parentcoachbot.MainActivity
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.Question
@@ -63,6 +66,7 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_screen.componen
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.DateBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.QuestionInputSection
+import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.RelatedQuestionsBox
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TypingAnimation
 import com.example.parentcoachbot.ui.theme.BackgroundWhite
@@ -114,6 +118,13 @@ fun ChatScreen(
         mutableStateOf(false)
     }
 
+    if (currentChildProfile == null) {
+        val intent =
+            Intent(LocalContext.current, MainActivity::class.java)
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        LocalContext.current.startActivity(intent)
+    }
 
     val bottomSheetContentState: MutableStateFlow<BottomSheetContent> =
         MutableStateFlow(BottomSheetContent.SubTopics)
@@ -127,6 +138,8 @@ fun ChatScreen(
     )
 
     var currentSubtopic: Subtopic? by remember { mutableStateOf(null) }
+
+
 
     Scaffold(
         bottomBar = {
@@ -209,6 +222,8 @@ fun ChatScreen(
                                                                     question
                                                                 )
                                                             )
+
+
                                                             scope.launch {
                                                                 bottomSheetScaffoldState.bottomSheetState.partialExpand()
                                                             }
@@ -475,6 +490,7 @@ fun ChatScreen(
                             )
                             {
                                 var lastIndex = 0
+
                                 lastIndex += questionSessionWithQuestionAndAnswersListGroupedByDate.size
 
                                 questionSessionWithQuestionAndAnswersListGroupedByDate.forEach { (date, questionSessionList) ->
@@ -498,7 +514,11 @@ fun ChatScreen(
                                                 Instant.ofEpochSecond(RealmInstant.now().epochSeconds)
                                             ).seconds
 
-                                            questionSessionAnswerTriple.second?.let { question ->
+                                            var isRelatedVisible by remember {
+                                                mutableStateOf(false)
+                                            }
+
+                                            questionSessionAnswerTriple.second?.first?.let { question ->
                                                 QuestionBox(
                                                     question = question,
                                                     questionSession = questionSessionAnswerTriple.first,
@@ -509,6 +529,10 @@ fun ChatScreen(
                                                 )
                                             }
 
+
+                                            val relatedQuestionsList =
+                                                questionSessionAnswerTriple.second.second
+
                                             lastIndex += questionSessionAnswerTriple.third?.size
                                                 ?: 0
                                             questionSessionAnswerTriple.third?.forEachIndexed { answerIndex, answer ->
@@ -517,6 +541,8 @@ fun ChatScreen(
                                                     var isVisible by remember {
                                                         mutableStateOf(false)
                                                     }
+
+                                                    isAnimationActive.value = true
 
                                                     // different behavior for first answer
                                                     LaunchedEffect(key1 = isVisible) {
@@ -544,17 +570,47 @@ fun ChatScreen(
                                                             currentLanguageCode = currentLanguageCode
                                                                 ?: Language.English.isoCode
                                                         )
+
+
                                                     }
+
+                                                    questionSessionAnswerTriple.third?.let {
+                                                        if (answerIndex == it.lastIndex) {
+                                                            isRelatedVisible = true
+                                                        }
+                                                    }
+
+
                                                 } else {
+                                                    isRelatedVisible = true
+
                                                     AnswerBox(
                                                         questionAnswer = answer,
                                                         currentLanguageCode = currentLanguageCode
                                                             ?: Language.English.isoCode
                                                     )
+
+                                                    isAnimationActive.value = false
+
+
                                                 }
 
+                                            }
+
+                                            AnimatedVisibility(visible = !isAnimationActive.value) {
+                                                relatedQuestionsList?.let {
+                                                    if (relatedQuestionsList.isNotEmpty()) {
+                                                        RelatedQuestionsBox(
+                                                            previousQuestion = questionSessionAnswerTriple.second.first,
+                                                            relatedQuestionsList = it,
+                                                            onEvent = onEvent
+                                                        )
+                                                    }
+
+                                                }
 
                                             }
+
 
                                         }
 

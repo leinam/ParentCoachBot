@@ -1,4 +1,4 @@
-package com.example.parentcoachbot.feature_chat.presentation.emergency_screen
+package com.example.parentcoachbot.feature_chat.presentation.contact_screen
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
@@ -44,7 +44,11 @@ import com.example.parentcoachbot.ui.theme.ThinGreen
 @Composable
 fun ExpandableCard(
     @StringRes cardHeaderStringId: Int = R.string.medical_emergency_label,
-    content: @Composable () -> Unit = { }, headerFontSize: TextUnit = 27.sp
+    content: @Composable () -> Unit = { },
+    headerFontSize: TextUnit = 27.sp,
+    isContactCard: Boolean = false,
+    contactCategory: ContactCategory? = null,
+    onEvent: (ContactScreenEvent) -> Unit = {}
 ) {
     var isExpanded by remember {
         mutableStateOf(false)
@@ -65,6 +69,12 @@ fun ExpandableCard(
             .background(color = ThinGreen),
         onClick = {
             isExpanded = !isExpanded
+
+            if (isExpanded and isContactCard) {
+                contactCategory?.let {
+                    onEvent(ContactScreenEvent.ViewContactCategory(contactCategory = it))
+                }
+            }
         }, shape = Shapes().medium
     ) {
 
@@ -91,6 +101,11 @@ fun ExpandableCard(
 
                 IconButton(modifier = Modifier.weight(1f), onClick = {
                     isExpanded = !isExpanded
+                    if (isExpanded and isContactCard) {
+                        contactCategory?.let {
+                            onEvent(ContactScreenEvent.ViewContactCategory(contactCategory = it))
+                        }
+                    }
                 }) {
                     Icon(
                         imageVector = if (!isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,

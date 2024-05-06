@@ -5,6 +5,8 @@ import com.example.parentcoachbot.feature_chat.domain.repository.AnswerThreadRep
 
 class GetAnswerThreadByCode(private val answerThreadRepository: AnswerThreadRepository) {
     suspend operator fun invoke(code: String): AnswerThread? {
+        answerThreadRepository.getAnswerThreadByCode(answerCode = code)
         return answerThreadRepository.getAnswerThreadByCode(answerCode = code)
+
     }
 }

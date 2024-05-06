@@ -1,4 +1,5 @@
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.parentcoachbot.MainActivity
 import com.example.parentcoachbot.R
 import com.example.parentcoachbot.feature_chat.domain.util.Language
 import com.example.parentcoachbot.feature_chat.presentation.Screen
@@ -75,7 +78,13 @@ fun SavedQuestionsScreen(
     val savedQuestionSessionsWithQuestionsAndAnswersGroupedByDate =
         savedQuestionsViewModelStateWrapper.savedQuestionSessionsWithQuestionAndAnswersListGroupedByDateState.collectAsStateWithLifecycle()
 
-
+    if (currentChildProfile == null){
+        val intent =
+            Intent(LocalContext.current, MainActivity::class.java)
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        LocalContext.current.startActivity(intent)
+    }
 
     Scaffold(
         topBar = {

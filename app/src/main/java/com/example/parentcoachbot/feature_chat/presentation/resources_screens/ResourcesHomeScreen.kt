@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -30,8 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,6 +48,7 @@ import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListEv
 import com.example.parentcoachbot.feature_chat.presentation.chat_list.ChatListStateWrapper
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.CustomNavigationDrawer
 import com.example.parentcoachbot.feature_chat.presentation.chat_screen.components.TopNavBar
+import com.example.parentcoachbot.feature_chat.presentation.profile_screen.Country
 import com.example.parentcoachbot.ui.theme.BackgroundBeige
 import com.example.parentcoachbot.ui.theme.PlexSans
 import com.example.parentcoachbot.ui.theme.PrimaryGreen
@@ -52,24 +57,32 @@ import com.example.parentcoachbot.ui.theme.ThinGreen
 
 sealed class ResourceItem(
     val title: Map<String, String>,
-    @DrawableRes val icon: Int,
     val filename: String? = null,
     val contentType: String,
-    @DrawableRes val imageId: Int? = null
+    @DrawableRes val imageId: Int? = null,
+    val country: String,
+    val source: String
 ) {
     object RoadToHealth : ResourceItem(
-        title = mapOf("en" to "Road To Health - SA"),
-        icon = R.drawable.resources_icon,
-        filename = "rthb_booklet.pdf", contentType = "PDF"
+        title = mapOf(
+            "en" to "Road To Health Booklet",
+            "pt" to "Caminho para a Saúde - Livreto"
+        ),
+        filename = "rthb_booklet.pdf",
+        contentType = "PDF",
+        country = Country.SouthAfrica.name,
+        source = "SA Gov"
     )
 
     object DangerSignsPT : ResourceItem(
         title = mapOf(
-            "en" to "Quando levar o seu filho à Urgencia",
+            "en" to "Danger Signs",
             "pt" to "Quando levar o seu filho à Urgencia"
-        ), icon = R.drawable.resources_icon,
+        ),
         contentType = "Image",
-        imageId = R.drawable.dangersignpt
+        imageId = R.drawable.dangersignpt,
+        country = Country.Portugal.name,
+        source = "Sociedade Portuguesa de Urgência e Emergência"
     )
 }
 
@@ -82,14 +95,18 @@ fun ResourcesHomeScreen(
 
 ) {
 
-    val resourceList = listOf(ResourceItem.RoadToHealth, ResourceItem.DangerSignsPT)
-
-
     val chatListStateWrapper = chatListViewModelState.value
+    val currentCountry by chatListStateWrapper.currentCountry.collectAsStateWithLifecycle()
     val currentLanguageCode = chatListStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
 
+    val resourceList = listOf(
+        ResourceItem.RoadToHealth,
+        ResourceItem.DangerSignsPT
+    ).filter { resourceItem -> resourceItem.country == currentCountry }
+
+
     val scope = rememberCoroutineScope()
-    val drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(4) }
+    val drawerSelectedItemIndex = rememberSaveable { mutableIntStateOf(6) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
 
@@ -159,8 +176,7 @@ fun ResourcesHomeScreen(
                                         if (resource.contentType == "PDF") {
                                             onEvent(
                                                 ChatListEvent.SelectPDFResource(
-                                                    fileName = resource.filename
-                                                        ?: "rthb_booklet.pdf"
+                                                    resourceItem = resource
                                                 )
                                             )
                                             navController.navigate(Screen.PDFResourceScreen.route)
@@ -168,7 +184,7 @@ fun ResourcesHomeScreen(
                                             resource.imageId?.let {
                                                 onEvent(
                                                     ChatListEvent.SelectImageResource(
-                                                        imageId = resource.imageId
+                                                        resourceItem = resource
                                                     )
                                                 )
 
@@ -182,40 +198,62 @@ fun ResourcesHomeScreen(
                                 )
                                 {
 
-                                    Row(
-                                        modifier = Modifier
-                                            .align(Alignment.CenterStart)
-                                            .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .align(Alignment.CenterStart),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+
+                                            Column (horizontalAlignment = Alignment.Start){
+                                                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 3.dp)) {
+
+                                                    (resource.title[currentLanguageCode.value]
+                                                        ?: resource.title["en"])?.let {
+                                                        Text(
+                                                            text = it,
+                                                            fontSize = 18.sp,
+                                                            fontFamily = PlexSans,
+                                                            fontWeight = FontWeight.SemiBold,
+                                                            color = TextGrey
+                                                        )
+                                                    }
+                                                }
 
 
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(
-                                                painter = painterResource(id = resource.icon),
-                                                contentDescription = null,
-                                                tint = TextGrey,
-                                                modifier = Modifier.padding(end = 12.dp)
-                                            )
 
-                                            (resource.title[currentLanguageCode.value]
-                                                ?: resource.title["en"])?.let {
-                                                Text(
-                                                    text = it,
-                                                    fontSize = 18.sp,
-                                                    fontFamily = PlexSans,
-                                                    fontWeight = FontWeight.SemiBold,
-                                                    color = TextGrey
-                                                )
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                                                    Text(
+                                                        buildAnnotatedString {
+                                                            withStyle(style = SpanStyle(fontFamily = PlexSans,color = TextGrey, fontWeight = FontWeight.SemiBold, fontSize = 12.sp)){
+                                                                append(text = stringResource(id = R.string.source_label) + " ")
+                                                            }
+
+                                                            withStyle(style = SpanStyle(fontFamily = PlexSans,color = TextGrey, fontWeight = FontWeight.Normal, fontSize = 12.sp)){
+                                                                append(text = resource.source)
+                                                            }
+                                                        }
+
+                                                    )
+
+                                                }
+
+
                                             }
+
+
+
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                                                contentDescription = null, tint = TextGrey
+                                            )
                                         }
 
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                                            contentDescription = null, tint = TextGrey
-                                        )
-                                    }
+
+
+
 
 
                                 }

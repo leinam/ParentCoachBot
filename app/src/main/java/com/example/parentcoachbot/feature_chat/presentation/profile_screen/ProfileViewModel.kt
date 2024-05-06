@@ -31,28 +31,34 @@ class ProfileViewModel @Inject constructor(
     private val eventLogger: EventLogger
 ) : ViewModel() {
 
-    var getChildProfilesJob: Job? = null
-    private val parentUserState = globalState.parentUserState
+    private var getChildProfilesJob: Job? = null
+    private val _parentUserState = globalState.parentUserState
     private val _childProfilesList = globalState.childProfilesListState
     private val _currentChildProfile = globalState.currentChildProfileState
     private val _currentLanguageCode = globalState.currentLanguageCode
+    private val _currentCountry = globalState.currentCountry
     private val _appPreferences: StateFlow<AppPreferences> = MutableStateFlow(appPreferences)
+    var getParentUserJob: Job? = null
+
 
 
     private val _profileViewModelState = mutableStateOf(
         ProfileStateWrapper(
-            parentUserState = parentUserState,
+            parentUserState = _parentUserState,
             childProfilesListState = _childProfilesList,
             currentChildProfileState = _currentChildProfile,
             currentLanguageCode = _currentLanguageCode,
-            appPreferences = _appPreferences
+            appPreferences = _appPreferences,
+            currentCountry = _currentCountry
         )
     )
 
     val profileViewModelState: State<ProfileStateWrapper> = _profileViewModelState
 
     init {
-        viewModelScope.launch {
+        getParentUserJob?.cancel()
+
+        getParentUserJob = viewModelScope.launch {
             globalState.getParentUser()
         }
 
@@ -63,7 +69,7 @@ class ProfileViewModel @Inject constructor(
         getChildProfilesJob?.cancel()
 
         getChildProfilesJob = viewModelScope.launch {
-            parentUserState.onEach { parentUser ->
+            _parentUserState.onEach { parentUser ->
                 parentUser?.let {
                     childProfileUseCases.getChildProfilesByParentUser(parentUser._id)?.onEach {
                         _childProfilesList.value = it
@@ -97,7 +103,7 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.SelectProfile -> {
                 globalState.updateCurrentChildProfile(profileEvent.childProfile)
 
-                parentUserState.value?.let { parentUser ->
+                _parentUserState.value?.let { parentUser ->
                     eventLogger.logProfileEvent(
                         loggingEvent = LoggingEvent.SelectProfile,
                         parentUser = parentUser,
@@ -109,11 +115,13 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.NewProfile -> {
                 viewModelScope.launch {
                     childProfileUseCases.newChildProfile(profileEvent.childProfile.apply {
-                        this._partition = authManager.authenticatedRealmUser.value?.id
+                        this.owner_id = authManager.authenticatedRealmUser.value?.id
+                        this.parentUsername = _parentUserState.value?.username
+                        this.parentUser = _parentUserState.value?._id
                     })
                 }
 
-                parentUserState.value?.let { parentUser ->
+                _parentUserState.value?.let { parentUser ->
                     eventLogger.logProfileEvent(
                         loggingEvent = LoggingEvent.NewProfile,
                         parentUser = parentUser,
@@ -128,7 +136,7 @@ class ProfileViewModel @Inject constructor(
                     childProfileUseCases.deleteChildProfile(profileEvent.childProfile)
                 }
 
-                parentUserState.value?.let { parentUser ->
+                _parentUserState.value?.let { parentUser ->
                     eventLogger.logProfileEvent(
                         loggingEvent = LoggingEvent.DeleteProfile,
                         parentUser = parentUser,
@@ -176,7 +184,7 @@ class ProfileViewModel @Inject constructor(
                         country = profileEvent.country
                     )
 
-                    parentUserState.value?.let { parentUser ->
+                    _parentUserState.value?.let { parentUser ->
                         eventLogger.logChangeCountryEvent(
                             country = profileEvent.country,
                             parentUser = parentUser,
