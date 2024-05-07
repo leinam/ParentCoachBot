@@ -112,11 +112,12 @@ fun DataPrivacyScreen(
                             item {
                                 ExpandableCard(
                                     cardHeaderStringId = R.string.data_privacy_label,
+                                    isExpanded = true,
                                     content = {
                                         if (parentUser?.country == "South Africa"){
                                             Text(
                                                 text = stringResource(id = R.string.data_privacy_introduction_header),
-                                                fontSize = 18.sp,
+                                                fontSize = 15.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = TextGrey,
                                                 modifier = Modifier

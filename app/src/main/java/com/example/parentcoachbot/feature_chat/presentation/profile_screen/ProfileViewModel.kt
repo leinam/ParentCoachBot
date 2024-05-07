@@ -12,6 +12,7 @@ import com.example.parentcoachbot.feature_chat.domain.use_case.childProfileUseCa
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
 import com.example.parentcoachbot.feature_chat.domain.util.AuthManager
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,7 @@ class ProfileViewModel @Inject constructor(
     private val parentUserUseCases: ParentUserUseCases,
     private val globalState: GlobalState,
     private val authManager: AuthManager,
+    val firebaseAnalytics: FirebaseAnalytics,
     private val appPreferences: AppPreferences,
     private val eventLogger: EventLogger
 ) : ViewModel() {
@@ -60,6 +62,8 @@ class ProfileViewModel @Inject constructor(
 
         getParentUserJob = viewModelScope.launch {
             globalState.getParentUser()
+
+
         }
 
         getChildProfilesList()

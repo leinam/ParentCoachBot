@@ -59,7 +59,7 @@ sealed class ResourceItem(
     val title: Map<String, String>,
     val filename: String? = null,
     val contentType: String,
-    @DrawableRes val imageId: Int? = null,
+    @DrawableRes val imageIdList: List<Int>? = null,
     val country: String,
     val source: String
 ) {
@@ -80,10 +80,104 @@ sealed class ResourceItem(
             "pt" to "Quando levar o seu filho à Urgencia"
         ),
         contentType = "Image",
-        imageId = R.drawable.dangersignpt,
+        imageIdList = listOf(R.drawable.dangersignpt),
         country = Country.Portugal.name,
         source = "Sociedade Portuguesa de Urgência e Emergência"
     )
+
+    object DangerSignsSA : ResourceItem(
+        title = mapOf(
+            "en" to "Danger Signs",
+            "pt" to "Quando levar o seu filho à Urgencia",
+            "zu" to "Izimpawu Eziyingozi"
+        ),
+        contentType = "Image",
+        imageIdList = listOf(R.drawable.rthb_danger_signs),
+        country = Country.SouthAfrica.name,
+        source = "Road To Health Booklet - SA Government"
+    )
+
+    object GoodNutritionSA : ResourceItem(
+        title = mapOf(
+            "en" to "Good Nutrition",
+            "pt" to "Boa nutrição",
+            "zu" to "Ukudla Okuhle"
+        ),
+        contentType = "Image",
+        imageIdList = listOf(
+            R.drawable.rthb_nutrition_1,
+            R.drawable.rthb_nutrition_2,
+            R.drawable.rthb_nutrition_3,
+            R.drawable.rthb_nutrition_4
+        ),
+        country = Country.SouthAfrica.name,
+        source = "Road To Health Booklet - SA Government"
+    )
+
+    object DevelopmentSA : ResourceItem(
+        title = mapOf(
+            "en" to "Good Nutrition",
+            "pt" to "Desenvolvimento Saudável",
+            "zu" to "Ukuthuthukiswa Okunempilo"
+        ),
+        contentType = "Image",
+        imageIdList = listOf(
+            R.drawable.rthb_love1,
+            R.drawable.rthb_development_milestones,
+            R.drawable.rthb_development_2,
+            R.drawable.rthb_developmemt3
+        ),
+        country = Country.SouthAfrica.name,
+        source = "Road To Health Booklet - SA Government"
+    )
+
+
+    object PreventionSA : ResourceItem(
+        title = mapOf(
+            "en" to "Protecting Your Child",
+            "pt" to "Protegendo seu filho",
+            "zu" to "Ukuvikela Ingane Yakho"
+        ),
+        contentType = "Image",
+        imageIdList = listOf(
+            R.drawable.rthb_prevention,
+            R.drawable.rthb_prevention_1,
+        ),
+        country = Country.SouthAfrica.name,
+        source = "Road To Health Booklet - SA Government"
+    )
+
+    object SpecialCareSA : ResourceItem(
+        title = mapOf(
+            "en" to "Taking care of a sick or special needs child",
+            "pt" to "Cuidar de uma criança doente ou com necessidades especiais",
+            "zu" to "Ukunakekela ingane egulayo noma enezidingo ezikhethekile"
+        ),
+        contentType = "Image",
+        imageIdList = listOf(
+            R.drawable.rthb_special,
+            R.drawable.rthb_special_2,
+        ),
+        country = Country.SouthAfrica.name,
+        source = "Road To Health Booklet - SA Government"
+    )
+
+    object UsefulInfoSA : ResourceItem(
+        title = mapOf(
+            "en" to "Useful Info",
+            "pt" to "Informação útil",
+            "zu" to "Ulwazi Oluwusizo"
+        ),
+        contentType = "Image",
+        imageIdList = listOf(
+            R.drawable.rthb_info,
+            R.drawable.rthb_info1,
+        ),
+        country = Country.SouthAfrica.name,
+        source = "Road To Health Booklet - SA Government"
+    )
+
+
 }
 
 @Preview
@@ -100,8 +194,13 @@ fun ResourcesHomeScreen(
     val currentLanguageCode = chatListStateWrapper.currentLanguageCode.collectAsStateWithLifecycle()
 
     val resourceList = listOf(
-        ResourceItem.RoadToHealth,
-        ResourceItem.DangerSignsPT
+        ResourceItem.DangerSignsPT,
+        ResourceItem.DangerSignsSA,
+        ResourceItem.GoodNutritionSA,
+        ResourceItem.DevelopmentSA,
+        ResourceItem.PreventionSA,
+        ResourceItem.SpecialCareSA,
+        ResourceItem.UsefulInfoSA
     ).filter { resourceItem -> resourceItem.country == currentCountry }
 
 
@@ -169,28 +268,23 @@ fun ResourcesHomeScreen(
                                     .clip(RoundedCornerShape(10.dp))
                                     .background(color = ThinGreen)
                                     .fillMaxWidth()
-                                    .height(70.dp)
+                                    .height(110.dp)
                                     .padding(10.dp)
                                     .clickable {
 
                                         if (resource.contentType == "PDF") {
+                                            // onEvent(ChatListEvent.SelectPDFResource(resourceItem = resource))
+                                            // navController.navigate(Screen.PDFResourceScreen.route)
+                                        } else if (resource.contentType == "Image") {
+
                                             onEvent(
-                                                ChatListEvent.SelectPDFResource(
+                                                ChatListEvent.SelectImageResource(
                                                     resourceItem = resource
                                                 )
                                             )
-                                            navController.navigate(Screen.PDFResourceScreen.route)
-                                        } else if (resource.contentType == "Image") {
-                                            resource.imageId?.let {
-                                                onEvent(
-                                                    ChatListEvent.SelectImageResource(
-                                                        resourceItem = resource
-                                                    )
-                                                )
 
+                                            navController.navigate(Screen.ImageResourceScreen.route)
 
-                                                navController.navigate(Screen.ImageResourceScreen.route)
-                                            }
                                         }
 
 
@@ -198,62 +292,75 @@ fun ResourcesHomeScreen(
                                 )
                                 {
 
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .align(Alignment.CenterStart),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .align(Alignment.CenterStart),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
 
-                                            Column (horizontalAlignment = Alignment.Start){
-                                                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 3.dp)) {
+                                        Column(horizontalAlignment = Alignment.Start) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.padding(bottom = 3.dp)
+                                            ) {
 
-                                                    (resource.title[currentLanguageCode.value]
-                                                        ?: resource.title["en"])?.let {
-                                                        Text(
-                                                            text = it,
-                                                            fontSize = 18.sp,
-                                                            fontFamily = PlexSans,
-                                                            fontWeight = FontWeight.SemiBold,
-                                                            color = TextGrey
-                                                        )
-                                                    }
-                                                }
-
-
-
-                                                Row(verticalAlignment = Alignment.CenterVertically) {
-
+                                                (resource.title[currentLanguageCode.value]
+                                                    ?: resource.title["en"])?.let {
                                                     Text(
-                                                        buildAnnotatedString {
-                                                            withStyle(style = SpanStyle(fontFamily = PlexSans,color = TextGrey, fontWeight = FontWeight.SemiBold, fontSize = 12.sp)){
-                                                                append(text = stringResource(id = R.string.source_label) + " ")
-                                                            }
-
-                                                            withStyle(style = SpanStyle(fontFamily = PlexSans,color = TextGrey, fontWeight = FontWeight.Normal, fontSize = 12.sp)){
-                                                                append(text = resource.source)
-                                                            }
-                                                        }
-
+                                                        text = it,
+                                                        fontSize = 18.sp,
+                                                        fontFamily = PlexSans,
+                                                        fontWeight = FontWeight.SemiBold,
+                                                        color = TextGrey
                                                     )
-
                                                 }
-
-
                                             }
 
 
 
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                                                contentDescription = null, tint = TextGrey
-                                            )
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                                                Text(
+                                                    buildAnnotatedString {
+                                                        withStyle(
+                                                            style = SpanStyle(
+                                                                fontFamily = PlexSans,
+                                                                color = TextGrey,
+                                                                fontWeight = FontWeight.SemiBold,
+                                                                fontSize = 12.sp
+                                                            )
+                                                        ) {
+                                                            append(text = stringResource(id = R.string.source_label) + " ")
+                                                        }
+
+                                                        withStyle(
+                                                            style = SpanStyle(
+                                                                fontFamily = PlexSans,
+                                                                color = TextGrey,
+                                                                fontWeight = FontWeight.Normal,
+                                                                fontSize = 12.sp
+                                                            )
+                                                        ) {
+                                                            append(text = resource.source)
+                                                        }
+                                                    }
+
+                                                )
+
+                                            }
+
+
                                         }
 
 
 
-
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
+                                            contentDescription = null, tint = TextGrey
+                                        )
+                                    }
 
 
                                 }

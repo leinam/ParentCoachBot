@@ -5,12 +5,14 @@ import com.example.parentcoachbot.feature_chat.domain.model.ChildProfile
 import com.example.parentcoachbot.feature_chat.domain.model.ParentUser
 import com.example.parentcoachbot.feature_chat.domain.use_case.parentUserUseCases.ParentUserUseCases
 import com.example.parentcoachbot.feature_chat.domain.util.AppPreferences
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
 class GlobalState(private val parentUserUseCases: ParentUserUseCases,
-                  appPreferences: AppPreferences) {
+                  appPreferences: AppPreferences,
+                  val firebaseAnalytics: FirebaseAnalytics) {
 
     val parentUserState = MutableStateFlow<ParentUser?>(null)
     val childProfilesListState = MutableStateFlow<List<ChildProfile>>(emptyList())
@@ -25,6 +27,11 @@ class GlobalState(private val parentUserUseCases: ParentUserUseCases,
             parentUserState.value = it
             println("The global parent state is ${parentUserState.value?._id} and country ${it?.country}")
             currentCountry.value = it?.country
+
+            val username: String = it?.username ?: "unknown_user"
+            println("The username is $username")
+
+            firebaseAnalytics.setUserId(username)
 
         }?.collect()
     }

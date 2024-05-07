@@ -10,6 +10,6 @@ sealed class ChatListEvent {
     data class PinChat(val chatSession: ChatSession) : ChatListEvent()
     object UpdateChildProfile : ChatListEvent()
     data class SelectPDFResource(val resourceItem: ResourceItem) : ChatListEvent()
-    data class SelectImageResource( val resourceItem: ResourceItem) : ChatListEvent()
+    data class SelectImageResource(val resourceItem: ResourceItem) : ChatListEvent()
 
 }

@@ -112,6 +112,7 @@ fun TermsOfUseScreen(
                             item {
                                 ExpandableCard(
                                     cardHeaderStringId = R.string.terms_label,
+                                    isExpanded = true,
                                     content = {
                                         if (parentUser?.country == "South Africa"){
 

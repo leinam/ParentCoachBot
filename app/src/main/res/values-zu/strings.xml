@@ -122,4 +122,6 @@
     <string name="adcock_contact_description">I-Adcock Ingram Helpline Yosizo Lokucindezeleka Nokukhathazeka inikeza ukusekelwa ngokomzwelo kubantu baseNingizimu Afrika abacindezelekile noma abasengozini yokuzibulala.</string>
     <string name="sa_crisis_hotline_description">I-South Africa Suicide Crisis Helpline inikeza ukwesekwa kwamahora angu-24 kubantu baseNingizimu Afrika abacindezelekile noma abasengozini yokuzibulala.</string>
     <string name="related_questions_label">Imibuzo Ehlobene:</string>
+    <string name="username_label">Igama lomsebenzisi</string>
+    <string name="no_match">Ayikho imibuzo efanayo</string>
 </resources>

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -75,7 +77,7 @@ fun ImageResourceScreen(
         ) {
 
             Text(
-                text = resourceTitle[currentLanguageCode] ?: "",
+                text = imageResource?.title?.get(currentLanguageCode) ?: "",
                 color = PrimaryGreen,
                 textAlign = TextAlign.Center,
                 fontFamily = PlexSans,
@@ -85,43 +87,46 @@ fun ImageResourceScreen(
 
 
         }
-        BoxWithConstraints(
-            modifier = Modifier.fillMaxWidth()
+        imageResource?.imageIdList?.let { imageIdList ->
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxWidth()
 
-        ) {
-            val state = rememberTransformableState { zoomChange, panChange, _ ->
-                scale = (scale * zoomChange).coerceIn(1f, 5f)
+            ) {
+                val state = rememberTransformableState { zoomChange, panChange, _ ->
+                    scale = (scale * zoomChange).coerceIn(1f, 5f)
 
-                val extraWidth = (scale - 1) * this.constraints.maxWidth
-                val extraHeight = (scale - 1) * this.constraints.maxHeight
-                val maxX = extraWidth / 2
-                val maxY = extraHeight / 2
+                    val extraWidth = (scale - 1) * this.constraints.maxWidth
+                    val extraHeight = (scale - 1) * this.constraints.maxHeight
+                    val maxX = extraWidth / 2
+                    val maxY = extraHeight / 2
 
-                offset = Offset(
-                    x = (offset.x + panChange.x).coerceIn(-maxX, maxX),
-                    y = (offset.y + panChange.y).coerceIn(-maxY, maxY)
-                )
+                    offset = Offset(
+                        x = (offset.x + panChange.x).coerceIn(-maxX, maxX),
+                        y = (offset.y + panChange.y).coerceIn(-maxY, maxY)
+                    )
 
-                offset += panChange
-            }
+                    offset += panChange
+                }
+                LazyColumn(modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                        translationX = offset.x
+                        translationY = offset.y
+                    }
+                    .transformable(state)) {
+                    items(imageIdList) { imageId ->
 
+                        BoxWithConstraints(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                            ,
+                        ) {
 
-                    BoxWithConstraints(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .graphicsLayer {
-                                scaleX = scale
-                                scaleY = scale
-                                translationX = offset.x
-                                translationY = offset.y
-                            }
-                            .transformable(state)
-                        ,
-                    ) {
-
-                            imageResource?.imageId?.let {
+                            imageResource?.imageIdList?.let {
                                 Image(
-                                    painter = painterResource(id = it),
+                                    painter = painterResource(id = imageId),
                                     contentDescription = null,
                                     modifier = Modifier
                                         .fillMaxWidth(),
@@ -133,11 +138,15 @@ fun ImageResourceScreen(
 
                     }
 
-
+                }
+            }
         }
 
 
     }
+
+
+}
 
 
 

@@ -76,9 +76,9 @@
     <string name="pt_medical_emergency_description" translatable="false">Disponível 24h por dia, todos os dias.  O 112 é o número de telefone de emergência único europeu, disponível em toda a União Europeia. As chamadas são gratuitas.</string>
     <string name="pt_medical_emergency_2" translatable="false">Linha Saúde 24 - 808 24 24 24</string>
     <string name="pt_medical_emergency_2_description" translatable="false">Para contacto clínico, disponível 24h por dia, todos os dias.  A Linha Saúde 24 assegura triagem, aconselhamento e encaminhamento em situações de doença. O valor da chamada é o de uma chamada para a rede fixa.</string>
-    <string name="pt_mental_health_contact" translatable="false">Serviço de Aconselhamento Psicológico da Linha SNS24 </string>
+    <string name="pt_mental_health_contact" translatable="false">Serviço de Aconselhamento Psicológico da Linha SNS24 - 808242424</string>
     <string name="pt_mental_health_contact_description" translatable="false">Fale com um/a Psicólogo/a. Disponível 24h por dia, todos os dias.</string>
-    <string name="pt_mental_health_contact_2" translatable="false">SOS VOZ AMIGA </string>
+    <string name="pt_mental_health_contact_2" translatable="false">SOS VOZ AMIGA - 213544545</string>
     <string name="pt_mental_health_contact_2_description" translatable="false">Horário: Diariamente das 15:30 às 00:30</string>
     <string name="team_contact_label">Reseach Team Contact</string>
     <string name="helpful_contacts_header">Helpful Contacts</string>
@@ -127,9 +127,11 @@
     <string name="terms_of_use_text_pt">We collect information that the user provides to us directly. For example, we collect information when you create an account, subscribe, participate in any interactive features of our services, fill in a form, request support or communicate with us in any other way. The types of information we may collect include your name, email address and other contact or identification information you choose to provide.</string>
     <string name="data_collected_header">Data Collected</string>
     <string name="source_label">Source:</string>
-    <string name="adcock_contact_title" translatable="false">Adcock Ingram Depression and Anxiety Helpline</string>
+    <string name="adcock_contact_title" translatable="false">Adcock Ingram Depression and Anxiety Helpline: 0800708090</string>
     <string name="adcock_contact_description">Adcock Ingram Depression and Anxiety Helpline offers emotional support to people in South Africa who are in distress or at risk of suicide.</string>
-    <string name="crisis_hotline_title" translatable="false">South Africa Suicide Crisis Helpline</string>
+    <string name="crisis_hotline_title" translatable="false">South Africa Suicide Crisis Helpline: 0800212223</string>
     <string name="sa_crisis_hotline_description">South Africa Suicide Crisis Helpline offers 24-hour support to people in South Africa who are in distress or at risk of suicide.</string>
     <string name="related_questions_label">Related Questions:</string>
+    <string name="username_label">Username</string>
+    <string name="no_match">No Matching Question</string>
 </resources>

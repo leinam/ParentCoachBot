@@ -256,7 +256,8 @@ class ChatViewModel @Inject constructor(
                                 question = question,
                                 questionSession = event.questionSession,
                                 parentUser = parentUserState.value!!,
-                                profile = _currentChildProfile.value!!
+                                profile = _currentChildProfile.value!!,
+                                language = _currentLanguageCode.value
                             )
                         } else {
                             eventLogger.logQuestionEvent(
@@ -264,7 +265,8 @@ class ChatViewModel @Inject constructor(
                                 question = question,
                                 questionSession = event.questionSession,
                                 parentUser = parentUserState.value!!,
-                                profile = _currentChildProfile.value!!
+                                profile = _currentChildProfile.value!!,
+                                language = _currentLanguageCode.value
                             )
                         }
 
@@ -289,7 +291,8 @@ class ChatViewModel @Inject constructor(
                             question = question,
                             questionSession = event.questionSession,
                             parentUser = parentUserState.value!!,
-                            profile = _currentChildProfile.value!!
+                            profile = _currentChildProfile.value!!,
+                            language = _currentLanguageCode.value
                         )
                     }
 
@@ -342,7 +345,8 @@ class ChatViewModel @Inject constructor(
                                     previousQuestion = event.previousQuestion,
                                     questionSession = null,
                                     parentUser = parentUserState.value!!,
-                                    profile = _currentChildProfile.value!!
+                                    profile = _currentChildProfile.value!!,
+                                    language = _currentLanguageCode.value
                                 )
                             } else {
                                 eventLogger.logQuestionEvent(
@@ -350,7 +354,8 @@ class ChatViewModel @Inject constructor(
                                     question = event.question,
                                     questionSession = null,
                                     parentUser = parentUserState.value!!,
-                                    profile = _currentChildProfile.value!!
+                                    profile = _currentChildProfile.value!!,
+                                    language = _currentLanguageCode.value
                                 )
                             }
 

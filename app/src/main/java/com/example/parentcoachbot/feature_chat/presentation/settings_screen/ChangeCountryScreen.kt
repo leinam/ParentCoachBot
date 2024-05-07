@@ -72,7 +72,7 @@ fun ChangeCountryScreen(
 
 
     var country: String by rememberSaveable {
-        mutableStateOf(countryList[0].name)
+        mutableStateOf(currentCountry ?: countryList[0].name)
     }
 
     val mContext = LocalContext.current
@@ -142,7 +142,7 @@ fun ChangeCountryScreen(
 
                         TextField(
                             readOnly = true,
-                            value = currentCountry ?: country,
+                            value = country,
                             onValueChange = {
                                 country = it
                             },

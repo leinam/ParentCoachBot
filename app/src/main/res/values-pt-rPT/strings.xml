@@ -88,7 +88,7 @@
     <string name="today_label">Hoje</string>
     <string name="yesterday_label">Ontem</string>
     <string name="profile_name">Nome</string>
-    <string name="participant_username_label">Username</string>
+    <string name="participant_username_label">Nome</string>
     <string name="pin_label">PIN</string>
     <string name="confirm_pin_label">Confirmar PIN</string>
     <string name="enter_pin_prompt">Insira seu PIN</string>
@@ -122,4 +122,6 @@
     <string name="adcock_contact_description">A Linha Direta de Depressão e Ansiedade da Adcock Ingram oferece apoio emocional a pessoas na África do Sul que estão em perigo ou em risco de suicídio.</string>
     <string name="sa_crisis_hotline_description">A Linha de Apoio à Crise de Suicídio na África do Sul oferece apoio 24 horas por dia a pessoas na África do Sul que estão em perigo ou em risco de suicídio.</string>
     <string name="related_questions_label">Perguntas relacionadas:</string>
+    <string name="username_label">Nome</string>
+    <string name="no_match">Sem Perguntas Encontradas</string>
 </resources>

@@ -355,11 +355,14 @@ object AppModule {
         parentUserUseCases: ParentUserUseCases,
         childProfileUseCases: ChildProfileUseCases,
         application: Application,
+        firebaseAnalytics: FirebaseAnalytics,
         appPreferences: AppPreferences
     ): GlobalState {
         return GlobalState(
             parentUserUseCases = parentUserUseCases,
-            appPreferences = appPreferences
+            appPreferences = appPreferences,
+            firebaseAnalytics = firebaseAnalytics
+
         )
     }
 

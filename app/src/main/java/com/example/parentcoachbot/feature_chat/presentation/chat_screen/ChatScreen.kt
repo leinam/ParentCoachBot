@@ -354,14 +354,6 @@ fun ChatScreen(
                                                         )
                                                     }
 
-                                                    topic.icon?.let {
-                                                        Icon(
-                                                            painter = painterResource(id = it),
-                                                            contentDescription = topic.title[currentLanguageCode],
-                                                            tint = Color.White
-                                                        )
-                                                    }
-
                                                 }
                                             }
                                         }
@@ -446,7 +438,7 @@ fun ChatScreen(
                                                     .fillMaxWidth()
                                             ) {
                                                 Text(
-                                                    text = "No Matching Question.",
+                                                    text = stringResource(id = R.string.no_match),
                                                     color = Color.White
                                                 )
 
@@ -603,7 +595,8 @@ fun ChatScreen(
                                                         RelatedQuestionsBox(
                                                             previousQuestion = questionSessionAnswerTriple.second.first,
                                                             relatedQuestionsList = it,
-                                                            onEvent = onEvent
+                                                            onEvent = onEvent,
+                                                            currentLanguageCode = currentLanguageCode ?: "en"
                                                         )
                                                     }
 

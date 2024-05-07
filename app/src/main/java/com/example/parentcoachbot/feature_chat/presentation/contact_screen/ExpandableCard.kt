@@ -47,11 +47,12 @@ fun ExpandableCard(
     content: @Composable () -> Unit = { },
     headerFontSize: TextUnit = 27.sp,
     isContactCard: Boolean = false,
+    isExpanded: Boolean = false,
     contactCategory: ContactCategory? = null,
     onEvent: (ContactScreenEvent) -> Unit = {}
 ) {
     var isExpanded by remember {
-        mutableStateOf(false)
+        mutableStateOf(isExpanded)
     }
 
     Card(

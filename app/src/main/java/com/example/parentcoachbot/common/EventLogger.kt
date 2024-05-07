@@ -31,7 +31,8 @@ class EventLogger @Inject constructor(val firebaseAnalytics: FirebaseAnalytics) 
         parentUser: ParentUser,
         profile: ChildProfile,
         loggingEvent: LoggingEvent,
-        previousQuestion: Question? = null
+        previousQuestion: Question? = null,
+        language: String? = null
     ) {
 
         val bundle = Bundle()
@@ -47,6 +48,7 @@ class EventLogger @Inject constructor(val firebaseAnalytics: FirebaseAnalytics) 
         bundle.putString("question_text", question?.questionText?.get("en")  ?: "null")
         bundle.putString("question_session_id", questionSession?._id ?: "null")
         bundle.putString("subtopic", question?.subtopic ?: "null")
+        bundle.putString("current_language", language ?: "null")
 
         firebaseAnalytics.logEvent(loggingEvent.eventName, bundle)
     }
@@ -64,8 +66,7 @@ class EventLogger @Inject constructor(val firebaseAnalytics: FirebaseAnalytics) 
         bundle.putString("profile_id", profile?._id ?: "null")
         bundle.putString("profile_name", profile?.name ?: "null")
         bundle.putString("chat_session_id", chatSession._id)
-
-
+        
         firebaseAnalytics.logEvent(loggingEvent.eventName, bundle)
     }
 
@@ -80,7 +81,6 @@ class EventLogger @Inject constructor(val firebaseAnalytics: FirebaseAnalytics) 
         bundle.putString("auth_id", parentUser.owner_id)
         bundle.putString("profile_id", profile._id)
         bundle.putString("profile_name", profile.name)
-
 
         firebaseAnalytics.logEvent(loggingEvent.eventName, bundle)
     }
@@ -99,7 +99,7 @@ class EventLogger @Inject constructor(val firebaseAnalytics: FirebaseAnalytics) 
         bundle.putString("auth_id", parentUser.owner_id)
         bundle.putString("profile_id", profile?._id ?: "null")
         bundle.putString("profile_name", profile?.name ?: "null")
-        bundle.putString("chatSession_id", chatSession?._id ?: "null")
+        bundle.putString("chat_session_id", chatSession?._id ?: "null")
         bundle.putString("search_query_text", searchQueryText)
         bundle.putString("current_language", currentLanguage)
 

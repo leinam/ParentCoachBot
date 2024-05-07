@@ -6,6 +6,7 @@ plugins {
     id ("io.realm.kotlin") version "1.8.0"
     id 'com.google.gms.google-services'
     id "com.google.firebase.crashlytics"
+    id("com.google.firebase.firebase-perf")
 }
 
 apply plugin: 'com.android.application'
@@ -78,6 +79,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
+    implementation("com.google.firebase:firebase-perf")
 
 
     // implementation 'io.realm.kotlin:library-base:1.10.0' // Add to use local realm (no sync)

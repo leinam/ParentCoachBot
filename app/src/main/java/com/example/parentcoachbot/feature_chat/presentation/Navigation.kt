@@ -27,7 +27,6 @@ import com.example.parentcoachbot.feature_chat.presentation.profile_screen.Profi
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.SelectProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.profile_screen.UpdateProfileScreen
 import com.example.parentcoachbot.feature_chat.presentation.resources_screens.ImageResourceScreen
-import com.example.parentcoachbot.feature_chat.presentation.resources_screens.PDFReader
 import com.example.parentcoachbot.feature_chat.presentation.resources_screens.ResourcesHomeScreen
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsScreenEvent
 import com.example.parentcoachbot.feature_chat.presentation.saved_questions_screen.SavedQuestionsViewModel
@@ -51,13 +50,16 @@ fun Navigation() {
     val savedQuestionsViewModel: SavedQuestionsViewModel = hiltViewModel()
     val splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
     val profileViewModel: ProfileViewModel = hiltViewModel()
-    val firebaseAnalytics: FirebaseAnalytics = chatViewModel.firebaseAnalytics
+    val firebaseAnalytics: FirebaseAnalytics = profileViewModel.firebaseAnalytics
     val currentParentUser by profileViewModel.profileViewModelState.value.parentUserState.collectAsStateWithLifecycle()
     val isTourCompleted by splashScreenViewModel.splashScreenViewModelState.value.isTourComplete.collectAsStateWithLifecycle()
-    firebaseAnalytics.setUserId(currentParentUser?.username ?: "Unknown")
+
+    // firebaseAnalytics.setUserId(currentParentUser?.username ?: "Unknown")
+    println("The username is ${firebaseAnalytics}")
 
     DisposableEffect(Unit) {
         var screenEntryTime = 0L
+
 
         val listener = NavController.OnDestinationChangedListener { controller, destination, _ ->
             val entryParams = Bundle()
@@ -70,12 +72,11 @@ fun Navigation() {
                 val exitTime: Long = destinationChangeTime
                 val parentUsername = currentParentUser?.username ?: "null"
                 val authID = currentParentUser?.owner_id ?: "null"
-
                 val timeSpentOnScreen =
                     if (screenEntryTime != 0L) exitTime - screenEntryTime else 0L
                 exitParams.putString("SCREEN_NAME", previousScreenRoute)
-                exitParams.putString("USERNAME", parentUsername)
-                exitParams.putString("authID", authID)
+                exitParams.putString("username", parentUsername)
+                exitParams.putString("auth_id", authID)
                 exitParams.putBoolean("Backgrounded", false)
                 exitParams.putLong("TIME_ON_SCREEN", timeSpentOnScreen)
 
@@ -91,7 +92,7 @@ fun Navigation() {
 
                 entryParams.putString(FirebaseAnalytics.Param.SCREEN_NAME, destinationRoute)
                 entryParams.putString("PREVIOUS_SCREEN", previousScreenRoute ?: "null")
-                entryParams.putString("USERNAME", parentUsername)
+                entryParams.putString("username", parentUsername)
                 entryParams.putString("authID", authID)
 
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, entryParams)
@@ -114,8 +115,8 @@ fun Navigation() {
             val timeSpentOnScreen =
                 if (screenEntryTime != 0L) backgroundedTime - screenEntryTime else 0L
             exitParams.putString("SCREEN_NAME", previousScreenRoute)
-            exitParams.putString("USERNAME", parentUsername)
-            exitParams.putString("authID", authID)
+            exitParams.putString("username", parentUsername)
+            exitParams.putString("auth_id", authID)
             exitParams.putBoolean("Backgrounded", true)
             exitParams.putLong("TIME_ON_SCREEN", timeSpentOnScreen)
 
@@ -276,25 +277,17 @@ fun Navigation() {
                 })
         }
 
-        composable(route = Screen.PDFResourceScreen.route) {
-            PDFReader(
-                navController = navHostController,
-                chatListViewModelState = chatListViewModel.chatListViewModelState
-            )
-        }
-
         composable(route = Screen.ImageResourceScreen.route) {
             ImageResourceScreen(
                 navController = navHostController,
-                chatListViewModelState = chatListViewModel.chatListViewModelState
-            )
+                chatListViewModelState = chatListViewModel.chatListViewModelState)
         }
 
         composable(route = Screen.EmergencyInfoScreen.route) {
             EmergencyInfoScreen(
                 navController = navHostController,
                 profileState = profileViewModel.profileViewModelState,
-                onEvent = {contactScreenEvent -> contactScreenViewModel.onEvent(contactScreenEvent)  }
+                onEvent = { contactScreenEvent -> contactScreenViewModel.onEvent(contactScreenEvent) }
             )
         }
 
