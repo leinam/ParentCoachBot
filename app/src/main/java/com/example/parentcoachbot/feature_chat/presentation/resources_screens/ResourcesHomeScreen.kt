@@ -116,7 +116,7 @@ sealed class ResourceItem(
 
     object DevelopmentSA : ResourceItem(
         title = mapOf(
-            "en" to "Good Nutrition",
+            "en" to "Child Development",
             "pt" to "Desenvolvimento Saudável",
             "zu" to "Ukuthuthukiswa Okunempilo"
         ),
